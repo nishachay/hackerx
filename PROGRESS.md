@@ -8,7 +8,7 @@
 
 ## Phase 2 — HN pull
 - [x] Implement resumable 14-day Algolia slices with pagination and splitting at 1,000 hits.
-- [ ] Persist story and comment fields, with concurrency and backoff.
+- [x] Persist story and comment fields, with concurrency and backoff.
 - [ ] Add weekly incremental and manual GitHub Actions entry points.
 
 ## Phase 3 — Tweet ID extraction and merge
@@ -62,7 +62,7 @@
 
 ## Current step
 
-Phase 2, step 2: persist selected story/comment fields and review parallel retry behavior.
+Phase 2, step 3: add weekly incremental and manual workflow entry points.
 
 ## Notes / decisions
 
@@ -77,6 +77,7 @@ Phase 2, step 2: persist selected story/comment fields and review parallel retry
 - Phase 1 setup files: `package.json`, `package-lock.json`, `next.config.ts`, `postcss.config.mjs`, `tsconfig.json`, `.gitignore`, `app/`, `pipeline/`.
 - Shared `config.json` defines 20 topic labels, evergreen pass threshold/kinds, citation minimums, worker/page settings, and rank weights. Next generated `next-env.d.ts` on the successful build.
 - `pipeline/pull_hn.py` requests both search phrases in 14-day UTC slices, refreshes the recent two weeks, recursively splits any saturated interval, stores each leaf range atomically, and skips cached ranges after restart. CLI syntax and compilation were checked without contacting HN.
+- HN responses are retained intact (including story points/titles and comment text/author/date/IDs) and summarized by story/comment counts. The collector runs up to eight workers and honors numeric or date-form `Retry-After` on 429/503.
 
 ## Blockers
 
