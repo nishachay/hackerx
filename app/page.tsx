@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { HomeFeed } from "./components/home-feed";
 
 const navItems = ["Home", "Explore", "By Year", "Accounts", "History", "About"];
 
 export default function Home() {
   const [light, setLight] = useState(false);
   const [page, setPage] = useState("Home");
+  const [selectedId, setSelectedId] = useState("");
+  const [profileHandle, setProfileHandle] = useState("");
   return (
     <main className={light ? "site light" : "site"}>
       <div className="layout">
@@ -17,8 +20,8 @@ export default function Home() {
           <div className="nav-note"><b>HackerX</b><small>Ideas worth returning to</small></div>
         </nav>
         <section className="center-column">
-          <header className="page-heading"><div className="page-title">{page}</div><p>Timeless ideas, surfaced by Hacker News readers.</p></header>
-          <div className="empty-state"><div className="brand-mark large">H</div><h1>Good ideas deserve to last.</h1><p>The HackerX feed is ready for its first fixture stories.</p></div>
+          <header className="page-heading"><div className="page-title">{page === "Home" ? "Home" : page}</div><p>Timeless ideas, surfaced by Hacker News readers.</p></header>
+          {page === "Home" ? <HomeFeed onOpen={(id) => { setSelectedId(id); setPage("Tweet"); }} onProfile={(handle) => { setProfileHandle(handle); setPage("Profile"); }} /> : <div className="empty-state"><div className="brand-mark large">H</div><h1>{page === "Tweet" ? `Idea ${selectedId}` : page === "Profile" ? `@${profileHandle}` : "Good ideas deserve to last."}</h1><p>Timeless ideas, surfaced by Hacker News readers.</p></div>}
         </section>
         <aside className="right-column">
           <div className="search-placeholder">⌕ <span>Search HackerX</span></div>
