@@ -12,7 +12,7 @@
 - [x] Add weekly incremental and manual GitHub Actions entry points.
 
 ## Phase 3 — Tweet ID extraction and merge
-- [ ] Extract IDs from supported links, including HTML-escaped URLs.
+- [x] Extract IDs from supported links, including HTML-escaped URLs.
 - [ ] Merge truncated IDs by handle and enforce distinct HN author counts.
 
 ## Phase 4 — Tweet fetch
@@ -62,7 +62,7 @@
 
 ## Current step
 
-Phase 3, step 1: extract tweet IDs from supported links and escaped URLs.
+Phase 3, step 2: merge truncated IDs by handle and enforce HN author counts.
 
 ## Notes / decisions
 
@@ -79,6 +79,7 @@ Phase 3, step 1: extract tweet IDs from supported links and escaped URLs.
 - `pipeline/pull_hn.py` requests both search phrases in 14-day UTC slices, refreshes the recent two weeks, recursively splits any saturated interval, stores each leaf range atomically, and skips cached ranges after restart. CLI syntax and compilation were checked without contacting HN.
 - HN responses are retained intact (including story points/titles and comment text/author/date/IDs) and summarized by story/comment counts. The collector runs up to eight workers and honors numeric or date-form `Retry-After` on 429/503.
 - `.github/workflows/weekly.yml` schedules Monday refreshes, supports manual backfills, restores/saves HN request caches, and commits source JSON with the Actions bot. Workflow has not been triggered.
+- `pipeline/extract_tweets.py` HTML-decodes HN text before recognizing x.com/twitter.com/mobile/Nitter status URLs, including generic `/i/web/status/` links, and preserves each citing HN item. Syntax compilation succeeded; the stage awaits the first HN pull.
 
 ## Blockers
 
