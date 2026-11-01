@@ -15,6 +15,7 @@
     "slice_days": 14,
     "hits_per_page": 1000,
     "threads": 8,
+    "tags": ["comment", "story"],
     "queries": ["twitter.com status", "x.com status", "twitter.com", "x.com"]
   },
   "rank": {
