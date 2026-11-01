@@ -10,7 +10,13 @@
     "passing_kinds": ["insight", "advice", "technical", "story"]
   },
   "recommendation": { "minimum_distinct_authors": 2 },
-  "hn": { "minimum_distinct_citing_authors": 3, "slice_days": 14, "hits_per_page": 1000, "threads": 8 },
+  "hn": {
+    "minimum_distinct_citing_authors": 3,
+    "slice_days": 14,
+    "hits_per_page": 1000,
+    "threads": 8,
+    "queries": ["twitter.com status", "x.com status", "twitter.com", "x.com"]
+  },
   "rank": {
     "recommending_author_weight": 10,
     "other_citing_author_weight": 2,
