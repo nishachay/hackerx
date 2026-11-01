@@ -64,6 +64,15 @@
 
 Phase 5, step 2: finish the cached HN pull using RUN.md, then run Amos filters on a 20-tweet sample.
 
+## User-requested work sequence
+
+- [x] Step 1 — Update agent instructions for Workers Builds and token-saving mode.
+- [ ] Step 2 — Lossless pre-filter before Amos.
+- [ ] Step 3 — Optional batched Amos mode.
+- [ ] Step 4 — Sample A/B comparison instructions (do not run).
+- [ ] Step 5 — Year-spread rank boost.
+- [ ] Step 6 — Phase 9 and 10 fixture UI; stop before Phase 11 and Phase 6.
+
 ## Notes / decisions
 
 - Initial checkpoint files were created before application code, as requested.
@@ -88,6 +97,7 @@ Phase 5, step 2: finish the cached HN pull using RUN.md, then run Amos filters o
 - Corrected `pipeline/pull_hn.py` range planning so its fixed historical slices plus refreshed rolling window cover every second with no gap. Amos documentation states submitted requests are retained to improve models; this will be disclosed in project documentation.
 - Recent Algolia diagnostics: exact phrase `twitter.com status` returned 0 hits for a recent 14-day range, while `twitter.com` returned hundreds. Also found `tags=comment,story` is an intersection and returns 0; collector now queries each tag separately. The two requested phrases and domain-only HN fallbacks are configured; status-link regex remains the eligibility boundary. Earlier pulls were stopped and their wrong-tag caches are unused.
 - Per user request, the active HN pull was stopped with its resumable cache preserved. `RUN.md` contains the next long command; the corrected pull should be resumed before extraction/fetch/sample scoring.
+- User-requested Step 1 updated `AGENTS.md` with Workers Builds hosting and token-saving rules and removed `set -e` from the existing resumable pull command; next apply Step 2 pre-filter before Amos.
 
 ## Blockers
 
