@@ -9,7 +9,7 @@
 ## Phase 2 — HN pull
 - [x] Implement resumable 14-day Algolia slices with pagination and splitting at 1,000 hits.
 - [x] Persist story and comment fields, with concurrency and backoff.
-- [ ] Add weekly incremental and manual GitHub Actions entry points.
+- [x] Add weekly incremental and manual GitHub Actions entry points.
 
 ## Phase 3 — Tweet ID extraction and merge
 - [ ] Extract IDs from supported links, including HTML-escaped URLs.
@@ -62,7 +62,7 @@
 
 ## Current step
 
-Phase 2, step 3: add weekly incremental and manual workflow entry points.
+Phase 3, step 1: extract tweet IDs from supported links and escaped URLs.
 
 ## Notes / decisions
 
@@ -78,6 +78,7 @@ Phase 2, step 3: add weekly incremental and manual workflow entry points.
 - Shared `config.json` defines 20 topic labels, evergreen pass threshold/kinds, citation minimums, worker/page settings, and rank weights. Next generated `next-env.d.ts` on the successful build.
 - `pipeline/pull_hn.py` requests both search phrases in 14-day UTC slices, refreshes the recent two weeks, recursively splits any saturated interval, stores each leaf range atomically, and skips cached ranges after restart. CLI syntax and compilation were checked without contacting HN.
 - HN responses are retained intact (including story points/titles and comment text/author/date/IDs) and summarized by story/comment counts. The collector runs up to eight workers and honors numeric or date-form `Retry-After` on 429/503.
+- `.github/workflows/weekly.yml` schedules Monday refreshes, supports manual backfills, restores/saves HN request caches, and commits source JSON with the Actions bot. Workflow has not been triggered.
 
 ## Blockers
 
