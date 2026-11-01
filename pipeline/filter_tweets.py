@@ -212,6 +212,48 @@ def filter_records(records: list[dict[str, Any]], config: dict[str, Any], client
     return scored, passed
 
 
+def compare_sample(records: list[dict[str, Any]], config: dict[str, Any], sample_size: int) -> None:
+    selected = sorted(records, key=lambda r: (-int(r.get("distinct_hn_authors", 0)), str(r.get("id", ""))))[:sample_size]
+    single_client, batched_client = AmosClient(), AmosClient()
+    single, _ = filter_records(selected, config, single_client, "single")
+    batched, _ = filter_records(selected, config, batched_client, "batched")
+    single_by_id = {str(r.get("id", "")): r for r in single}
+    batch_by_id = {str(r.get("id", "")): r for r in batched}
+    agreements = {"evergreen_pass": 0, "kind": 0, "recommendation_pass": 0}
+    disagreements: list[dict[str, Any]] = []
+    for record_id in single_by_id:
+        left, right = single_by_id[record_id], batch_by_id[record_id]
+        values_left = {
+            "evergreen_pass": left["evergreen_pass"],
+            "kind": left["amos"]["kind"],
+            "recommendation_pass": left.get("recommendation_pass", "not checked"),
+        }
+        values_right = {
+            "evergreen_pass": right["evergreen_pass"],
+            "kind": right["amos"]["kind"],
+            "recommendation_pass": right.get("recommendation_pass", "not checked"),
+        }
+        for key in agreements:
+            agreements[key] += values_left[key] == values_right[key]
+        if values_left != values_right:
+            disagreements.append({"id": record_id, "single": values_left, "batched": values_right})
+    denominator = len(single_by_id)
+    for key, count in agreements.items():
+        print(f"{key} agreement: {count / denominator * 100 if denominator else 0:.1f}% ({count}/{denominator})")
+    print("Disagreements:")
+    for item in disagreements:
+        print(json.dumps(item, ensure_ascii=False))
+    print(f"Amos requests used per mode: single={single_client.requests_made}; batched={batched_client.requests_made}.")
+
+    batch_size = int(config.get("amos", {}).get("batch_size", 1))
+    sample_pass_rate = (sum(bool(r["evergreen_pass"]) for r in single) / denominator) if denominator else 0
+    all_comment_counts = [sum(1 for c in r.get("citations", []) if c.get("hn_kind") == "comment" and str(c.get("hn_comment_text", "")).strip()) for r in records]
+    expected_passing_comment_calls = sample_pass_rate * sum(all_comment_counts)
+    single_estimate = len(records) + expected_passing_comment_calls
+    batched_estimate = math.ceil(len(records) / batch_size) + sample_pass_rate * sum(math.ceil(count / batch_size) for count in all_comment_counts)
+    print(f"Full-run estimate after pre-filter: single={single_estimate:.1f} requests/{single_estimate / 60:.1f} minutes; batched={batched_estimate:.1f} requests/{batched_estimate / 60:.1f} minutes at 60/min.")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", default="data/fetched-tweets.json")
@@ -219,6 +261,7 @@ def main() -> None:
     parser.add_argument("--passed", default="data/amos-passed.json")
     parser.add_argument("--fetch-rejections", default="data/rejected-fetch.json")
     parser.add_argument("--mode", choices=("single", "batched"), default="single")
+    parser.add_argument("--compare", action="store_true", help="Compare single and batched modes on the top 20 eligible tweets")
     parser.add_argument("--sample", type=int, default=0, help="Filter top N by distinct HN author count; 0 means all")
     args = parser.parse_args()
     input_path = ROOT / args.input
@@ -233,6 +276,9 @@ def main() -> None:
     sample = args.sample > 0
     selected = ordered[:args.sample] if sample else ordered
     config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
+    if args.compare:
+        compare_sample(ordered, config, 20)
+        return
     client = AmosClient()
     scored, passed = filter_records(selected, config, client, args.mode)
     scored_path, passed_path = ROOT / args.scored, ROOT / args.passed

@@ -69,7 +69,7 @@ Phase 5, step 2: finish the cached HN pull using RUN.md, then run Amos filters o
 - [x] Step 1 — Update agent instructions for Workers Builds and token-saving mode.
 - [x] Step 2 — Lossless pre-filter before Amos.
 - [x] Step 3 — Optional batched Amos mode.
-- [ ] Step 4 — Sample A/B comparison instructions (do not run).
+- [x] Step 4 — Sample A/B comparison instructions (do not run).
 - [ ] Step 5 — Year-spread rank boost.
 - [ ] Step 6 — Phase 9 and 10 fixture UI; stop before Phase 11 and Phase 6.
 
@@ -100,6 +100,7 @@ Phase 5, step 2: finish the cached HN pull using RUN.md, then run Amos filters o
 - User-requested Step 1 updated `AGENTS.md` with Workers Builds hosting and token-saving rules and removed `set -e` from the existing resumable pull command; next apply Step 2 pre-filter before Amos.
 - User-requested Step 2 adds fetch-failure, deleted-tweet, and fewer-than-two-distinct-comment-author exclusions before Amos; writes `data/rejected-prefilter.json` with reasons and prints each exclusion count. `python3 -m py_compile pipeline/filter_tweets.py` passed; no Amos request was made.
 - User-requested Step 3 sets `amos.batch_size` to 6 (the API allows 32 questions per request; evergreen uses 5 per tweet, so six is the largest complete batch). `--mode single|batched` defaults to single; batched evergreen and per-tweet comment chunks use unique keys, retry malformed items singly, and use content-addressed request caches. Syntax and config JSON checks passed; no Amos call was made. API reference: https://docs.system-one.dev/en/docs/api
+- User-requested Step 4 adds `--compare` for the top 20 post-prefilter records, per-metric agreement, disagreement details, actual request counts, and post-prefilter runtime estimates. `RUN.md` now has deferred extraction/merge/fetch and comparison blocks; neither was run. Syntax compilation passed.
 
 ## Blockers
 
