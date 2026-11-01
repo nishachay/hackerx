@@ -10,6 +10,8 @@
     "passing_kinds": ["insight", "advice", "technical", "story"]
   },
   "recommendation": { "minimum_distinct_authors": 2 },
+  "amos": { "batch_size": 6 },
+  "amos": { "batch_size": 6 },
   "hn": {
     "minimum_distinct_citing_authors": 3,
     "slice_days": 14,
