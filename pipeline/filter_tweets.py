@@ -33,6 +33,40 @@ def unique_authors(citations: list[dict[str, Any]]) -> set[str]:
     return {str(c.get("hn_author", "")).strip().lower() for c in citations if str(c.get("hn_author", "")).strip()}
 
 
+def prefilter_records(
+    records: list[dict[str, Any]], fetch_failures: list[dict[str, Any]]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, int]]:
+    failed_ids = {str(item.get("id", "")) for item in fetch_failures}
+    eligible: list[dict[str, Any]] = []
+    rejected: list[dict[str, Any]] = []
+    counts = {"fetch_failed": 0, "deleted": 0, "fewer_than_two_comment_authors": 0}
+    for record in records:
+        tweet_id = str(record.get("id", ""))
+        reason = None
+        if tweet_id in failed_ids or record.get("fetch_ok") is False:
+            reason = "fetch failed"
+            counts["fetch_failed"] += 1
+        elif record.get("deleted_on_x") is True or record.get("tweet", {}).get("deleted_on_x") is True:
+            reason = "tweet is deleted"
+            counts["deleted"] += 1
+        else:
+            comment_authors = {
+                str(c.get("hn_author", "")).strip().casefold()
+                for c in record.get("citations", [])
+                if c.get("hn_kind") == "comment"
+                and str(c.get("hn_comment_text", "")).strip()
+                and str(c.get("hn_author", "")).strip()
+            }
+            if len(comment_authors) < 2:
+                reason = "fewer than 2 distinct HN authors left a comment with text"
+                counts["fewer_than_two_comment_authors"] += 1
+        if reason:
+            rejected.append({"id": tweet_id, "reason": reason})
+        else:
+            eligible.append(record)
+    return eligible, rejected, counts
+
+
 def filter_records(records: list[dict[str, Any]], config: dict[str, Any], client: AmosClient) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     evergreen_config = config["evergreen"]
     recommendation_minimum = int(config["recommendation"]["minimum_distinct_authors"])
@@ -93,16 +127,20 @@ def main() -> None:
     parser.add_argument("--input", default="data/fetched-tweets.json")
     parser.add_argument("--scored", default="data/scored-tweets.json")
     parser.add_argument("--passed", default="data/amos-passed.json")
+    parser.add_argument("--fetch-rejections", default="data/rejected-fetch.json")
     parser.add_argument("--sample", type=int, default=0, help="Filter top N by distinct HN author count; 0 means all")
     args = parser.parse_args()
     input_path = ROOT / args.input
     if not input_path.exists():
         parser.error(f"Input file not found: {input_path.relative_to(ROOT)} (run pipeline/fetch_tweets.py first)")
     records = json.loads(input_path.read_text(encoding="utf-8"))
+    rejected_fetch_path = ROOT / args.fetch_rejections
+    fetch_failures = json.loads(rejected_fetch_path.read_text(encoding="utf-8")) if rejected_fetch_path.exists() else []
+    eligible, rejected, prefilter_counts = prefilter_records(records, fetch_failures)
     total_comments = sum(1 for record in records for c in record.get("citations", []) if c.get("hn_kind") == "comment" and c.get("hn_comment_text"))
-    ordered = sorted(records, key=lambda r: (-int(r.get("distinct_hn_authors", 0)), str(r.get("id", ""))))
+    ordered = sorted(eligible, key=lambda r: (-int(r.get("distinct_hn_authors", 0)), str(r.get("id", ""))))
     sample = args.sample > 0
-    selected = ordered[:args.sample] if sample else records
+    selected = ordered[:args.sample] if sample else ordered
     config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
     client = AmosClient()
     scored, passed = filter_records(selected, config, client)
@@ -110,11 +148,19 @@ def main() -> None:
     scored_path.parent.mkdir(parents=True, exist_ok=True)
     scored_path.write_text(json.dumps(scored, ensure_ascii=False), encoding="utf-8")
     passed_path.write_text(json.dumps(passed, ensure_ascii=False), encoding="utf-8")
+    prefilter_path = ROOT / "data" / "rejected-prefilter.json"
+    prefilter_path.write_text(json.dumps(rejected, ensure_ascii=False, indent=2), encoding="utf-8")
     for record in scored:
         score = record["amos"]
         if sample:
             print(f"{record['id']} evergreen={score['evergreen']} avg={score['average']:.3f} kind={score['kind']} evergreen_pass={record['evergreen_pass']} recommendation_pass={record.get('recommendation_pass', 'not checked')}")
     print(f"Processed {len(scored)} tweets; evergreen passed {sum(r['evergreen_pass'] for r in scored)}; recommendation passed {len(passed)}.")
+    print(
+        "Pre-filter removed: "
+        f"{prefilter_counts['fetch_failed']} fetch failures, "
+        f"{prefilter_counts['deleted']} deleted, "
+        f"{prefilter_counts['fewer_than_two_comment_authors']} with fewer than 2 distinct commenting authors."
+    )
     print(f"Amos requests used: {client.requests_made}; cached responses reused: {client.cache_hits}.")
     if sample:
         evergreen_rate = (sum(r["evergreen_pass"] for r in scored) / len(scored)) if scored else 0
