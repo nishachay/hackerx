@@ -169,11 +169,28 @@ def main() -> None:
             if path.name == "pull-errors.json":
                 continue
             hits = json.loads(path.read_text(encoding="utf-8"))
-            all_hits.update((str(hit.get("objectID")), hit) for hit in hits)
+            for hit in hits:
+                object_id = str(hit.get("objectID", ""))
+                if not object_id:
+                    continue
+                all_hits[object_id] = hit
     out = ROOT / "data" / "hn-hits.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(list(all_hits.values()), ensure_ascii=False), encoding="utf-8")
-    print(f"Wrote {len(all_hits)} unique HN hits to {out.relative_to(ROOT)}")
+    story_count = sum(1 for hit in all_hits.values() if "story" in hit.get("_tags", []))
+    comment_count = sum(1 for hit in all_hits.values() if "comment" in hit.get("_tags", []))
+    summary = {
+        "pulled_at": datetime.now(timezone.utc).isoformat(),
+        "from": args.from_date,
+        "until_exclusive": args.until_date,
+        "queries": queries,
+        "unique_hits": len(all_hits),
+        "stories": story_count,
+        "comments": comment_count,
+        "fields_retained": ["objectID", "author", "created_at", "created_at_i", "title", "points", "comment_text", "story_id", "parent_id", "story_title", "story_url", "url", "_tags"],
+    }
+    (ROOT / "data" / "hn-pull-summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    print(f"Wrote {len(all_hits)} unique HN hits ({story_count} stories, {comment_count} comments) to {out.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
