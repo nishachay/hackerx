@@ -40,7 +40,7 @@
 - [ ] Publish the open dataset and document its fields and license.
 
 ## Phase 9 — Site UI
-- [ ] Inspect all supplied X layout references and record measurements/tokens.
+- [x] Inspect all supplied X layout references and record measurements/tokens.
 - [ ] Build responsive three-column shell, navigation, sidebars, theme, and mobile nav.
 - [ ] Build home feed and reusable tweet cards with interactions and pagination.
 - [ ] Build tweet detail, HN replies, profiles, and search experience.
@@ -102,6 +102,7 @@ Phase 5, step 2: finish the cached HN pull using RUN.md, then run Amos filters o
 - User-requested Step 3 sets `amos.batch_size` to 6 (the API allows 32 questions per request; evergreen uses 5 per tweet, so six is the largest complete batch). `--mode single|batched` defaults to single; batched evergreen and per-tweet comment chunks use unique keys, retry malformed items singly, and use content-addressed request caches. Syntax and config JSON checks passed; no Amos call was made. API reference: https://docs.system-one.dev/en/docs/api
 - User-requested Step 4 adds `--compare` for the top 20 post-prefilter records, per-metric agreement, disagreement details, actual request counts, and post-prefilter runtime estimates. `RUN.md` now has deferred extraction/merge/fetch and comparison blocks; neither was run. Syntax compilation passed.
 - User-requested Step 5 adds `rank.year_spread_weight` (2) and the UTC calendar-year count boost to scored records as `rank_score += weight × (distinct years − 1)`; it only changes rank. Syntax and config JSON checks passed.
+- After the required `direct git pull`, confirmed ten references in `design/`: home, light home, tweet, image tweet, link card, profile, search, explore, like, and bookmark. The screenshots are 1366×768; the three columns align with the previously recorded ~327/598/441px proportions. Implement the responsive HackerX shell with the requested colors and orange H mark.
 
 ## Blockers
 
