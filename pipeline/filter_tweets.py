@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -31,6 +32,27 @@ def comment_state(record: dict[str, Any], citation: dict[str, Any]) -> dict[str,
 
 def unique_authors(citations: list[dict[str, Any]]) -> set[str]:
     return {str(c.get("hn_author", "")).strip().lower() for c in citations if str(c.get("hn_author", "")).strip()}
+
+
+def citation_year(citation: dict[str, Any]) -> int | None:
+    timestamp = citation.get("hn_created_at_i")
+    if timestamp is not None:
+        try:
+            return datetime.fromtimestamp(int(timestamp), timezone.utc).year
+        except (TypeError, ValueError, OverflowError, OSError):
+            pass
+    value = citation.get("hn_created_at")
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00")).year
+        except ValueError:
+            return None
+    return None
+
+
+def year_spread_boost(record: dict[str, Any], config: dict[str, Any]) -> float:
+    years = {year for citation in record.get("citations", []) if (year := citation_year(citation)) is not None}
+    return float(config.get("rank", {}).get("year_spread_weight", 2)) * max(0, len(years) - 1)
 
 
 def prefilter_records(
@@ -176,6 +198,7 @@ def filter_records(records: list[dict[str, Any]], config: dict[str, Any], client
         probabilities = {key: float(answers[key]["noul"]) for key in ("evergreen_1", "evergreen_2", "evergreen_3")}
         average = sum(probabilities.values()) / 3
         kind = str(answers["kind"]["choice"]).lower()
+        year_boost = year_spread_boost(record, config)
         result = {
             **record,
             "amos": {
@@ -187,6 +210,8 @@ def filter_records(records: list[dict[str, Any]], config: dict[str, Any], client
             },
             "evergreen_pass": average >= float(evergreen_config["minimum_average_probability"]) and kind in set(evergreen_config["passing_kinds"]),
             "recommendations": [],
+            "year_spread_rank_boost": year_boost,
+            "rank_score": float(record.get("rank_score", 0)) + year_boost,
         }
         scored.append(result)
         if result["evergreen_pass"]:
