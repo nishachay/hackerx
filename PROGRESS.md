@@ -62,7 +62,7 @@
 
 ## Current step
 
-Phase 5, step 2: run Amos filters on a 20-tweet sample and report scores/estimates.
+Phase 5, step 2: finish the cached HN pull using RUN.md, then run Amos filters on a 20-tweet sample.
 
 ## Notes / decisions
 
@@ -87,6 +87,7 @@ Phase 5, step 2: run Amos filters on a 20-tweet sample and report scores/estimat
 - `pipeline/amos.py` caches each complete response by request content, shares an in-process sliding 60/minute request limit across filters, and honors `Retry-After`; `pipeline/filter_tweets.py` applies the configured evergreen/recommendation rules and supports a deterministic 20-tweet sample. Syntax compilation and static build succeeded.
 - Corrected `pipeline/pull_hn.py` range planning so its fixed historical slices plus refreshed rolling window cover every second with no gap. Amos documentation states submitted requests are retained to improve models; this will be disclosed in project documentation.
 - Recent Algolia diagnostics: exact phrase `twitter.com status` returned 0 hits for a recent 14-day range, while `twitter.com` returned hundreds. Also found `tags=comment,story` is an intersection and returns 0; collector now queries each tag separately. The two requested phrases and domain-only HN fallbacks are configured; status-link regex remains the eligibility boundary. Earlier pulls were stopped and their wrong-tag caches are unused.
+- Per user request, the active HN pull was stopped with its resumable cache preserved. `RUN.md` contains the next long command; the corrected pull should be resumed before extraction/fetch/sample scoring.
 
 ## Blockers
 
