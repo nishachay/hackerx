@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getTweet } from 'react-tweet/api';
@@ -12,6 +12,7 @@ function option(name, fallback) {
 
 const inputPath = path.resolve(root, option('--input', 'data/tweet-candidates.json'));
 const outputPath = path.resolve(root, option('--output', 'data/fetched-tweets.json'));
+const refreshArchives = args.includes('--refresh-archives');
 const limitValue = option('--limit', '0');
 const limit = Number.parseInt(limitValue, 10) || 0;
 const cacheDir = path.join(root, 'data/cache/tweets');
@@ -34,21 +35,26 @@ globalThis.fetch = async (input, init) => {
   throw new Error('Retry limit reached');
 };
 
-async function fetchOne(candidate) {
+async function fetchOne(candidate, previousTweet = undefined, force = false) {
   const id = String(candidate.id);
   const cachePath = path.join(cacheDir, `${id}.json`);
-  try {
-    await readFile(cachePath, 'utf8');
-    return;
-  } catch { /* no cached result: fetch it below */ }
+  if (!force) {
+    try {
+      await readFile(cachePath, 'utf8');
+      return;
+    } catch { /* no cached result: fetch it below */ }
+  }
 
   let entry;
   try {
     const tweet = await getTweet(id);
     if (!tweet) throw new Error('Tweet is unavailable or deleted');
-    entry = { id, fetched_at: new Date().toISOString(), ok: true, tweet };
+    entry = { id, fetched_at: new Date().toISOString(), ok: true, deleted_on_x: false, tweet };
   } catch (error) {
-    entry = { id, fetched_at: new Date().toISOString(), ok: false, error: String(error?.message ?? error) };
+    const message = String(error?.message ?? error);
+    entry = previousTweet
+      ? { id, fetched_at: new Date().toISOString(), ok: true, deleted_on_x: true, refetch_error: message, tweet: previousTweet }
+      : { id, fetched_at: new Date().toISOString(), ok: false, error: message };
   }
 
   const tempPath = `${cachePath}.${process.pid}.tmp`;
@@ -65,6 +71,34 @@ async function worker() {
   }
 }
 await Promise.all(Array.from({ length: Math.min(4, selected.length) }, worker));
+
+if (refreshArchives) {
+  const archiveDir = path.join(root, 'data/curated');
+  let archiveFiles = [];
+  try { archiveFiles = (await readdir(archiveDir)).filter((name) => name.endsWith('.json')); }
+  catch { /* archive directory is created in the saving phase */ }
+  let archiveCursor = 0;
+  async function archiveWorker() {
+    while (archiveCursor < archiveFiles.length) {
+      const filename = archiveFiles[archiveCursor++];
+      const archivePath = path.join(archiveDir, filename);
+      const archive = JSON.parse(await readFile(archivePath, 'utf8'));
+      const id = archive.id ?? path.basename(filename, '.json');
+      await fetchOne({ id }, archive.tweet ?? archive, true);
+      const refreshed = JSON.parse(await readFile(path.join(cacheDir, `${id}.json`), 'utf8'));
+      const shouldMarkDeleted = refreshed.deleted_on_x === true;
+      const shouldClearDeleted = !shouldMarkDeleted && archive.deleted_on_x === true;
+      if (shouldMarkDeleted || shouldClearDeleted) {
+        if (shouldMarkDeleted) archive.deleted_on_x = true;
+        else delete archive.deleted_on_x;
+        const tempArchivePath = `${archivePath}.${process.pid}.tmp`;
+        await writeFile(tempArchivePath, JSON.stringify(archive, null, 2), 'utf8');
+        await rename(tempArchivePath, archivePath);
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(4, archiveFiles.length) }, archiveWorker));
+}
 
 const found = [];
 const rejected = [];
