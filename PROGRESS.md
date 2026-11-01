@@ -20,7 +20,7 @@
 - [x] Record first-fetch failures and retain previously archived copies.
 
 ## Phase 5 — Amos test on 20 tweets (STOP for user OK)
-- [ ] Implement shared rate limiting, retries, and resumable Amos answer cache.
+- [x] Implement shared rate limiting, retries, and resumable Amos answer cache.
 - [ ] Run evergreen and recommendation labels on a 20-tweet sample.
 - [ ] Record scores, pass/fail, request/runtime estimates, then stop for user approval.
 
@@ -62,7 +62,7 @@
 
 ## Current step
 
-Phase 5, step 1: implement shared Amos throttling, retry, and answer-cache behavior.
+Phase 5, step 2: run Amos filters on a 20-tweet sample and report scores/estimates.
 
 ## Notes / decisions
 
@@ -84,6 +84,8 @@ Phase 5, step 1: implement shared Amos throttling, retry, and answer-cache behav
 - Current npm versions were checked before installation: Next 16.4.3, React 19.3.1, Tailwind 4.3.3, Pagefind 1.6.0, Playwright 1.64.1, Wrangler 4.156.0, and react-tweet 3.3.1. React/Tailwind/react-tweet were updated; Pagefind, Playwright, Wrangler remain for their relevant phases.
 - `pipeline/fetch_tweets.py` bridges to `pipeline/fetch_tweets.mjs`, which calls react-tweet `getTweet` with four workers, retries 429/503 with Retry-After, and writes each result/failure to a per-ID cache. Production build, Python/Node syntax checks, and production dependency audit succeeded. First failures are recorded in `data/rejected-fetch.json`.
 - Fetch adapter supports `--refresh-archives`: archived payloads survive a later unavailable/error response, `deleted_on_x` is set on the archive and cleared if a later fetch succeeds. Syntax checks passed; this mode has not run because no curated archive exists yet.
+- `pipeline/amos.py` caches each complete response by request content, shares an in-process sliding 60/minute request limit across filters, and honors `Retry-After`; `pipeline/filter_tweets.py` applies the configured evergreen/recommendation rules and supports a deterministic 20-tweet sample. Syntax compilation and static build succeeded.
+- Corrected `pipeline/pull_hn.py` range planning so its fixed historical slices plus refreshed rolling window cover every second with no gap. Amos documentation states submitted requests are retained to improve models; this will be disclosed in project documentation.
 
 ## Blockers
 
