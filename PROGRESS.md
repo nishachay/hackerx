@@ -13,7 +13,7 @@
 
 ## Phase 3 — Tweet ID extraction and merge
 - [x] Extract IDs from supported links, including HTML-escaped URLs.
-- [ ] Merge truncated IDs by handle and enforce distinct HN author counts.
+- [x] Merge truncated IDs by handle and enforce distinct HN author counts.
 
 ## Phase 4 — Tweet fetch
 - [ ] Fetch uncached tweet records four at a time and preserve response fields.
@@ -36,7 +36,7 @@
 
 ## Phase 8 — Feeds and dataset
 - [ ] Build 50-item feeds, calendar feeds, account/topic data, and all.json.
-- [ ] Validate schemas and emit Pages size warnings.
+- [ ] Validate schemas and fail near Workers Static Assets size limits.
 - [ ] Publish the open dataset and document its fields and license.
 
 ## Phase 9 — Site UI
@@ -48,7 +48,7 @@
 ## Phase 10 — Extra pages
 - [ ] Add Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick.
 - [ ] Add image export, PWA/offline support, keyboard navigation, and persistence.
-- [ ] Add RSS, sitemap, robots, metadata, and analytics.
+- [ ] Add RSS, sitemap, robots, metadata, and dashboard-only Web Analytics guidance (no script).
 
 ## Phase 11 — Tests and CI
 - [ ] Add requested Playwright smoke tests, screenshots, broken-link and RSS checks.
@@ -56,13 +56,13 @@
 - [ ] Ensure any failing check blocks deployment.
 
 ## Phase 12 — Deploy setup, README, and final report
-- [ ] Configure Cloudflare Pages static deployment and weekly data workflow commits.
+- [ ] Configure Cloudflare Workers Static Assets deployment and validated weekly data workflow commits.
 - [ ] Document setup, reruns, tuning, overrides, and dataset fields.
 - [ ] Record final counts, media size, top 20, Amos usage, and failures.
 
 ## Current step
 
-Phase 3, step 2: merge truncated IDs by handle and enforce HN author counts.
+Phase 4, step 1: fetch uncached tweet records four at a time and preserve response fields.
 
 ## Notes / decisions
 
@@ -80,6 +80,7 @@ Phase 3, step 2: merge truncated IDs by handle and enforce HN author counts.
 - HN responses are retained intact (including story points/titles and comment text/author/date/IDs) and summarized by story/comment counts. The collector runs up to eight workers and honors numeric or date-form `Retry-After` on 429/503.
 - `.github/workflows/weekly.yml` schedules Monday refreshes, supports manual backfills, restores/saves HN request caches, and commits source JSON with the Actions bot. Workflow has not been triggered.
 - `pipeline/extract_tweets.py` HTML-decodes HN text before recognizing x.com/twitter.com/mobile/Nitter status URLs, including generic `/i/web/status/` links, and preserves each citing HN item. Syntax compilation succeeded; the stage awaits the first HN pull.
+- `pipeline/merge_tweets.py` canonicalizes numeric ID prefixes only when source links share a handle, then retains candidates with at least three distinct HN authors and writes below-threshold IDs with a rejection reason. Current hosting target is Workers Static Assets; Pages references in the earlier checklist have been corrected.
 
 ## Blockers
 
