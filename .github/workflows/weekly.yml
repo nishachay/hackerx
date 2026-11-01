@@ -1,0 +1,49 @@
+name: Weekly HackerX data refresh
+
+on:
+  schedule:
+    - cron: "23 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: First UTC date to pull (useful for a backfill)
+        required: false
+        default: "2007-01-01"
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hackerx-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: hackerx-pipeline-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            hackerx-pipeline-${{ runner.os }}-
+      - name: Pull Hacker News records
+        env:
+          START_DATE: ${{ inputs.from_date || '2007-01-01' }}
+        run: python pipeline/pull_hn.py --from "$START_DATE"
+      - name: Commit refreshed source data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/hn-hits.json data/hn-pull-summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: refresh Hacker News source records"
+            git push origin HEAD:main
+          fi
