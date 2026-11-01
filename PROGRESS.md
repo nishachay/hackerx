@@ -2,7 +2,7 @@
 
 ## Phase 1 — Project setup and config
 - [x] Create the resumable progress checklist and continuation instructions.
-- [ ] Inspect the repository, design references, and existing project constraints.
+- [x] Inspect the repository, design references, and existing project constraints.
 - [ ] Set up the Next.js static export, TypeScript, Tailwind, and Python pipeline structure.
 - [ ] Add shared configuration for topics, thresholds, and ranking weights.
 
@@ -62,13 +62,16 @@
 
 ## Current step
 
-Phase 1, step 2: inspect the repository and supplied design references.
+Phase 1, step 3: set up the static app and Python pipeline structure.
 
 ## Notes / decisions
 
 - Initial checkpoint files were created before application code, as requested.
 - The usable Git checkout is `/data/home/hackerx`; `/data/workspace` is empty and is not a repository.
 - Design references are attached to the task; the checkout currently has no `/design` directory.
+- The repository initially contained only a 9-byte README. All ten supplied screenshots were opened/studied; each is 1366×768. Main desktop columns are about 327px / 598px / 441px in the screenshot (left nav / center / right sidebar).
+- Pillow is not installed, so image dimensions were inspected with the system `file` utility; no install was needed.
+- Visual tokens from the brief and screenshots: black `#000`, primary `#E7E9EA`, secondary `#71767B`, borders `#2F3336`, 16px feed text, rounded 16px cards; use HN orange `#FF6600` instead of blue for HackerX accents.
 
 ## Blockers
 
