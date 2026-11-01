@@ -22,7 +22,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 API = "https://hn.algolia.com/api/v1/search_by_date"
-QUERIES = ("twitter.com status", "x.com status")
+REQUIRED_QUERIES = ("twitter.com status", "x.com status")
+FALLBACK_QUERIES = ("twitter.com", "x.com")
+QUERIES = REQUIRED_QUERIES + FALLBACK_QUERIES
 START_DATE = date(2007, 1, 1)
 RANGE_SECONDS = 14 * 24 * 60 * 60
 
@@ -138,7 +140,7 @@ def main() -> None:
     end = utc_midnight(date.fromisoformat(args.until_date))
     if end <= start:
         parser.error("--until must be later than --from")
-    queries = args.query or list(QUERIES)
+    queries = args.query or list(config["hn"].get("queries", QUERIES))
     tasks = [(query, left, right) for query in queries for left, right in ranges(start, end)]
     print(f"Fetching {len(tasks)} base ranges across {len(queries)} queries with {config['hn']['threads']} workers")
 

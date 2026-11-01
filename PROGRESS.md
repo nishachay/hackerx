@@ -86,6 +86,7 @@ Phase 5, step 2: run Amos filters on a 20-tweet sample and report scores/estimat
 - Fetch adapter supports `--refresh-archives`: archived payloads survive a later unavailable/error response, `deleted_on_x` is set on the archive and cleared if a later fetch succeeds. Syntax checks passed; this mode has not run because no curated archive exists yet.
 - `pipeline/amos.py` caches each complete response by request content, shares an in-process sliding 60/minute request limit across filters, and honors `Retry-After`; `pipeline/filter_tweets.py` applies the configured evergreen/recommendation rules and supports a deterministic 20-tweet sample. Syntax compilation and static build succeeded.
 - Corrected `pipeline/pull_hn.py` range planning so its fixed historical slices plus refreshed rolling window cover every second with no gap. Amos documentation states submitted requests are retained to improve models; this will be disclosed in project documentation.
+- Recent Algolia query diagnostic: exact phrase `twitter.com status` returned 0 hits for a recent 14-day range, while `twitter.com` returned 462. Kept the two requested phrases and added domain-only HN fallback queries; status-link regex remains the eligibility boundary. Initial pull was stopped before completion and will resume from cached ranges with the expanded query set.
 
 ## Blockers
 
