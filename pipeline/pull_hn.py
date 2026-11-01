@@ -113,16 +113,16 @@ def get_range(query: str, start: int, end: int, hits_per_page: int) -> list[dict
 
 def ranges(start: int, end: int) -> list[tuple[int, int]]:
     result: list[tuple[int, int]] = []
+    # Keep a rolling recent window uncached by date boundary, so weekly runs
+    # see late-indexed activity. Complete older spans are fixed/cacheable.
+    recent_start = max(start, end - RANGE_SECONDS)
     cursor = start
-    while cursor + RANGE_SECONDS <= end:
+    while cursor + RANGE_SECONDS <= recent_start:
         result.append((cursor, cursor + RANGE_SECONDS))
         cursor += RANGE_SECONDS
-    if cursor < end:
-        # Re-query a sliding 14-day window. Its changing end timestamp gives
-        # each weekly run a fresh cache key while fixed older windows are reused.
-        recent_start = max(start, end - RANGE_SECONDS)
-        if result and result[-1][1] > recent_start:
-            result.pop()
+    if cursor < recent_start:
+        result.append((cursor, recent_start))
+    if recent_start < end:
         result.append((recent_start, end))
     return result
 
