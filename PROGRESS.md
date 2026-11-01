@@ -17,7 +17,7 @@
 
 ## Phase 4 — Tweet fetch
 - [x] Fetch uncached tweet records four at a time and preserve response fields.
-- [ ] Record first-fetch failures and retain previously archived copies.
+- [x] Record first-fetch failures and retain previously archived copies.
 
 ## Phase 5 — Amos test on 20 tweets (STOP for user OK)
 - [ ] Implement shared rate limiting, retries, and resumable Amos answer cache.
@@ -62,7 +62,7 @@
 
 ## Current step
 
-Phase 4, step 2: record first-fetch failures and preserve archived tweet copies on later failures.
+Phase 5, step 1: implement shared Amos throttling, retry, and answer-cache behavior.
 
 ## Notes / decisions
 
@@ -83,6 +83,7 @@ Phase 4, step 2: record first-fetch failures and preserve archived tweet copies 
 - `pipeline/merge_tweets.py` canonicalizes numeric ID prefixes only when source links share a handle, then retains candidates with at least three distinct HN authors and writes below-threshold IDs with a rejection reason. Current hosting target is Workers Static Assets; Pages references in the earlier checklist have been corrected.
 - Current npm versions were checked before installation: Next 16.4.3, React 19.3.1, Tailwind 4.3.3, Pagefind 1.6.0, Playwright 1.64.1, Wrangler 4.156.0, and react-tweet 3.3.1. React/Tailwind/react-tweet were updated; Pagefind, Playwright, Wrangler remain for their relevant phases.
 - `pipeline/fetch_tweets.py` bridges to `pipeline/fetch_tweets.mjs`, which calls react-tweet `getTweet` with four workers, retries 429/503 with Retry-After, and writes each result/failure to a per-ID cache. Production build, Python/Node syntax checks, and production dependency audit succeeded. First failures are recorded in `data/rejected-fetch.json`.
+- Fetch adapter supports `--refresh-archives`: archived payloads survive a later unavailable/error response, `deleted_on_x` is set on the archive and cleared if a later fetch succeeds. Syntax checks passed; this mode has not run because no curated archive exists yet.
 
 ## Blockers
 
