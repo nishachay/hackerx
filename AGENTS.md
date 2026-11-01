@@ -14,6 +14,7 @@ This project is HackerX: a static Next.js export with TypeScript and Tailwind pl
 - Put every long job in `RUN.md` as its own copy-paste block. Each block must run `cd /data/home/hackerx && git pull`, then `mkdir -p logs`, then one command with output redirected to `logs/<step>.log 2>&1`, then `echo FINISHED; tail -n 20 logs/<step>.log`. Do not use `set -e`.
 - When the user says a step is done, read only the last 30 lines of its log.
 - Quick checks (syntax, a small unit test, `npm run build`) may be run directly.
+- On this machine, run every local build as `env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy npm run build` to keep Turbopack's PostCSS worker from inheriting the proxy. Cloudflare Workers Builds has no proxy; keep its build command as `npm run build`.
 - Keep chat replies to 3 lines.
 
 Branding must use a simple orange H mark. Never use X's logo, the Grok icon, or the word Twitter in the UI. New entries come only from Hacker News and there is no submit feature.

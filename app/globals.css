@@ -1,24 +1,9 @@
-@import "tailwindcss";
-
-:root {
-  color-scheme: dark;
-  --background: #000000;
-  --surface: #000000;
-  --surface-raised: #16181c;
-  --text: #e7e9ea;
-  --muted: #71767b;
-  --border: #2f3336;
-  --accent: #ff6600;
-}
-
-* { box-sizing: border-box; }
-html { background: var(--background); }
-body {
-  margin: 0;
-  background: var(--background);
-  color: var(--text);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 15px;
-}
-a { color: inherit; text-decoration: none; }
-button, input { font: inherit; }
+@import "tailwindcss" source(none);
+@source "./";
+@source not "../data";
+@source not "../logs";
+@source not "../data/cache";
+:root{color-scheme:dark;--background:#000000;--surface:#000000;--raised:#16181c;--text:#E7E9EA;--muted:#71767B;--border:#2F3336;--accent:#FF6600;--like:#F91880;--bookmark:#1D9BF0}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--background);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px}button,input{font:inherit}button{color:inherit}a{color:inherit;text-decoration:none}.site{min-height:100vh;background:var(--background);color:var(--text)}.site.light{--background:#fff;--surface:#fff;--raised:#f5f5f5;--text:#15171a;--muted:#687078;--border:#d8dadd}.layout{display:grid;grid-template-columns:327px minmax(0,598px) minmax(320px,441px);max-width:1366px;margin:auto;min-height:100vh}.left-nav{position:sticky;top:0;height:100vh;border-right:1px solid var(--border);padding:12px 26px;display:flex;flex-direction:column;align-items:flex-start}.brand-mark{display:flex;align-items:center;justify-content:center;width:52px;height:52px;color:var(--accent);font-size:36px;font-weight:900;letter-spacing:-5px;border-radius:50%;margin:0 0 14px}.brand-mark:hover{background:#ff66001c}.nav-link{border:0;background:transparent;display:flex;align-items:center;gap:22px;padding:12px 15px;border-radius:999px;font-size:20px;cursor:pointer}.nav-link:hover,.nav-link.active{background:color-mix(in srgb,var(--text) 9%,transparent)}.nav-link.active{font-weight:700}.nav-link span{width:25px;text-align:center;color:var(--muted)}.nav-note{margin-top:auto;padding:14px 15px;display:flex;flex-direction:column;gap:3px}.nav-note b{color:var(--accent)}.nav-note small,.right-column small,footer{color:var(--muted)}.center-column{border-right:1px solid var(--border);min-height:100vh}.page-heading{position:sticky;top:0;z-index:2;padding:15px 20px 13px;background:color-mix(in srgb,var(--background) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}.page-title{font-weight:750;font-size:20px}.page-heading p{color:var(--muted);font-size:13px;margin:4px 0 0}.right-column{padding:14px 30px}.search-placeholder{height:46px;border:1px solid var(--border);border-radius:999px;padding:12px 17px;color:var(--muted);margin-bottom:16px}.search-placeholder span{margin-left:10px}.side-card{border:1px solid var(--border);border-radius:16px;padding:17px;margin-bottom:14px}.side-card h2{font-size:20px;margin:0 0 10px}.side-card p{margin:0 0 12px;line-height:1.45}.side-card a{color:var(--accent);font-weight:650}.topic-row{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:1px solid var(--border)}.topic-row:last-child{border-bottom:0}.topic-row b{font-size:15px}.right-column footer{font-size:12px;line-height:2;padding:4px}.empty-state{padding:80px 30px;text-align:center;color:var(--muted)}.empty-state h1{font-size:24px;color:var(--text);margin:12px 0}.empty-state p{margin:0}.brand-mark.large{margin:0 auto;font-size:56px}.mobile-nav{display:none}
+@media(max-width:1100px){.layout{grid-template-columns:88px minmax(0,650px) minmax(260px,1fr)}.left-nav{align-items:center;padding-inline:10px}.nav-link{font-size:0;gap:0;padding:13px}.nav-link span{font-size:23px}.nav-note{display:none}.right-column{padding:14px 18px}}
+@media(max-width:760px){.layout{display:block}.left-nav,.right-column{display:none}.center-column{border:0;padding-bottom:58px}.page-heading{padding-left:16px}.mobile-nav{position:fixed;bottom:0;left:0;right:0;z-index:5;display:flex;justify-content:space-around;height:56px;border-top:1px solid var(--border);background:var(--background)}.mobile-nav button{border:0;background:transparent;font-size:24px;padding:0 14px}.empty-state{padding:60px 22px}}
