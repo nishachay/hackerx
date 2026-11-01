@@ -4,7 +4,7 @@
 - [x] Create the resumable progress checklist and continuation instructions.
 - [x] Inspect the repository, design references, and existing project constraints.
 - [x] Set up the Next.js static export, TypeScript, Tailwind, and Python pipeline structure.
-- [ ] Add shared configuration for topics, thresholds, and ranking weights.
+- [x] Add shared configuration for topics, thresholds, and ranking weights.
 
 ## Phase 2 — HN pull
 - [ ] Implement resumable 14-day Algolia slices with pagination and splitting at 1,000 hits.
@@ -62,7 +62,7 @@
 
 ## Current step
 
-Phase 1, step 4: finalize shared topics, thresholds, and ranking weights.
+Phase 2, step 1: implement resumable HN Algolia date slices.
 
 ## Notes / decisions
 
@@ -75,6 +75,7 @@ Phase 1, step 4: finalize shared topics, thresholds, and ranking weights.
 - Initial static shell uses Next.js 16.4.3, React 19, TypeScript, Tailwind 4, static export, and a Python stdlib pipeline entry point. `npm run build` generated the static home page successfully.
 - Dependency install initially flagged Next 15.5.6; upgraded to Next 16.4.3. `npm audit` reports zero vulnerabilities.
 - Phase 1 setup files: `package.json`, `package-lock.json`, `next.config.ts`, `postcss.config.mjs`, `tsconfig.json`, `.gitignore`, `app/`, `pipeline/`.
+- Shared `config.json` defines 20 topic labels, evergreen pass threshold/kinds, citation minimums, worker/page settings, and rank weights. Next generated `next-env.d.ts` on the successful build.
 
 ## Blockers
 
