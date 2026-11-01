@@ -7,7 +7,7 @@
 - [x] Add shared configuration for topics, thresholds, and ranking weights.
 
 ## Phase 2 — HN pull
-- [ ] Implement resumable 14-day Algolia slices with pagination and splitting at 1,000 hits.
+- [x] Implement resumable 14-day Algolia slices with pagination and splitting at 1,000 hits.
 - [ ] Persist story and comment fields, with concurrency and backoff.
 - [ ] Add weekly incremental and manual GitHub Actions entry points.
 
@@ -62,7 +62,7 @@
 
 ## Current step
 
-Phase 2, step 1: implement resumable HN Algolia date slices.
+Phase 2, step 2: persist selected story/comment fields and review parallel retry behavior.
 
 ## Notes / decisions
 
@@ -76,6 +76,7 @@ Phase 2, step 1: implement resumable HN Algolia date slices.
 - Dependency install initially flagged Next 15.5.6; upgraded to Next 16.4.3. `npm audit` reports zero vulnerabilities.
 - Phase 1 setup files: `package.json`, `package-lock.json`, `next.config.ts`, `postcss.config.mjs`, `tsconfig.json`, `.gitignore`, `app/`, `pipeline/`.
 - Shared `config.json` defines 20 topic labels, evergreen pass threshold/kinds, citation minimums, worker/page settings, and rank weights. Next generated `next-env.d.ts` on the successful build.
+- `pipeline/pull_hn.py` requests both search phrases in 14-day UTC slices, refreshes the recent two weeks, recursively splits any saturated interval, stores each leaf range atomically, and skips cached ranges after restart. CLI syntax and compilation were checked without contacting HN.
 
 ## Blockers
 
