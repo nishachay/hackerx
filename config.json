@@ -24,6 +24,7 @@
     "recommending_author_weight": 10,
     "other_citing_author_weight": 2,
     "story_points_log_weight": 3,
-    "recent_citation_boost": 1
+    "recent_citation_boost": 1,
+    "year_spread_weight": 2
   }
 }
