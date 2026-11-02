@@ -45,7 +45,7 @@ export default async function TweetPage({ params }: { params: Promise<{ id: stri
         <span className="meta-mono">Rank #{card.rank}</span>
       </div>
 
-      <article className="detail">
+      <article className="detail card">
         <header className="detail-author">
           <Avatar name={card.author.handle} size={52} />
           <div className="detail-author-copy">
