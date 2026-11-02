@@ -4,11 +4,13 @@ import { PageHeader } from "../components/page-header";
 import { TodayPick } from "../components/today-pick";
 import { Feed } from "../components/feed";
 import { getCards, getSite } from "../lib/site-data";
+import { og } from "../lib/og";
 import { fullNumber } from "../lib/format";
 
 export const metadata = {
   title: { absolute: "HackerX — ideas worth keeping" },
   description: "Timeless ideas recommended by Hacker News readers, with the comments that recommend them.",
+  ...og("HackerX — ideas worth keeping", "Timeless ideas recommended by Hacker News readers, with the comments that recommend them."),
 };
 
 export default function HomePage() {

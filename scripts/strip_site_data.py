@@ -4,7 +4,7 @@
 The raw pipeline output is not in the repo, so this rewrites the committed
 snapshot in place: every per-tweet object keeps only ``id``, ``url``,
 ``author.handle``, ``created_at``, ``topic``, ``kind``, ``recommenders``,
-``citing_users``, ``rank_score``, ``years``, ``quotes`` and ``rank``. Post
+``citing_users``, ``rank_score``, ``years``, ``thread``, ``quotes`` and ``rank``. Post
 text, media, link cards, quoted posts, engagement stats, author display
 names and avatars are removed from ``tweets.json``, ``accounts.json``,
 ``years.json``, ``meta.json``, ``all.json`` and ``rss.xml``. HN quote text
@@ -60,6 +60,9 @@ def strip_card(card: dict) -> dict:
         "citing_users": int(card.get("citing_users") or 0),
         "rank_score": float(card.get("rank_score") or 0),
         "years": [int(year) for year in card.get("years") or []],
+        # The raw pipeline data is not in the repo, so the flag is only
+        # preserved here; detection happens in pipeline/build_site.py.
+        "thread": bool(card.get("thread") is True),
         "quotes": [strip_quote(quote) for quote in card.get("quotes") or []],
     }
 
