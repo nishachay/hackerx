@@ -87,6 +87,48 @@ def clean_hn_text(value: str) -> str:
     return text.strip()
 
 
+THREAD_EMOJI = "\U0001f9f5"  # 🧵
+NUMBERED_THREAD = re.compile(r"(?:^|\s)1\s*/(?:\d+|\s|$)")
+
+
+def is_thread_starter(record: dict[str, Any]) -> bool:
+    """Mark a post as a thread starter from private pipeline data only.
+
+    Two signals, both computed locally without contacting any endpoint:
+    the same author replied to the post in a chain (a self-reply anywhere
+    in the raw record), or the post text is clearly numbered (``1/`` …)
+    or carries the thread emoji. Only the boolean is ever published.
+    """
+    tweet = record.get("tweet") if isinstance(record.get("tweet"), dict) else {}
+    user = tweet.get("user") if isinstance(tweet.get("user"), dict) else {}
+    handle = str(user.get("screen_name") or record.get("author", {}).get("handle") or "").casefold()
+    text = str(tweet.get("text") or tweet.get("full_text") or "")
+    if THREAD_EMOJI in text or NUMBERED_THREAD.search(text):
+        return True
+    tweet_id = str(record.get("id") or tweet.get("id_str") or "")
+
+    def is_self_reply(candidate: Any) -> bool:
+        if not isinstance(candidate, dict):
+            return False
+        author = candidate.get("user") if isinstance(candidate.get("user"), dict) else {}
+        screen_name = str(author.get("screen_name") or candidate.get("screen_name") or "").casefold()
+        if not handle or not screen_name or screen_name != handle:
+            return False
+        parent = str(
+            candidate.get("in_reply_to_status_id_str")
+            or candidate.get("in_reply_to_status_id")
+            or ""
+        )
+        return bool(tweet_id) and parent == tweet_id
+
+    for key in ("replies", "thread", "thread_tweets", "self_replies"):
+        for container in (record, tweet):
+            candidates = container.get(key)
+            if isinstance(candidates, list) and any(is_self_reply(item) for item in candidates):
+                return True
+    return False
+
+
 def citation_year(citation: dict[str, Any]) -> int:
     parsed = parse_date(citation.get("hn_created_at"))
     if parsed:
@@ -134,12 +176,15 @@ def rank_score(recommenders: int, citing: int, points: int, years: int, newest_y
     )
 
 
-def public_card(record: dict[str, Any]) -> dict[str, Any]:
+def public_card(record: dict[str, Any], thread_ids: frozenset[str] = frozenset()) -> dict[str, Any]:
     """Build the public, X-content-free shape for one scored record.
 
     Only our own metadata may be published: never the post text, media,
     link cards, quoted posts, engagement stats, or the author's display
     name or avatar. The post itself is shown through X's official embed.
+    Thread detection uses only the private raw record plus the optional
+    committed ``data/threads.json`` id list; the public card carries a
+    single boolean, never reply text.
     """
     tweet = record.get("tweet") if isinstance(record.get("tweet"), dict) else {}
     user = tweet.get("user") if isinstance(tweet.get("user"), dict) else {}
@@ -162,12 +207,13 @@ def public_card(record: dict[str, Any]) -> dict[str, Any]:
         "citing_users": citing,
         "rank_score": 0.0,
         "years": years,
+        "thread": is_thread_starter(record) or tweet_id in thread_ids,
         "quotes": quotes,
     }
 
 
-def build_card(record: dict[str, Any], config: dict[str, Any]) -> dict[str, Any]:
-    card = public_card(record)
+def build_card(record: dict[str, Any], config: dict[str, Any], thread_ids: frozenset[str] = frozenset()) -> dict[str, Any]:
+    card = public_card(record, thread_ids)
     quotes = card["quotes"]
     years = card["years"]
     points = max([quote["points"] for quote in quotes] or [0])
@@ -187,6 +233,8 @@ def validate_card(card: dict[str, Any]) -> None:
     for key in ("recommenders", "citing_users"):
         if not isinstance(card.get(key), int) or card[key] < 0:
             raise SchemaError(f"card {card['id']} has a bad {key}")
+    if not isinstance(card.get("thread"), bool):
+        raise SchemaError(f"card {card['id']} has a bad thread flag")
     if not isinstance(card.get("rank_score"), (int, float)):
         raise SchemaError(f"card {card['id']} has a bad rank_score")
     if not isinstance(card.get("quotes"), list):
@@ -334,6 +382,7 @@ def write_site_files(cards: list[dict[str, Any]], out_dir: Path, scored_total: i
             "citing_users": card["citing_users"],
             "rank_score": card["rank_score"],
             "years": card["years"],
+            "thread": card["thread"],
         }
         for card in cards
     ]
@@ -353,9 +402,25 @@ def write_site_files(cards: list[dict[str, Any]], out_dir: Path, scored_total: i
     return {"published": len(cards), "accounts": len(account_list), "years": len(year_list), **sizes}
 
 
-def build(scored_path: Path, out_dir: Path, config: dict[str, Any], site_url: str) -> dict[str, int]:
+def load_thread_ids(path: Path) -> frozenset[str]:
+    """Optional ``data/threads.json`` overlay written by ``npm run threads``.
+
+    The file holds only a sorted list of post ids detected as thread
+    starters from the private raw data. A missing file simply means no
+    labels: the build still works.
+    """
+    if not path.exists():
+        return frozenset()
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, list) or not all(isinstance(item, str) for item in payload):
+        raise SchemaError(f"{path} must be a JSON array of id strings only")
+    return frozenset(payload)
+
+
+def build(scored_path: Path, out_dir: Path, config: dict[str, Any], site_url: str, threads_path: Path | None = None) -> dict[str, int]:
     records = json.loads(scored_path.read_text(encoding="utf-8"))
-    published = [build_card(record, config) for record in records if record.get("recommendation_pass") is True]
+    thread_ids = load_thread_ids(threads_path) if threads_path is not None else frozenset()
+    published = [build_card(record, config, thread_ids) for record in records if record.get("recommendation_pass") is True]
     ranked = sort_and_rank(published)
     return write_site_files(ranked, out_dir, scored_total=len(records), site_url=site_url)
 
@@ -366,13 +431,14 @@ def main() -> None:
     parser.add_argument("--out", default="data/site")
     parser.add_argument("--config", default="config.json")
     parser.add_argument("--site-url", default="")
+    parser.add_argument("--threads", default="data/threads.json")
     args = parser.parse_args()
     scored_path = ROOT / args.scored
     if not scored_path.exists():
         parser.error(f"Scored file not found: {scored_path.relative_to(ROOT)} (run RUN.md Step 4 first)")
     config = json.loads((ROOT / args.config).read_text(encoding="utf-8"))
     site_url = (args.site_url or config.get("site_url") or SITE_URL).rstrip("/")
-    stats = build(scored_path, ROOT / args.out, config, site_url)
+    stats = build(scored_path, ROOT / args.out, config, site_url, ROOT / args.threads)
     for key, value in stats.items():
         if key in {"published", "accounts", "years"}:
             print(f"{key}: {value:,}")

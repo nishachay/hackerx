@@ -33,6 +33,11 @@ export function plural(count: number, single: string, many = `${single}s`) {
   return count === 1 ? single : many;
 }
 
+/** "1 recommendation" / "34 recommendations" — count plus the right noun form. */
+export function pluralize(count: number, single: string, many = `${single}s`) {
+  return `${fullNumber(count)} ${plural(count, single, many)}`;
+}
+
 export function initials(name: string) {
   return name
     .split(/\s+/)

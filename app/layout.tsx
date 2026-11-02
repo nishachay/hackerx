@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { ScrollManager } from "./components/scroll-manager";
 import { ThemeColor } from "./components/theme-color";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
+const newsreader = Newsreader({ subsets: ["latin"], variable: "--font-newsreader", display: "swap" });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hackerx.nishachay.tech";
 
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
     title: "HackerX — ideas worth keeping",
     description: "Timeless ideas recommended by Hacker News readers.",
     url: siteUrl,
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, type: "image/png" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -42,7 +44,7 @@ const themeScript = `(function(){try{var light=localStorage.getItem('hackerx-the
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${newsreader.variable}`} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <ScrollManager />

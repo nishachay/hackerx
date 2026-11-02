@@ -166,9 +166,17 @@ export function TweetEmbed({ id, url, handle, createdAt, eager = false }: Props)
   }, [consent, id, eager, theme]);
 
   if (consent === "all" && status !== "failed" && status !== "empty") {
+    const loading = status !== "ready";
     return (
-      <div className="tweet-embed" ref={containerRef}>
-        {status !== "ready" ? <LinksOnly url={url} handle={handle} createdAt={createdAt} /> : null}
+      <div className={`tweet-embed${loading ? " is-loading" : ""}`} ref={containerRef} aria-busy={loading}>
+        {loading ? (
+          <div className="tweet-embed-skeleton" aria-hidden="true">
+            <span className="skeleton skeleton-row skeleton-row-head" />
+            <span className="skeleton skeleton-row" />
+            <span className="skeleton skeleton-row" />
+            <span className="skeleton skeleton-row skeleton-row-short" />
+          </div>
+        ) : null}
         <div className="tweet-embed-slot" ref={slotRef} />
       </div>
     );

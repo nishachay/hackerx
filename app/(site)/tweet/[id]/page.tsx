@@ -8,6 +8,8 @@ import { ShareButton } from "../../../components/share-button";
 import { TweetEmbed } from "../../../components/tweet-embed";
 import { getCard, getCards } from "../../../lib/site-data";
 import { recommendationBadge, topQuote } from "../../../lib/quotes";
+import { og } from "../../../lib/og";
+import { QuoteText } from "../../../lib/quote-text";
 import { formatDate, fullNumber } from "../../../lib/format";
 
 export function generateStaticParams() {
@@ -22,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const title = `@${card.author.handle}, ${badge.charAt(0).toLowerCase()}${badge.slice(1)}`;
   const quote = topQuote(card);
   const description = `${card.topic || "Ideas"} on HackerX${quote ? ` — “${quote.text.slice(0, 140)}” (HN reader @${quote.author})` : ""}`;
-  return { title, description };
+  return { title, description, ...og(title, description) };
 }
 
 const stanceLabel: Record<string, string> = { recommends: "Recommends", neutral: "Cites it", critical: "Disagrees" };
@@ -43,7 +45,7 @@ export default async function TweetPage({ params }: { params: Promise<{ id: stri
         <span className="meta-mono">Rank #{card.rank}</span>
       </div>
 
-      <article className="detail">
+      <article className="detail card">
         <header className="detail-author">
           <Avatar name={card.author.handle} size={52} />
           <div className="detail-author-copy">
@@ -54,6 +56,13 @@ export default async function TweetPage({ params }: { params: Promise<{ id: stri
               <time className="meta-mono" dateTime={card.created_at}>
                 {formatDate(card.created_at)}
               </time>
+              <span className="topic-chip">{card.topic || "Ideas"}</span>
+              {card.thread ? (
+                <a className="thread-chip" href={card.url} target="_blank" rel="noreferrer">
+                  Thread · Read the full thread on X
+                  <ArrowUpRight size={12} strokeWidth={2} aria-hidden="true" />
+                </a>
+              ) : null}
             </p>
           </div>
           <a className="icon-button" href={card.url} target="_blank" rel="noreferrer" aria-label="View on X">
@@ -68,7 +77,6 @@ export default async function TweetPage({ params }: { params: Promise<{ id: stri
             <QuoteIcon size={13} strokeWidth={2} aria-hidden="true" />
             {recommendationBadge(card.recommenders)}
           </span>
-          <span className="topic-chip">{card.topic || "Ideas"}</span>
           <span className="topic-chip">{card.kind || "idea"}</span>
         </div>
 
@@ -107,7 +115,9 @@ export default async function TweetPage({ params }: { params: Promise<{ id: stri
                       <span className={`stance stance-${quote.stance}`}>{stanceLabel[quote.stance] ?? "Cites it"}</span>
                       {quote.year ? <span className="meta-mono">{quote.year}</span> : null}
                     </div>
-                    <blockquote>{quote.text}</blockquote>
+                    <blockquote>
+                      <QuoteText text={quote.text} />
+                    </blockquote>
                     <figcaption>
                       {quote.story_title ? <span>{quote.story_title}</span> : <span>Hacker News discussion</span>}
                       {quote.story_url ? (

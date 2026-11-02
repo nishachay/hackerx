@@ -13,10 +13,10 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "data" / "site"
 OUT = ROOT / "out"
 
-CARD_FIELDS = {"id", "url", "author", "created_at", "topic", "kind", "recommenders", "citing_users", "rank_score", "years", "quotes", "rank"}
+CARD_FIELDS = {"id", "url", "author", "created_at", "topic", "kind", "recommenders", "citing_users", "rank_score", "years", "thread", "quotes", "rank"}
 QUOTE_FIELDS = {"hn_id", "author", "text", "created_at", "year", "story_title", "story_url", "points", "stance"}
 ACCOUNT_FIELDS = {"handle", "url", "tweet_ids", "tweet_count", "recommenders", "citations", "topics"}
-ALL_FIELDS = {"id", "rank", "url", "author", "topic", "kind", "recommenders", "citing_users", "rank_score", "years"}
+ALL_FIELDS = {"id", "rank", "url", "author", "topic", "kind", "recommenders", "citing_users", "rank_score", "years", "thread"}
 BANNED_SUBSTRINGS = ("twimg.com", "pbs.twimg", "video.twimg")
 BANNED_QUOTE_MARKUP = ("&#x", "&quot;", "&amp;", "&lt;", "&gt;", "<p>", "<a ")
 HTML_FILES = list(OUT.rglob("*.html")) + list(OUT.rglob("*.txt")) + list(OUT.rglob("*.xml"))
@@ -60,6 +60,13 @@ class DataShapeTests(unittest.TestCase):
                 for banned in BANNED_QUOTE_MARKUP:
                     self.assertNotIn(banned, quote["text"], f"quote {quote['hn_id']} contains {banned!r}")
 
+    def test_thread_is_a_boolean_only_flag(self):
+        for card in self.cards:
+            self.assertIsInstance(card["thread"], bool, f"card {card['id']}")
+        body = (SITE / "tweets.json").read_text(encoding="utf-8")
+        for leaked in ('"thread_text"', '"replies"', '"thread_tweets"', '"self_replies"', '"in_reply_to'):
+            self.assertNotIn(leaked, body, f"tweets.json leaks {leaked}")
+
     def test_badge_number_equals_distinct_recommending_readers(self):
         for card in self.cards:
             distinct = {q["author"].strip().casefold() for q in card["quotes"] if q["stance"] == "recommends" and q["author"].strip()}
@@ -86,6 +93,11 @@ class BuiltSiteTests(unittest.TestCase):
         if rss:
             self.assertNotIn("Recommended by 1 HN users", rss)
 
+    def test_no_workers_dev_anywhere(self):
+        for path in HTML_FILES:
+            body = path.read_text(encoding="utf-8", errors="replace")
+            self.assertNotIn("workers.dev", body, f"{path.relative_to(OUT)} mentions workers.dev")
+
     def test_no_word_twitter_in_visible_ui(self):
         # Scope: our own UI copy. Excluded: the OpenGraph "twitter:*"
         # protocol meta names, script/JSON payloads, URLs, and verbatim
@@ -96,7 +108,7 @@ class BuiltSiteTests(unittest.TestCase):
             body = re.sub(r"<meta[^>]*>", "", body)
             # HN quote blocks and quote items are verbatim third-party
             # content (comment text, story titles, author handles).
-            body = re.sub(r"<a class=\"hn-quote\"[\s\S]*?</a>", "", body)
+            body = re.sub(r"<div class=\"hn-quote[\s\S]*?</div>", "", body)
             body = re.sub(r"<figure class=\"quote-item\"[\s\S]*?</figure>", "", body)
             body = re.sub(r"<q[ >][\s\S]*?</q>|<blockquote[ >][\s\S]*?</blockquote>", "", body)
             body = re.sub(r"https?://\S*", "", body)
