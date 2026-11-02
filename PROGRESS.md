@@ -48,7 +48,7 @@
 ## Phase 10 — Extra pages
 - [x] Add Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick.
 - [x] Add image export, PWA/offline support, keyboard navigation, and persistence.
-- [ ] Add RSS, sitemap, robots, metadata, and dashboard-only Web Analytics guidance (no script).
+- [x] Add RSS, sitemap, robots, metadata, and dashboard-only Web Analytics guidance (no script).
 
 ## Phase 11 — Tests and CI
 - [ ] Add requested Playwright smoke tests, screenshots, broken-link and RSS checks.
@@ -71,7 +71,7 @@ Phase 10, step 2: add image export, PWA/offline support, keyboard navigation, an
 - [x] Step 3 — Optional batched Amos mode.
 - [x] Step 4 — Sample A/B comparison instructions (do not run).
 - [x] Step 5 — Year-spread rank boost.
-- [ ] Step 6 — Phase 9 and 10 fixture UI; stop before Phase 11 and Phase 6.
+- [x] Step 6 — Phase 9 and 10 fixture UI; stop before Phase 11 and Phase 6.
 
 ## Notes / decisions
 
@@ -108,6 +108,7 @@ Phase 10, step 2: add image export, PWA/offline support, keyboard navigation, an
 - Phase 9 detail step adds tweet detail with HN discussion links, author profiles, and fixture search using the shared data module. Proxy-free production build passed in 4 seconds.
 - Phase 10 page step adds Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick, all against fixture data. Proxy-free production build passed in 4 seconds.
 - Phase 10 interaction step adds downloadable SVG quote cards, a static web manifest/service worker, `/` search and `g h` home keyboard shortcuts, and local persistence for theme, likes, saves, and viewed history. Proxy-free static export build passed in 5 seconds.
+- Phase 10 metadata step adds RSS, sitemap, robots, Open Graph metadata, and dashboard-only Web Analytics guidance with no script. Detail URLs use `/?tweet=<id>`; static metadata defaults to `https://hackerx.workers.dev` and accepts `NEXT_PUBLIC_SITE_URL` at build time. Proxy-free production build passed; stopping before Phase 11 and Phase 6 as requested.
 
 ## Blockers
 
