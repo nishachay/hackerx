@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TweetRecord } from "../lib/data";
 
 type Props = { record: TweetRecord; onOpen: (id: string) => void; onProfile: (handle: string) => void };
@@ -18,6 +18,18 @@ export function TweetCard({ record, onOpen, onProfile }: Props) {
   const [saved, setSaved] = useState(false);
   const author = record.author;
   const preview = record.citations.find((citation) => citation.hn_kind === "comment" && citation.hn_comment_text);
+  useEffect(() => {
+    const likedIds = JSON.parse(localStorage.getItem("hackerx-liked") || "[]") as string[];
+    const savedIds = JSON.parse(localStorage.getItem("hackerx-saved") || "[]") as string[];
+    setLiked(likedIds.includes(record.id));
+    setSaved(savedIds.includes(record.id));
+  }, [record.id]);
+  const toggleStored = (key: string, value: boolean, update: (next: boolean) => void) => {
+    const ids = JSON.parse(localStorage.getItem(key) || "[]") as string[];
+    const nextIds = value ? [...new Set([...ids, record.id])] : ids.filter((id) => id !== record.id);
+    localStorage.setItem(key, JSON.stringify(nextIds));
+    update(value);
+  };
   return (
     <article className="tweet-card">
       <div className="avatar">{record.avatar ? <img src={record.avatar} alt="" /> : initials(author.name)}</div>
@@ -34,8 +46,8 @@ export function TweetCard({ record, onOpen, onProfile }: Props) {
         <div className="tweet-actions">
           <button onClick={() => onOpen(record.id)} aria-label="View Hacker News citations"><span>◯</span>{count(record.counts.replies)}</button>
           <button onClick={() => onOpen(record.id)} aria-label="View citations"><span>↗</span>{count(record.counts.reposts)}</button>
-          <button className={liked ? "liked" : ""} onClick={() => setLiked(!liked)} aria-pressed={liked}><span>{liked ? "♥" : "♡"}</span>{count(record.counts.likes + Number(liked))}</button>
-          <button className={saved ? "saved" : ""} onClick={() => setSaved(!saved)} aria-pressed={saved}><span>{saved ? "▣" : "▢"}</span>{count(record.counts.bookmarks + Number(saved))}</button>
+          <button className={liked ? "liked" : ""} onClick={() => toggleStored("hackerx-liked", !liked, setLiked)} aria-pressed={liked}><span>{liked ? "♥" : "♡"}</span>{count(record.counts.likes + Number(liked))}</button>
+          <button className={saved ? "saved" : ""} onClick={() => toggleStored("hackerx-saved", !saved, setSaved)} aria-pressed={saved}><span>{saved ? "▣" : "▢"}</span>{count(record.counts.bookmarks + Number(saved))}</button>
           <button onClick={() => onOpen(record.id)} aria-label="Open tweet details"><span>↗</span></button>
         </div>
       </div>
