@@ -16,6 +16,7 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
+import { Credit } from "./credit";
 import { ThemeToggle } from "./theme-toggle";
 
 export type NavItem = { href: string; label: string; icon: LucideIcon };
@@ -96,6 +97,7 @@ export function RailNav() {
           <span className="nav-label">RSS feed</span>
         </a>
         <p className="rail-note">Ideas worth keeping, surfaced by Hacker News readers.</p>
+        <Credit />
       </div>
     </nav>
   );

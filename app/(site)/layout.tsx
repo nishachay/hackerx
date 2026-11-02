@@ -1,3 +1,4 @@
+import { Credit } from "../components/credit";
 import { MobileNav, MobileTopBar, RailNav } from "../components/nav";
 import { Sidebar } from "../components/sidebar";
 
@@ -13,6 +14,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         {children}
       </main>
       <Sidebar />
+      <footer className="credit-mobile">
+        <Credit />
+      </footer>
       <MobileNav />
     </div>
   );
