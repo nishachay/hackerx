@@ -2739,17 +2739,37 @@ html.sheet-open {
 .tweet-embed {
   margin-top: 16px;
   inline-size: 100%;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
   border-radius: var(--radius-card);
   overflow: hidden;
   background: transparent;
+  /* The wrapper and the cross-origin X iframe must share one color scheme,
+     otherwise Chrome paints an opaque canvas backdrop behind the iframe and
+     white shows in its rounded corners in dark mode. Never touch the site's
+     own color-scheme. */
+  color-scheme: light;
+  /* Make the overflow clip apply to the iframe in Chrome and Safari. */
+  isolation: isolate;
+}
+
+/* The injected widget must not offset itself inside the clipped wrapper. */
+.tweet-embed .twitter-tweet,
+.tweet-embed .twitter-tweet-rendered {
+  margin: 0;
 }
 
 /* No white or grey corners in either theme: the iframe and any X wrapper
-   stay transparent and follow the normal color scheme. */
+   stay transparent, match X's light-scheme document and take the same
+   12px clip as the wrapper. */
 .tweet-embed iframe,
-.tweet-embed twitter-widget {
+.tweet-embed twitter-widget,
+.twitter-tweet-rendered iframe,
+iframe[id^="twitter-widget"] {
   background: transparent !important;
-  color-scheme: normal;
+  color-scheme: light;
+  border-radius: var(--radius-card);
 }
 
 .tweet-embed.is-loading {
