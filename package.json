@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "audit": "node scripts/audit.mjs"
+    "audit": "node scripts/audit.mjs",
+    "test": "for t in tests/test_*.py; do python3 $t || exit 1; done && python3 tests/check_site.py && node tests/browser_test.mjs",
+    "test:browser": "node tests/browser_test.mjs"
   },
   "dependencies": {
     "lucide-react": "1.66.0",
