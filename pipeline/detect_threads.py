@@ -45,7 +45,7 @@ def main() -> None:
     scored_path = ROOT / args.scored
     if not scored_path.exists():
         print(f"error: raw pipeline data not found: {scored_path}", file=sys.stderr)
-        print("Run the fetch pipeline on the machine that holds the raw data first (see RUN.md).", file=sys.stderr)
+        print("Run the fetch pipeline on the machine that holds the raw data first.", file=sys.stderr)
         sys.exit(1)
     records = json.loads(scored_path.read_text(encoding="utf-8"))
     if not isinstance(records, list):

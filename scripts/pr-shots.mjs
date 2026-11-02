@@ -29,7 +29,7 @@ async function shot(name, route, width, height, { theme = "dark", mode = "show",
   await page.waitForTimeout(400);
   if (before) await before(page);
   if (mode === "show") await page.waitForTimeout(600);
-  await page.screenshot({ path: `.github/pr-assets/${name}.png`, fullPage });
+  await page.screenshot({ path: `.pr-shots/${name}.png`, fullPage });
   console.log("shot", name);
   await context.close();
 }

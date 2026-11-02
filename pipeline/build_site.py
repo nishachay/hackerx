@@ -435,7 +435,7 @@ def main() -> None:
     args = parser.parse_args()
     scored_path = ROOT / args.scored
     if not scored_path.exists():
-        parser.error(f"Scored file not found: {scored_path.relative_to(ROOT)} (run RUN.md Step 4 first)")
+        parser.error(f"Scored file not found: {scored_path.relative_to(ROOT)} (run the Amos filter step first)")
     config = json.loads((ROOT / args.config).read_text(encoding="utf-8"))
     site_url = (args.site_url or config.get("site_url") or SITE_URL).rstrip("/")
     stats = build(scored_path, ROOT / args.out, config, site_url, ROOT / args.threads)

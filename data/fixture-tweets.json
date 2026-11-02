@@ -5,14 +5,14 @@
     "tweet": {
       "text": "Example fixture post 1: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Paul Graham",
-        "screen_name": "paulg"
+        "name": "Example Author 1",
+        "screen_name": "example_user1"
       },
       "created_at": "2011-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Paul Graham",
-      "handle": "paulg"
+      "name": "Example Author 1",
+      "handle": "example_user1"
     },
     "avatar": null,
     "media": null,
@@ -21,36 +21,36 @@
       {
         "hn_id": "910011",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2012-06-11T12:00:00Z",
         "hn_created_at_i": 1339372800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800001",
-        "hn_story_title": "Discussion: a lasting idea from Paul Graham",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 1",
         "hn_story_url": "https://news.ycombinator.com/item?id=800001",
         "hn_story_points": 25
       },
       {
         "hn_id": "910012",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2013-06-12T12:00:00Z",
         "hn_created_at_i": 1370995200,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800001",
-        "hn_story_title": "Discussion: a lasting idea from Paul Graham",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 1",
         "hn_story_url": "https://news.ycombinator.com/item?id=800001",
         "hn_story_points": 25
       },
       {
         "hn_id": "910013",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2014-06-13T12:00:00Z",
         "hn_created_at_i": 1402617600,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800001",
-        "hn_story_title": "Discussion: a lasting idea from Paul Graham",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 1",
         "hn_story_url": "https://news.ycombinator.com/item?id=800001",
         "hn_story_points": 25
       }
@@ -69,14 +69,14 @@
     "tweet": {
       "text": "Example fixture post 2: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Kathy Sierra",
-        "screen_name": "KathySierra"
+        "name": "Example Author 2",
+        "screen_name": "example_user2"
       },
       "created_at": "2013-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Kathy Sierra",
-      "handle": "KathySierra"
+      "name": "Example Author 2",
+      "handle": "example_user2"
     },
     "avatar": null,
     "media": null,
@@ -85,36 +85,36 @@
       {
         "hn_id": "910021",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2014-06-11T12:00:00Z",
         "hn_created_at_i": 1402444800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800002",
-        "hn_story_title": "Discussion: a lasting idea from Kathy Sierra",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 2",
         "hn_story_url": "https://news.ycombinator.com/item?id=800002",
         "hn_story_points": 26
       },
       {
         "hn_id": "910022",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2015-06-12T12:00:00Z",
         "hn_created_at_i": 1434067200,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800002",
-        "hn_story_title": "Discussion: a lasting idea from Kathy Sierra",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 2",
         "hn_story_url": "https://news.ycombinator.com/item?id=800002",
         "hn_story_points": 26
       },
       {
         "hn_id": "910023",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2016-06-13T12:00:00Z",
         "hn_created_at_i": 1465776000,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800002",
-        "hn_story_title": "Discussion: a lasting idea from Kathy Sierra",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 2",
         "hn_story_url": "https://news.ycombinator.com/item?id=800002",
         "hn_story_points": 26
       }
@@ -133,56 +133,56 @@
     "tweet": {
       "text": "Example fixture post 3: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Patrick McKenzie",
-        "screen_name": "patio11"
+        "name": "Example Author 3",
+        "screen_name": "example_user3"
       },
       "created_at": "2016-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Patrick McKenzie",
-      "handle": "patio11"
+      "name": "Example Author 3",
+      "handle": "example_user3"
     },
     "avatar": null,
     "media": null,
     "link_card": {
       "title": "Notes on a ideas",
       "description": "A fixture preview for the linked article.",
-      "url": "https://example.com/notes/patio11"
+      "url": "https://example.com/notes/example_user3"
     },
     "citations": [
       {
         "hn_id": "910031",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2017-06-11T12:00:00Z",
         "hn_created_at_i": 1497139200,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800003",
-        "hn_story_title": "Discussion: a lasting idea from Patrick McKenzie",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 3",
         "hn_story_url": "https://news.ycombinator.com/item?id=800003",
         "hn_story_points": 27
       },
       {
         "hn_id": "910032",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2018-06-12T12:00:00Z",
         "hn_created_at_i": 1528761600,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800003",
-        "hn_story_title": "Discussion: a lasting idea from Patrick McKenzie",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 3",
         "hn_story_url": "https://news.ycombinator.com/item?id=800003",
         "hn_story_points": 27
       },
       {
         "hn_id": "910033",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2019-06-13T12:00:00Z",
         "hn_created_at_i": 1560384000,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800003",
-        "hn_story_title": "Discussion: a lasting idea from Patrick McKenzie",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 3",
         "hn_story_url": "https://news.ycombinator.com/item?id=800003",
         "hn_story_points": 27
       }
@@ -201,14 +201,14 @@
     "tweet": {
       "text": "Example fixture post 4: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Dan Luu",
-        "screen_name": "danluu"
+        "name": "Example Author 4",
+        "screen_name": "example_user4"
       },
       "created_at": "2018-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Dan Luu",
-      "handle": "danluu"
+      "name": "Example Author 4",
+      "handle": "example_user4"
     },
     "avatar": null,
     "media": null,
@@ -217,36 +217,36 @@
       {
         "hn_id": "910041",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2019-06-11T12:00:00Z",
         "hn_created_at_i": 1560211200,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800004",
-        "hn_story_title": "Discussion: a lasting idea from Dan Luu",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 4",
         "hn_story_url": "https://news.ycombinator.com/item?id=800004",
         "hn_story_points": 28
       },
       {
         "hn_id": "910042",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2020-06-12T12:00:00Z",
         "hn_created_at_i": 1591920000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800004",
-        "hn_story_title": "Discussion: a lasting idea from Dan Luu",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 4",
         "hn_story_url": "https://news.ycombinator.com/item?id=800004",
         "hn_story_points": 28
       },
       {
         "hn_id": "910043",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2021-06-13T12:00:00Z",
         "hn_created_at_i": 1623542400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800004",
-        "hn_story_title": "Discussion: a lasting idea from Dan Luu",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 4",
         "hn_story_url": "https://news.ycombinator.com/item?id=800004",
         "hn_story_points": 28
       }
@@ -265,14 +265,14 @@
     "tweet": {
       "text": "Example fixture post 5: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Julia Evans",
-        "screen_name": "b0rk"
+        "name": "Example Author 5",
+        "screen_name": "example_user5"
       },
       "created_at": "2020-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Julia Evans",
-      "handle": "b0rk"
+      "name": "Example Author 5",
+      "handle": "example_user5"
     },
     "avatar": null,
     "media": null,
@@ -281,36 +281,36 @@
       {
         "hn_id": "910051",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2021-06-11T12:00:00Z",
         "hn_created_at_i": 1623369600,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800005",
-        "hn_story_title": "Discussion: a lasting idea from Julia Evans",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 5",
         "hn_story_url": "https://news.ycombinator.com/item?id=800005",
         "hn_story_points": 29
       },
       {
         "hn_id": "910052",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2022-06-12T12:00:00Z",
         "hn_created_at_i": 1654992000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800005",
-        "hn_story_title": "Discussion: a lasting idea from Julia Evans",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 5",
         "hn_story_url": "https://news.ycombinator.com/item?id=800005",
         "hn_story_points": 29
       },
       {
         "hn_id": "910053",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2023-06-13T12:00:00Z",
         "hn_created_at_i": 1686614400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800005",
-        "hn_story_title": "Discussion: a lasting idea from Julia Evans",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 5",
         "hn_story_url": "https://news.ycombinator.com/item?id=800005",
         "hn_story_points": 29
       }
@@ -329,56 +329,56 @@
     "tweet": {
       "text": "Example fixture post 6: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Moxie Marlinspike",
-        "screen_name": "moxie"
+        "name": "Example Author 6",
+        "screen_name": "example_user6"
       },
       "created_at": "2014-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Moxie Marlinspike",
-      "handle": "moxie"
+      "name": "Example Author 6",
+      "handle": "example_user6"
     },
     "avatar": null,
     "media": null,
     "link_card": {
       "title": "Notes on good ideas",
       "description": "A fixture preview for the linked article.",
-      "url": "https://example.com/notes/moxie"
+      "url": "https://example.com/notes/example_user6"
     },
     "citations": [
       {
         "hn_id": "910061",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2015-06-11T12:00:00Z",
         "hn_created_at_i": 1433980800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800006",
-        "hn_story_title": "Discussion: a lasting idea from Moxie Marlinspike",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 6",
         "hn_story_url": "https://news.ycombinator.com/item?id=800006",
         "hn_story_points": 30
       },
       {
         "hn_id": "910062",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2016-06-12T12:00:00Z",
         "hn_created_at_i": 1465689600,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800006",
-        "hn_story_title": "Discussion: a lasting idea from Moxie Marlinspike",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 6",
         "hn_story_url": "https://news.ycombinator.com/item?id=800006",
         "hn_story_points": 30
       },
       {
         "hn_id": "910063",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2017-06-13T12:00:00Z",
         "hn_created_at_i": 1497312000,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800006",
-        "hn_story_title": "Discussion: a lasting idea from Moxie Marlinspike",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 6",
         "hn_story_url": "https://news.ycombinator.com/item?id=800006",
         "hn_story_points": 30
       }
@@ -397,14 +397,14 @@
     "tweet": {
       "text": "Example fixture post 7: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Rich Hickey",
-        "screen_name": "richhickey"
+        "name": "Example Author 7",
+        "screen_name": "example_user7"
       },
       "created_at": "2012-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Rich Hickey",
-      "handle": "richhickey"
+      "name": "Example Author 7",
+      "handle": "example_user7"
     },
     "avatar": null,
     "media": null,
@@ -413,36 +413,36 @@
       {
         "hn_id": "910071",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2013-06-11T12:00:00Z",
         "hn_created_at_i": 1370908800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800007",
-        "hn_story_title": "Discussion: a lasting idea from Rich Hickey",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 7",
         "hn_story_url": "https://news.ycombinator.com/item?id=800007",
         "hn_story_points": 31
       },
       {
         "hn_id": "910072",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2014-06-12T12:00:00Z",
         "hn_created_at_i": 1402531200,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800007",
-        "hn_story_title": "Discussion: a lasting idea from Rich Hickey",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 7",
         "hn_story_url": "https://news.ycombinator.com/item?id=800007",
         "hn_story_points": 31
       },
       {
         "hn_id": "910073",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2015-06-13T12:00:00Z",
         "hn_created_at_i": 1434153600,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800007",
-        "hn_story_title": "Discussion: a lasting idea from Rich Hickey",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 7",
         "hn_story_url": "https://news.ycombinator.com/item?id=800007",
         "hn_story_points": 31
       }
@@ -461,14 +461,14 @@
     "tweet": {
       "text": "Example fixture post 8: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Tanya Reilly",
-        "screen_name": "whereistanya"
+        "name": "Example Author 8",
+        "screen_name": "example_user8"
       },
       "created_at": "2021-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Tanya Reilly",
-      "handle": "whereistanya"
+      "name": "Example Author 8",
+      "handle": "example_user8"
     },
     "avatar": null,
     "media": null,
@@ -477,36 +477,36 @@
       {
         "hn_id": "910081",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2022-06-11T12:00:00Z",
         "hn_created_at_i": 1654905600,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800008",
-        "hn_story_title": "Discussion: a lasting idea from Tanya Reilly",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 8",
         "hn_story_url": "https://news.ycombinator.com/item?id=800008",
         "hn_story_points": 32
       },
       {
         "hn_id": "910082",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2023-06-12T12:00:00Z",
         "hn_created_at_i": 1686528000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800008",
-        "hn_story_title": "Discussion: a lasting idea from Tanya Reilly",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 8",
         "hn_story_url": "https://news.ycombinator.com/item?id=800008",
         "hn_story_points": 32
       },
       {
         "hn_id": "910083",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2024-06-13T12:00:00Z",
         "hn_created_at_i": 1718236800,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800008",
-        "hn_story_title": "Discussion: a lasting idea from Tanya Reilly",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 8",
         "hn_story_url": "https://news.ycombinator.com/item?id=800008",
         "hn_story_points": 32
       }
@@ -525,56 +525,56 @@
     "tweet": {
       "text": "Example fixture post 9: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Bret Victor",
-        "screen_name": "worrydream"
+        "name": "Example Author 9",
+        "screen_name": "example_user9"
       },
       "created_at": "2013-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Bret Victor",
-      "handle": "worrydream"
+      "name": "Example Author 9",
+      "handle": "example_user9"
     },
     "avatar": null,
     "media": null,
     "link_card": {
       "title": "Notes on creators ideas",
       "description": "A fixture preview for the linked article.",
-      "url": "https://example.com/notes/worrydream"
+      "url": "https://example.com/notes/example_user9"
     },
     "citations": [
       {
         "hn_id": "910091",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2014-06-11T12:00:00Z",
         "hn_created_at_i": 1402444800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800009",
-        "hn_story_title": "Discussion: a lasting idea from Bret Victor",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 9",
         "hn_story_url": "https://news.ycombinator.com/item?id=800009",
         "hn_story_points": 33
       },
       {
         "hn_id": "910092",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2015-06-12T12:00:00Z",
         "hn_created_at_i": 1434067200,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800009",
-        "hn_story_title": "Discussion: a lasting idea from Bret Victor",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 9",
         "hn_story_url": "https://news.ycombinator.com/item?id=800009",
         "hn_story_points": 33
       },
       {
         "hn_id": "910093",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2016-06-13T12:00:00Z",
         "hn_created_at_i": 1465776000,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800009",
-        "hn_story_title": "Discussion: a lasting idea from Bret Victor",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 9",
         "hn_story_url": "https://news.ycombinator.com/item?id=800009",
         "hn_story_points": 33
       }
@@ -593,14 +593,14 @@
     "tweet": {
       "text": "Example fixture post 10: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Drew DeVault",
-        "screen_name": "sir"
+        "name": "Example Author 10",
+        "screen_name": "example_user10"
       },
       "created_at": "2019-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Drew DeVault",
-      "handle": "sir"
+      "name": "Example Author 10",
+      "handle": "example_user10"
     },
     "avatar": null,
     "media": null,
@@ -609,36 +609,36 @@
       {
         "hn_id": "910101",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2020-06-11T12:00:00Z",
         "hn_created_at_i": 1591833600,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800010",
-        "hn_story_title": "Discussion: a lasting idea from Drew DeVault",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 10",
         "hn_story_url": "https://news.ycombinator.com/item?id=800010",
         "hn_story_points": 34
       },
       {
         "hn_id": "910102",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2021-06-12T12:00:00Z",
         "hn_created_at_i": 1623456000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800010",
-        "hn_story_title": "Discussion: a lasting idea from Drew DeVault",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 10",
         "hn_story_url": "https://news.ycombinator.com/item?id=800010",
         "hn_story_points": 34
       },
       {
         "hn_id": "910103",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2022-06-13T12:00:00Z",
         "hn_created_at_i": 1655078400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800010",
-        "hn_story_title": "Discussion: a lasting idea from Drew DeVault",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 10",
         "hn_story_url": "https://news.ycombinator.com/item?id=800010",
         "hn_story_points": 34
       }
@@ -657,14 +657,14 @@
     "tweet": {
       "text": "Example fixture post 11: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "DHH",
-        "screen_name": "dhh"
+        "name": "Example Author 11",
+        "screen_name": "example_user11"
       },
       "created_at": "2015-05-14T10:00:00Z"
     },
     "author": {
-      "name": "DHH",
-      "handle": "dhh"
+      "name": "Example Author 11",
+      "handle": "example_user11"
     },
     "avatar": null,
     "media": null,
@@ -673,36 +673,36 @@
       {
         "hn_id": "910111",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2016-06-11T12:00:00Z",
         "hn_created_at_i": 1465603200,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800011",
-        "hn_story_title": "Discussion: a lasting idea from DHH",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 11",
         "hn_story_url": "https://news.ycombinator.com/item?id=800011",
         "hn_story_points": 35
       },
       {
         "hn_id": "910112",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2017-06-12T12:00:00Z",
         "hn_created_at_i": 1497225600,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800011",
-        "hn_story_title": "Discussion: a lasting idea from DHH",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 11",
         "hn_story_url": "https://news.ycombinator.com/item?id=800011",
         "hn_story_points": 35
       },
       {
         "hn_id": "910113",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2018-06-13T12:00:00Z",
         "hn_created_at_i": 1528848000,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800011",
-        "hn_story_title": "Discussion: a lasting idea from DHH",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 11",
         "hn_story_url": "https://news.ycombinator.com/item?id=800011",
         "hn_story_points": 35
       }
@@ -721,56 +721,56 @@
     "tweet": {
       "text": "Example fixture post 12: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Martin Fowler",
-        "screen_name": "martinfowler"
+        "name": "Example Author 12",
+        "screen_name": "example_user12"
       },
       "created_at": "2010-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Martin Fowler",
-      "handle": "martinfowler"
+      "name": "Example Author 12",
+      "handle": "example_user12"
     },
     "avatar": null,
     "media": null,
     "link_card": {
       "title": "Notes on refactoring ideas",
       "description": "A fixture preview for the linked article.",
-      "url": "https://example.com/notes/martinfowler"
+      "url": "https://example.com/notes/example_user12"
     },
     "citations": [
       {
         "hn_id": "910121",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2011-06-11T12:00:00Z",
         "hn_created_at_i": 1307750400,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800012",
-        "hn_story_title": "Discussion: a lasting idea from Martin Fowler",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 12",
         "hn_story_url": "https://news.ycombinator.com/item?id=800012",
         "hn_story_points": 36
       },
       {
         "hn_id": "910122",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2012-06-12T12:00:00Z",
         "hn_created_at_i": 1339459200,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800012",
-        "hn_story_title": "Discussion: a lasting idea from Martin Fowler",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 12",
         "hn_story_url": "https://news.ycombinator.com/item?id=800012",
         "hn_story_points": 36
       },
       {
         "hn_id": "910123",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2013-06-13T12:00:00Z",
         "hn_created_at_i": 1371081600,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800012",
-        "hn_story_title": "Discussion: a lasting idea from Martin Fowler",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 12",
         "hn_story_url": "https://news.ycombinator.com/item?id=800012",
         "hn_story_points": 36
       }
@@ -789,14 +789,14 @@
     "tweet": {
       "text": "Example fixture post 13: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Charity Majors",
-        "screen_name": "mipsytipsy"
+        "name": "Example Author 13",
+        "screen_name": "example_user13"
       },
       "created_at": "2017-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Charity Majors",
-      "handle": "mipsytipsy"
+      "name": "Example Author 13",
+      "handle": "example_user13"
     },
     "avatar": null,
     "media": null,
@@ -805,36 +805,36 @@
       {
         "hn_id": "910131",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2018-06-11T12:00:00Z",
         "hn_created_at_i": 1528675200,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800013",
-        "hn_story_title": "Discussion: a lasting idea from Charity Majors",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 13",
         "hn_story_url": "https://news.ycombinator.com/item?id=800013",
         "hn_story_points": 37
       },
       {
         "hn_id": "910132",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2019-06-12T12:00:00Z",
         "hn_created_at_i": 1560297600,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800013",
-        "hn_story_title": "Discussion: a lasting idea from Charity Majors",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 13",
         "hn_story_url": "https://news.ycombinator.com/item?id=800013",
         "hn_story_points": 37
       },
       {
         "hn_id": "910133",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2020-06-13T12:00:00Z",
         "hn_created_at_i": 1592006400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800013",
-        "hn_story_title": "Discussion: a lasting idea from Charity Majors",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 13",
         "hn_story_url": "https://news.ycombinator.com/item?id=800013",
         "hn_story_points": 37
       }
@@ -853,14 +853,14 @@
     "tweet": {
       "text": "Example fixture post 14: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Sandi Metz",
-        "screen_name": "sandimetz"
+        "name": "Example Author 14",
+        "screen_name": "example_user14"
       },
       "created_at": "2016-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Sandi Metz",
-      "handle": "sandimetz"
+      "name": "Example Author 14",
+      "handle": "example_user14"
     },
     "avatar": null,
     "media": null,
@@ -869,36 +869,36 @@
       {
         "hn_id": "910141",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2017-06-11T12:00:00Z",
         "hn_created_at_i": 1497139200,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800014",
-        "hn_story_title": "Discussion: a lasting idea from Sandi Metz",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 14",
         "hn_story_url": "https://news.ycombinator.com/item?id=800014",
         "hn_story_points": 38
       },
       {
         "hn_id": "910142",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2018-06-12T12:00:00Z",
         "hn_created_at_i": 1528761600,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800014",
-        "hn_story_title": "Discussion: a lasting idea from Sandi Metz",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 14",
         "hn_story_url": "https://news.ycombinator.com/item?id=800014",
         "hn_story_points": 38
       },
       {
         "hn_id": "910143",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2019-06-13T12:00:00Z",
         "hn_created_at_i": 1560384000,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800014",
-        "hn_story_title": "Discussion: a lasting idea from Sandi Metz",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 14",
         "hn_story_url": "https://news.ycombinator.com/item?id=800014",
         "hn_story_points": 38
       }
@@ -917,56 +917,56 @@
     "tweet": {
       "text": "Example fixture post 15: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Gwern Branwen",
-        "screen_name": "gwern"
+        "name": "Example Author 15",
+        "screen_name": "example_user15"
       },
       "created_at": "2018-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Gwern Branwen",
-      "handle": "gwern"
+      "name": "Example Author 15",
+      "handle": "example_user15"
     },
     "avatar": null,
     "media": null,
     "link_card": {
       "title": "Notes on a ideas",
       "description": "A fixture preview for the linked article.",
-      "url": "https://example.com/notes/gwern"
+      "url": "https://example.com/notes/example_user15"
     },
     "citations": [
       {
         "hn_id": "910151",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2019-06-11T12:00:00Z",
         "hn_created_at_i": 1560211200,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800015",
-        "hn_story_title": "Discussion: a lasting idea from Gwern Branwen",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 15",
         "hn_story_url": "https://news.ycombinator.com/item?id=800015",
         "hn_story_points": 39
       },
       {
         "hn_id": "910152",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2020-06-12T12:00:00Z",
         "hn_created_at_i": 1591920000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800015",
-        "hn_story_title": "Discussion: a lasting idea from Gwern Branwen",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 15",
         "hn_story_url": "https://news.ycombinator.com/item?id=800015",
         "hn_story_points": 39
       },
       {
         "hn_id": "910153",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2021-06-13T12:00:00Z",
         "hn_created_at_i": 1623542400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800015",
-        "hn_story_title": "Discussion: a lasting idea from Gwern Branwen",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 15",
         "hn_story_url": "https://news.ycombinator.com/item?id=800015",
         "hn_story_points": 39
       }
@@ -985,14 +985,14 @@
     "tweet": {
       "text": "Example fixture post 16: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Kent Beck",
-        "screen_name": "KentBeck"
+        "name": "Example Author 16",
+        "screen_name": "example_user16"
       },
       "created_at": "2012-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Kent Beck",
-      "handle": "KentBeck"
+      "name": "Example Author 16",
+      "handle": "example_user16"
     },
     "avatar": null,
     "media": null,
@@ -1001,36 +1001,36 @@
       {
         "hn_id": "910161",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2013-06-11T12:00:00Z",
         "hn_created_at_i": 1370908800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800016",
-        "hn_story_title": "Discussion: a lasting idea from Kent Beck",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 16",
         "hn_story_url": "https://news.ycombinator.com/item?id=800016",
         "hn_story_points": 40
       },
       {
         "hn_id": "910162",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2014-06-12T12:00:00Z",
         "hn_created_at_i": 1402531200,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800016",
-        "hn_story_title": "Discussion: a lasting idea from Kent Beck",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 16",
         "hn_story_url": "https://news.ycombinator.com/item?id=800016",
         "hn_story_points": 40
       },
       {
         "hn_id": "910163",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2015-06-13T12:00:00Z",
         "hn_created_at_i": 1434153600,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800016",
-        "hn_story_title": "Discussion: a lasting idea from Kent Beck",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 16",
         "hn_story_url": "https://news.ycombinator.com/item?id=800016",
         "hn_story_points": 40
       }
@@ -1049,14 +1049,14 @@
     "tweet": {
       "text": "Example fixture post 17: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Anil Dash",
-        "screen_name": "anildash"
+        "name": "Example Author 17",
+        "screen_name": "example_user17"
       },
       "created_at": "2011-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Anil Dash",
-      "handle": "anildash"
+      "name": "Example Author 17",
+      "handle": "example_user17"
     },
     "avatar": null,
     "media": null,
@@ -1065,36 +1065,36 @@
       {
         "hn_id": "910171",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2012-06-11T12:00:00Z",
         "hn_created_at_i": 1339372800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800017",
-        "hn_story_title": "Discussion: a lasting idea from Anil Dash",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 17",
         "hn_story_url": "https://news.ycombinator.com/item?id=800017",
         "hn_story_points": 41
       },
       {
         "hn_id": "910172",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2013-06-12T12:00:00Z",
         "hn_created_at_i": 1370995200,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800017",
-        "hn_story_title": "Discussion: a lasting idea from Anil Dash",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 17",
         "hn_story_url": "https://news.ycombinator.com/item?id=800017",
         "hn_story_points": 41
       },
       {
         "hn_id": "910173",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2014-06-13T12:00:00Z",
         "hn_created_at_i": 1402617600,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800017",
-        "hn_story_title": "Discussion: a lasting idea from Anil Dash",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 17",
         "hn_story_url": "https://news.ycombinator.com/item?id=800017",
         "hn_story_points": 41
       }
@@ -1113,14 +1113,14 @@
     "tweet": {
       "text": "Example fixture post 18: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Maggie Appleton",
-        "screen_name": "Mappletons"
+        "name": "Example Author 18",
+        "screen_name": "example_user18"
       },
       "created_at": "2022-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Maggie Appleton",
-      "handle": "Mappletons"
+      "name": "Example Author 18",
+      "handle": "example_user18"
     },
     "avatar": null,
     "media": null,
@@ -1133,36 +1133,36 @@
       {
         "hn_id": "910181",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2023-06-11T12:00:00Z",
         "hn_created_at_i": 1686441600,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800018",
-        "hn_story_title": "Discussion: a lasting idea from Maggie Appleton",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 18",
         "hn_story_url": "https://news.ycombinator.com/item?id=800018",
         "hn_story_points": 42
       },
       {
         "hn_id": "910182",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2024-06-12T12:00:00Z",
         "hn_created_at_i": 1718150400,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800018",
-        "hn_story_title": "Discussion: a lasting idea from Maggie Appleton",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 18",
         "hn_story_url": "https://news.ycombinator.com/item?id=800018",
         "hn_story_points": 42
       },
       {
         "hn_id": "910183",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2025-06-13T12:00:00Z",
         "hn_created_at_i": 1749772800,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800018",
-        "hn_story_title": "Discussion: a lasting idea from Maggie Appleton",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 18",
         "hn_story_url": "https://news.ycombinator.com/item?id=800018",
         "hn_story_points": 42
       }
@@ -1181,14 +1181,14 @@
     "tweet": {
       "text": "Example fixture post 19: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Simon Willison",
-        "screen_name": "simonw"
+        "name": "Example Author 19",
+        "screen_name": "example_user19"
       },
       "created_at": "2020-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Simon Willison",
-      "handle": "simonw"
+      "name": "Example Author 19",
+      "handle": "example_user19"
     },
     "avatar": null,
     "media": null,
@@ -1197,36 +1197,36 @@
       {
         "hn_id": "910191",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2021-06-11T12:00:00Z",
         "hn_created_at_i": 1623369600,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800019",
-        "hn_story_title": "Discussion: a lasting idea from Simon Willison",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 19",
         "hn_story_url": "https://news.ycombinator.com/item?id=800019",
         "hn_story_points": 43
       },
       {
         "hn_id": "910192",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2022-06-12T12:00:00Z",
         "hn_created_at_i": 1654992000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800019",
-        "hn_story_title": "Discussion: a lasting idea from Simon Willison",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 19",
         "hn_story_url": "https://news.ycombinator.com/item?id=800019",
         "hn_story_points": 43
       },
       {
         "hn_id": "910193",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2023-06-13T12:00:00Z",
         "hn_created_at_i": 1686614400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800019",
-        "hn_story_title": "Discussion: a lasting idea from Simon Willison",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 19",
         "hn_story_url": "https://news.ycombinator.com/item?id=800019",
         "hn_story_points": 43
       }
@@ -1245,14 +1245,14 @@
     "tweet": {
       "text": "Example fixture post 20: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Ellen Chisa",
-        "screen_name": "ellenchisa"
+        "name": "Example Author 20",
+        "screen_name": "example_user20"
       },
       "created_at": "2019-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Ellen Chisa",
-      "handle": "ellenchisa"
+      "name": "Example Author 20",
+      "handle": "example_user20"
     },
     "avatar": null,
     "media": null,
@@ -1261,36 +1261,36 @@
       {
         "hn_id": "910201",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2020-06-11T12:00:00Z",
         "hn_created_at_i": 1591833600,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800020",
-        "hn_story_title": "Discussion: a lasting idea from Ellen Chisa",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 20",
         "hn_story_url": "https://news.ycombinator.com/item?id=800020",
         "hn_story_points": 44
       },
       {
         "hn_id": "910202",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2021-06-12T12:00:00Z",
         "hn_created_at_i": 1623456000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800020",
-        "hn_story_title": "Discussion: a lasting idea from Ellen Chisa",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 20",
         "hn_story_url": "https://news.ycombinator.com/item?id=800020",
         "hn_story_points": 44
       },
       {
         "hn_id": "910203",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2022-06-13T12:00:00Z",
         "hn_created_at_i": 1655078400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800020",
-        "hn_story_title": "Discussion: a lasting idea from Ellen Chisa",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 20",
         "hn_story_url": "https://news.ycombinator.com/item?id=800020",
         "hn_story_points": 44
       }
@@ -1309,56 +1309,56 @@
     "tweet": {
       "text": "Example fixture post 21: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Mitchell Hashimoto",
-        "screen_name": "mitchellh"
+        "name": "Example Author 21",
+        "screen_name": "example_user21"
       },
       "created_at": "2021-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Mitchell Hashimoto",
-      "handle": "mitchellh"
+      "name": "Example Author 21",
+      "handle": "example_user21"
     },
     "avatar": null,
     "media": null,
     "link_card": {
       "title": "Notes on a ideas",
       "description": "A fixture preview for the linked article.",
-      "url": "https://example.com/notes/mitchellh"
+      "url": "https://example.com/notes/example_user21"
     },
     "citations": [
       {
         "hn_id": "910211",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2022-06-11T12:00:00Z",
         "hn_created_at_i": 1654905600,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800021",
-        "hn_story_title": "Discussion: a lasting idea from Mitchell Hashimoto",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 21",
         "hn_story_url": "https://news.ycombinator.com/item?id=800021",
         "hn_story_points": 45
       },
       {
         "hn_id": "910212",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2023-06-12T12:00:00Z",
         "hn_created_at_i": 1686528000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800021",
-        "hn_story_title": "Discussion: a lasting idea from Mitchell Hashimoto",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 21",
         "hn_story_url": "https://news.ycombinator.com/item?id=800021",
         "hn_story_points": 45
       },
       {
         "hn_id": "910213",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2024-06-13T12:00:00Z",
         "hn_created_at_i": 1718236800,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800021",
-        "hn_story_title": "Discussion: a lasting idea from Mitchell Hashimoto",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 21",
         "hn_story_url": "https://news.ycombinator.com/item?id=800021",
         "hn_story_points": 45
       }
@@ -1377,14 +1377,14 @@
     "tweet": {
       "text": "Example fixture post 22: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Jessica Kerr",
-        "screen_name": "jessitron"
+        "name": "Example Author 22",
+        "screen_name": "example_user22"
       },
       "created_at": "2015-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Jessica Kerr",
-      "handle": "jessitron"
+      "name": "Example Author 22",
+      "handle": "example_user22"
     },
     "avatar": null,
     "media": null,
@@ -1393,36 +1393,36 @@
       {
         "hn_id": "910221",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2016-06-11T12:00:00Z",
         "hn_created_at_i": 1465603200,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800022",
-        "hn_story_title": "Discussion: a lasting idea from Jessica Kerr",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 22",
         "hn_story_url": "https://news.ycombinator.com/item?id=800022",
         "hn_story_points": 46
       },
       {
         "hn_id": "910222",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2017-06-12T12:00:00Z",
         "hn_created_at_i": 1497225600,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800022",
-        "hn_story_title": "Discussion: a lasting idea from Jessica Kerr",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 22",
         "hn_story_url": "https://news.ycombinator.com/item?id=800022",
         "hn_story_points": 46
       },
       {
         "hn_id": "910223",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2018-06-13T12:00:00Z",
         "hn_created_at_i": 1528848000,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800022",
-        "hn_story_title": "Discussion: a lasting idea from Jessica Kerr",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 22",
         "hn_story_url": "https://news.ycombinator.com/item?id=800022",
         "hn_story_points": 46
       }
@@ -1441,14 +1441,14 @@
     "tweet": {
       "text": "Example fixture post 23: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "John Carmack",
-        "screen_name": "ID_AA_Carmack"
+        "name": "Example Author 23",
+        "screen_name": "example_user23"
       },
       "created_at": "2013-05-14T10:00:00Z"
     },
     "author": {
-      "name": "John Carmack",
-      "handle": "ID_AA_Carmack"
+      "name": "Example Author 23",
+      "handle": "example_user23"
     },
     "avatar": null,
     "media": null,
@@ -1457,36 +1457,36 @@
       {
         "hn_id": "910231",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2014-06-11T12:00:00Z",
         "hn_created_at_i": 1402444800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800023",
-        "hn_story_title": "Discussion: a lasting idea from John Carmack",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 23",
         "hn_story_url": "https://news.ycombinator.com/item?id=800023",
         "hn_story_points": 47
       },
       {
         "hn_id": "910232",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2015-06-12T12:00:00Z",
         "hn_created_at_i": 1434067200,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800023",
-        "hn_story_title": "Discussion: a lasting idea from John Carmack",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 23",
         "hn_story_url": "https://news.ycombinator.com/item?id=800023",
         "hn_story_points": 47
       },
       {
         "hn_id": "910233",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2016-06-13T12:00:00Z",
         "hn_created_at_i": 1465776000,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800023",
-        "hn_story_title": "Discussion: a lasting idea from John Carmack",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 23",
         "hn_story_url": "https://news.ycombinator.com/item?id=800023",
         "hn_story_points": 47
       }
@@ -1505,56 +1505,56 @@
     "tweet": {
       "text": "Example fixture post 24: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Lara Hogan",
-        "screen_name": "lara_hogan"
+        "name": "Example Author 24",
+        "screen_name": "example_user24"
       },
       "created_at": "2020-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Lara Hogan",
-      "handle": "lara_hogan"
+      "name": "Example Author 24",
+      "handle": "example_user24"
     },
     "avatar": null,
     "media": null,
     "link_card": {
       "title": "Notes on clear ideas",
       "description": "A fixture preview for the linked article.",
-      "url": "https://example.com/notes/lara_hogan"
+      "url": "https://example.com/notes/example_user24"
     },
     "citations": [
       {
         "hn_id": "910241",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2021-06-11T12:00:00Z",
         "hn_created_at_i": 1623369600,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800024",
-        "hn_story_title": "Discussion: a lasting idea from Lara Hogan",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 24",
         "hn_story_url": "https://news.ycombinator.com/item?id=800024",
         "hn_story_points": 48
       },
       {
         "hn_id": "910242",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2022-06-12T12:00:00Z",
         "hn_created_at_i": 1654992000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800024",
-        "hn_story_title": "Discussion: a lasting idea from Lara Hogan",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 24",
         "hn_story_url": "https://news.ycombinator.com/item?id=800024",
         "hn_story_points": 48
       },
       {
         "hn_id": "910243",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2023-06-13T12:00:00Z",
         "hn_created_at_i": 1686614400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800024",
-        "hn_story_title": "Discussion: a lasting idea from Lara Hogan",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 24",
         "hn_story_url": "https://news.ycombinator.com/item?id=800024",
         "hn_story_points": 48
       }
@@ -1573,14 +1573,14 @@
     "tweet": {
       "text": "Example fixture post 25: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Benedict Evans",
-        "screen_name": "benedictevans"
+        "name": "Example Author 25",
+        "screen_name": "example_user25"
       },
       "created_at": "2017-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Benedict Evans",
-      "handle": "benedictevans"
+      "name": "Example Author 25",
+      "handle": "example_user25"
     },
     "avatar": null,
     "media": null,
@@ -1589,36 +1589,36 @@
       {
         "hn_id": "910251",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2018-06-11T12:00:00Z",
         "hn_created_at_i": 1528675200,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800025",
-        "hn_story_title": "Discussion: a lasting idea from Benedict Evans",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 25",
         "hn_story_url": "https://news.ycombinator.com/item?id=800025",
         "hn_story_points": 49
       },
       {
         "hn_id": "910252",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2019-06-12T12:00:00Z",
         "hn_created_at_i": 1560297600,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800025",
-        "hn_story_title": "Discussion: a lasting idea from Benedict Evans",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 25",
         "hn_story_url": "https://news.ycombinator.com/item?id=800025",
         "hn_story_points": 49
       },
       {
         "hn_id": "910253",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2020-06-13T12:00:00Z",
         "hn_created_at_i": 1592006400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800025",
-        "hn_story_title": "Discussion: a lasting idea from Benedict Evans",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 25",
         "hn_story_url": "https://news.ycombinator.com/item?id=800025",
         "hn_story_points": 49
       }
@@ -1637,14 +1637,14 @@
     "tweet": {
       "text": "Example fixture post 26: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Joel Spolsky",
-        "screen_name": "spolsky"
+        "name": "Example Author 26",
+        "screen_name": "example_user26"
       },
       "created_at": "2004-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Joel Spolsky",
-      "handle": "spolsky"
+      "name": "Example Author 26",
+      "handle": "example_user26"
     },
     "avatar": null,
     "media": null,
@@ -1653,36 +1653,36 @@
       {
         "hn_id": "910261",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2005-06-11T12:00:00Z",
         "hn_created_at_i": 1118448000,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800026",
-        "hn_story_title": "Discussion: a lasting idea from Joel Spolsky",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 26",
         "hn_story_url": "https://news.ycombinator.com/item?id=800026",
         "hn_story_points": 50
       },
       {
         "hn_id": "910262",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2006-06-12T12:00:00Z",
         "hn_created_at_i": 1150070400,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800026",
-        "hn_story_title": "Discussion: a lasting idea from Joel Spolsky",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 26",
         "hn_story_url": "https://news.ycombinator.com/item?id=800026",
         "hn_story_points": 50
       },
       {
         "hn_id": "910263",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2007-06-13T12:00:00Z",
         "hn_created_at_i": 1181692800,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800026",
-        "hn_story_title": "Discussion: a lasting idea from Joel Spolsky",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 26",
         "hn_story_url": "https://news.ycombinator.com/item?id=800026",
         "hn_story_points": 50
       }
@@ -1701,14 +1701,14 @@
     "tweet": {
       "text": "Example fixture post 27: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Miriam Suzanne",
-        "screen_name": "TerribleMia"
+        "name": "Example Author 27",
+        "screen_name": "example_user27"
       },
       "created_at": "2022-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Miriam Suzanne",
-      "handle": "TerribleMia"
+      "name": "Example Author 27",
+      "handle": "example_user27"
     },
     "avatar": null,
     "media": null,
@@ -1721,36 +1721,36 @@
       {
         "hn_id": "910271",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2023-06-11T12:00:00Z",
         "hn_created_at_i": 1686441600,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800027",
-        "hn_story_title": "Discussion: a lasting idea from Miriam Suzanne",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 27",
         "hn_story_url": "https://news.ycombinator.com/item?id=800027",
         "hn_story_points": 51
       },
       {
         "hn_id": "910272",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2024-06-12T12:00:00Z",
         "hn_created_at_i": 1718150400,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800027",
-        "hn_story_title": "Discussion: a lasting idea from Miriam Suzanne",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 27",
         "hn_story_url": "https://news.ycombinator.com/item?id=800027",
         "hn_story_points": 51
       },
       {
         "hn_id": "910273",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2025-06-13T12:00:00Z",
         "hn_created_at_i": 1749772800,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800027",
-        "hn_story_title": "Discussion: a lasting idea from Miriam Suzanne",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 27",
         "hn_story_url": "https://news.ycombinator.com/item?id=800027",
         "hn_story_points": 51
       }
@@ -1769,14 +1769,14 @@
     "tweet": {
       "text": "Example fixture post 28: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Adam Wiggins",
-        "screen_name": "adamwiggins"
+        "name": "Example Author 28",
+        "screen_name": "example_user28"
       },
       "created_at": "2014-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Adam Wiggins",
-      "handle": "adamwiggins"
+      "name": "Example Author 28",
+      "handle": "example_user28"
     },
     "avatar": null,
     "media": null,
@@ -1785,36 +1785,36 @@
       {
         "hn_id": "910281",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2015-06-11T12:00:00Z",
         "hn_created_at_i": 1433980800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800028",
-        "hn_story_title": "Discussion: a lasting idea from Adam Wiggins",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 28",
         "hn_story_url": "https://news.ycombinator.com/item?id=800028",
         "hn_story_points": 52
       },
       {
         "hn_id": "910282",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2016-06-12T12:00:00Z",
         "hn_created_at_i": 1465689600,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800028",
-        "hn_story_title": "Discussion: a lasting idea from Adam Wiggins",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 28",
         "hn_story_url": "https://news.ycombinator.com/item?id=800028",
         "hn_story_points": 52
       },
       {
         "hn_id": "910283",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2017-06-13T12:00:00Z",
         "hn_created_at_i": 1497312000,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800028",
-        "hn_story_title": "Discussion: a lasting idea from Adam Wiggins",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 28",
         "hn_story_url": "https://news.ycombinator.com/item?id=800028",
         "hn_story_points": 52
       }
@@ -1833,14 +1833,14 @@
     "tweet": {
       "text": "Example fixture post 29: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Rachel Thomas",
-        "screen_name": "math_rachel"
+        "name": "Example Author 29",
+        "screen_name": "example_user29"
       },
       "created_at": "2018-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Rachel Thomas",
-      "handle": "math_rachel"
+      "name": "Example Author 29",
+      "handle": "example_user29"
     },
     "avatar": null,
     "media": null,
@@ -1849,36 +1849,36 @@
       {
         "hn_id": "910291",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2019-06-11T12:00:00Z",
         "hn_created_at_i": 1560211200,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800029",
-        "hn_story_title": "Discussion: a lasting idea from Rachel Thomas",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 29",
         "hn_story_url": "https://news.ycombinator.com/item?id=800029",
         "hn_story_points": 53
       },
       {
         "hn_id": "910292",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2020-06-12T12:00:00Z",
         "hn_created_at_i": 1591920000,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800029",
-        "hn_story_title": "Discussion: a lasting idea from Rachel Thomas",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 29",
         "hn_story_url": "https://news.ycombinator.com/item?id=800029",
         "hn_story_points": 53
       },
       {
         "hn_id": "910293",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2021-06-13T12:00:00Z",
         "hn_created_at_i": 1623542400,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800029",
-        "hn_story_title": "Discussion: a lasting idea from Rachel Thomas",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 29",
         "hn_story_url": "https://news.ycombinator.com/item?id=800029",
         "hn_story_points": 53
       }
@@ -1897,14 +1897,14 @@
     "tweet": {
       "text": "Example fixture post 30: placeholder text for local development only, not a real post.",
       "user": {
-        "name": "Tim Bray",
-        "screen_name": "TimBray"
+        "name": "Example Author 30",
+        "screen_name": "example_user30"
       },
       "created_at": "2011-05-14T10:00:00Z"
     },
     "author": {
-      "name": "Tim Bray",
-      "handle": "TimBray"
+      "name": "Example Author 30",
+      "handle": "example_user30"
     },
     "avatar": null,
     "media": null,
@@ -1917,36 +1917,36 @@
       {
         "hn_id": "910301",
         "hn_kind": "comment",
-        "hn_author": "curious_builder",
+        "hn_author": "hn_user1",
         "hn_created_at": "2012-06-11T12:00:00Z",
         "hn_created_at_i": 1339372800,
         "hn_comment_text": "I still send this to people starting on the problem.",
         "hn_story_id": "800030",
-        "hn_story_title": "Discussion: a lasting idea from Tim Bray",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 30",
         "hn_story_url": "https://news.ycombinator.com/item?id=800030",
         "hn_story_points": 54
       },
       {
         "hn_id": "910302",
         "hn_kind": "comment",
-        "hn_author": "hn_reader",
+        "hn_author": "hn_user2",
         "hn_created_at": "2013-06-12T12:00:00Z",
         "hn_created_at_i": 1370995200,
         "hn_comment_text": "The explanation aged well; the example is still useful.",
         "hn_story_id": "800030",
-        "hn_story_title": "Discussion: a lasting idea from Tim Bray",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 30",
         "hn_story_url": "https://news.ycombinator.com/item?id=800030",
         "hn_story_points": 54
       },
       {
         "hn_id": "910303",
         "hn_kind": "comment",
-        "hn_author": "systems_thinker",
+        "hn_author": "hn_user3",
         "hn_created_at": "2014-06-13T12:00:00Z",
         "hn_created_at_i": 1402617600,
         "hn_comment_text": "This changed how I think about building small tools.",
         "hn_story_id": "800030",
-        "hn_story_title": "Discussion: a lasting idea from Tim Bray",
+        "hn_story_title": "Discussion: a lasting idea from Example Author 30",
         "hn_story_url": "https://news.ycombinator.com/item?id=800030",
         "hn_story_points": 54
       }
