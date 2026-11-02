@@ -1568,6 +1568,12 @@ code {
   }
 }
 
+.edited-note {
+  font-size: 0.6875rem;
+  font-style: italic;
+  color: var(--muted, #8b8b8b);
+}
+
 .today-pick-src {
   display: block;
   margin-block-start: 6px;

@@ -20,6 +20,7 @@ export function TodayPick({ card }: { card: Card }) {
       {quote ? (
         <span className="today-pick-src">
           From the Hacker News thread · {quote.author}
+          {quote.edited_for_display ? " · edited for display" : ""}
         </span>
       ) : null}
       <div className="today-pick-foot">

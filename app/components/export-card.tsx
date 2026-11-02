@@ -36,7 +36,9 @@ function wrap(text: string, width: number) {
 export function ExportCard({ card }: { card: Card }) {
   const download = () => {
     const quote = topQuote(card);
-    const quoteText = quote ? `“${quote.text}” — HN reader @${quote.author}` : "Recommended by Hacker News readers.";
+    const quoteText = quote
+      ? `“${quote.text}” — HN reader @${quote.author}${quote.edited_for_display ? " (edited for display)" : ""}`
+      : "Recommended by Hacker News readers.";
     const lines = wrap(quoteText, 44);
     const height = Math.max(420, 280 + lines.length * 44);
     const body = lines

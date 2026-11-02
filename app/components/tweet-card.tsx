@@ -109,6 +109,7 @@ export function TweetCard({ card, eager = false }: Props) {
           <q>{quote.text}</q>
           <span className="hn-quote-meta">
             <span>@{quote.author}</span>
+            {quote.edited_for_display ? <span className="edited-note">edited for display</span> : null}
             {quote.story_title ? <span className="hn-quote-story">{quote.story_title}</span> : null}
             {quote.year ? <span className="meta-mono">{quote.year}</span> : null}
           </span>

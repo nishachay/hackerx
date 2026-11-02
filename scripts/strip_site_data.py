@@ -40,11 +40,19 @@ QUOTE_FIELDS = ("hn_id", "author", "text", "created_at", "year", "story_title", 
 
 def strip_quote(quote: dict) -> dict:
     cleaned = {key: quote.get(key) for key in QUOTE_FIELDS if key in quote}
-    cleaned["text"] = clean_hn_text(str(quote.get("text") or ""))
+    text = clean_hn_text(str(quote.get("text") or ""))
+    story_title = str(cleaned.get("story_title") or "")
+    normalized_text = normalize_x_spelling(text)
+    normalized_title = normalize_x_spelling(story_title)
+    cleaned["text"] = normalized_text
     if "story_title" in cleaned:
-        cleaned["story_title"] = normalize_x_spelling(str(cleaned["story_title"] or ""))
+        cleaned["story_title"] = normalized_title
     if "stance" not in cleaned:
         cleaned["stance"] = "neutral"
+    if normalized_text != text or normalized_title != story_title:
+        cleaned["edited_for_display"] = True
+    else:
+        cleaned.pop("edited_for_display", None)
     return cleaned
 
 

@@ -27,6 +27,7 @@ export type Quote = {
   story_url: string;
   points: number;
   stance: Stance;
+  edited_for_display?: boolean;
 };
 
 export type Card = {
