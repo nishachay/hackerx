@@ -54,7 +54,7 @@ export default function HowWePickPage() {
               </span>
               <div>
                 <h3>Read the post itself</h3>
-                <p>The post text, author, date and media are archived from public embed data. Deleted posts and posts we cannot fetch are dropped, with the reason recorded.</p>
+                <p>We keep only the post link and author handle. The post itself loads through X’s official embed. Deleted posts and posts we cannot fetch are dropped, with the reason recorded.</p>
               </div>
             </li>
             <li>
