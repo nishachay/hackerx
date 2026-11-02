@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: { default: "HackerX — ideas worth keeping", template: "%s · HackerX" },
   description: "Timeless ideas recommended by Hacker News readers, with the comments that recommend them.",
   applicationName: "HackerX",
+  authors: [{ name: "Nishachay", url: "https://nishachay.tech" }],
+  creator: "Nishachay",
+  publisher: "Nishachay",
   openGraph: {
     type: "website",
     siteName: "HackerX",
