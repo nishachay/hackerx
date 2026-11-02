@@ -32,7 +32,7 @@ npm run dev
 
 ## Run the pipeline
 
-Long pipeline jobs are copy-paste blocks in [`RUN.md`](./RUN.md). The two that matter after the first pull:
+Long pipeline jobs are copy-paste blocks in `RUN.md`, kept locally and not tracked in this repo. The two that matter after the first pull:
 
 - **Step 4** runs Amos over every eligible post (resumable, about 2–2.5 hours at 60 requests/minute).
 - **Step 5** builds `data/site/` and commits and pushes the generated data.

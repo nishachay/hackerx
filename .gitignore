@@ -9,3 +9,12 @@ __pycache__/
 /data/*.json
 /logs/
 !/data/threads.json
+
+# internal notes, design refs, borrowed skills (kept on disk only)
+.agents/
+skills-lock.json
+design/
+PROGRESS.md
+RUN.md
+AGENTS.md
+.pr-shots/

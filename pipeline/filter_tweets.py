@@ -1,7 +1,7 @@
 """Run the cached Amos evergreen and recommendation filters.
 
 v1 runs the full eligible set in single mode only. Phase 5's single-versus-batched
-comparison was skipped (see PROGRESS.md), so batching is deliberately absent: one
+comparison was skipped, so batching is deliberately absent: one
 Amos call per tweet for evergreen scoring and one per HN comment for stance.
 Every call is content-addressed and cached under ``data/cache/amos`` and the
 shared sliding-window limiter in ``amos.py`` caps the whole process at 60/min.
@@ -114,7 +114,7 @@ def valid_answer(answer: Any, answer_type: str) -> bool:
 
 
 class ProgressMeter:
-    """Prints a heartbeat every 25 completed calls so RUN.md logs stay readable."""
+    """Prints a heartbeat every 25 completed calls so pipeline logs stay readable."""
 
     def __init__(self, label: str, total: int, client: AmosClient) -> None:
         self.label = label
