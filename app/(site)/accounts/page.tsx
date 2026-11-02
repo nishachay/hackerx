@@ -5,7 +5,10 @@ import { Avatar } from "../../components/avatar";
 import { getSite } from "../../lib/site-data";
 import { fullNumber } from "../../lib/format";
 
-export const metadata = { title: "Accounts" };
+export const metadata = {
+  title: "Accounts",
+  description: "The authors whose ideas Hacker News readers keep recommending, ranked by recommendations.",
+};
 
 export default function AccountsPage() {
   const { accounts, meta } = getSite();

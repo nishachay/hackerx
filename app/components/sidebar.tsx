@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Compass, Rss, Search } from "lucide-react";
 import { getSite, initials } from "../lib/site-data";
+import { BrandMark } from "./brand-mark";
 import { formatDate, fullNumber, plural } from "../lib/format";
 
 export function Sidebar({ activeTopic }: { activeTopic?: string }) {
@@ -23,9 +24,7 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
 
       <section className="side-card side-intro">
         <div className="side-card-head">
-          <span className="mini-mark" aria-hidden="true">
-            H
-          </span>
+          <BrandMark size={24} className="mini-mark" />
           <h2>Ideas worth keeping</h2>
         </div>
         <p>HackerX collects posts that Hacker News readers recommend years after they were written. No feed, no outrage, just ideas that age well.</p>

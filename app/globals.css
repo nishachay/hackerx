@@ -73,7 +73,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 96px;
   -webkit-text-size-adjust: 100%;
 }
@@ -269,18 +268,11 @@ code {
 }
 
 .brand-mark {
-  display: grid;
-  place-items: center;
+  display: block;
+  flex: 0 0 auto;
   inline-size: 32px;
   block-size: 32px;
   border-radius: 9px;
-  background: var(--accent);
-  color: #0a0a0a;
-  font-weight: 800;
-  font-size: 1.125rem;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  text-box: trim-both cap alphabetic;
 }
 
 .brand-name {
@@ -1208,15 +1200,9 @@ code {
 }
 
 .mini-mark {
-  display: grid;
-  place-items: center;
   inline-size: 24px;
   block-size: 24px;
   border-radius: 6px;
-  background: var(--accent);
-  color: #0a0a0a;
-  font-size: 0.8125rem;
-  font-weight: 800;
 }
 
 .side-card .text-link {
@@ -2377,10 +2363,6 @@ code {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {
@@ -2472,5 +2454,120 @@ code {
 
   .year-row-year {
     font-size: 1.25rem;
+  }
+}
+
+/* ------------------------------- More sheet -------------------------------- */
+html.sheet-open {
+  overflow: hidden;
+}
+
+.more-sheet {
+  position: fixed;
+  inset-inline: 0;
+  inset-block: auto 0;
+  width: min(100%, 480px);
+  max-width: 480px;
+  max-height: min(86dvh, 640px);
+  margin: 0 auto;
+  padding: 0 0 max(12px, env(safe-area-inset-bottom));
+  border: 1px solid var(--border);
+  border-block-end: 0;
+  border-radius: 20px 20px 0 0;
+  background: var(--bg-elev);
+  color: var(--text);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.more-sheet[open] {
+  animation: sheet-in 180ms var(--ease);
+}
+
+.more-sheet::backdrop {
+  background: rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(3px);
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(16px);
+    opacity: 0.5;
+  }
+}
+
+.more-sheet-head {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 10px;
+  background: color-mix(in srgb, var(--bg-elev) 92%, transparent);
+  backdrop-filter: blur(12px);
+  border-block-end: 1px solid var(--border);
+}
+
+.more-sheet-head h2 {
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.more-sheet-list {
+  list-style: none;
+  padding: 6px 8px;
+}
+
+.sheet-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-block-size: 46px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.sheet-link svg {
+  flex: 0 0 auto;
+}
+
+.sheet-link.is-active {
+  background: var(--accent-soft);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.sheet-link.is-active svg {
+  color: var(--accent);
+}
+
+.more-sheet-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px 0;
+  border-block-start: 1px solid var(--border);
+}
+
+.more-sheet-foot .nav-link {
+  min-block-size: 46px;
+}
+
+@media (hover: hover) {
+  .sheet-link:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .more-sheet[open] {
+    animation: none;
   }
 }

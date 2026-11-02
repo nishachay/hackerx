@@ -2,7 +2,10 @@ import { PageHeader } from "../../components/page-header";
 import { SearchView } from "../../components/search-view";
 import { getCards } from "../../lib/site-data";
 
-export const metadata = { title: "Search" };
+export const metadata = {
+  title: "Search",
+  description: "Search HackerX by idea, author, topic or the words of the Hacker News comments.",
+};
 
 export default function SearchPage() {
   return (

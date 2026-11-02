@@ -4,7 +4,10 @@ import { PageHeader } from "../../components/page-header";
 import { getSite } from "../../lib/site-data";
 import { fullNumber } from "../../lib/format";
 
-export const metadata = { title: "How we pick" };
+export const metadata = {
+  title: "How we pick",
+  description: "The Hacker News signals, thresholds and ranking that decide which ideas HackerX publishes.",
+};
 
 export default function HowWePickPage() {
   const { meta } = getSite();

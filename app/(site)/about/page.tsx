@@ -4,7 +4,10 @@ import { PageHeader } from "../../components/page-header";
 import { getSite } from "../../lib/site-data";
 import { formatDate, fullNumber } from "../../lib/format";
 
-export const metadata = { title: "About" };
+export const metadata = {
+  title: "About",
+  description: "What HackerX is, where its data comes from, and what it deliberately leaves out.",
+};
 
 export default function AboutPage() {
   const { meta } = getSite();

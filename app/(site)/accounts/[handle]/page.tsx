@@ -12,7 +12,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params;
   const account = getAccount(handle);
-  return { title: account ? `${account.name} (@${account.handle})` : "Account" };
+  return {
+    title: account ? `${account.name} (@${account.handle})` : "Account",
+    description: account
+      ? `Ideas from ${account.name} that Hacker News readers recommend, with their original comments.`
+      : "An author in the HackerX archive.",
+  };
 }
 
 export default async function AccountPage({ params }: { params: Promise<{ handle: string }> }) {
