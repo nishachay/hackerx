@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Code2, Rss } from "lucide-react";
 import { PageHeader } from "../../components/page-header";
+import { EmbedSetting } from "../../components/embed-setting";
 import { getSite } from "../../lib/site-data";
 import { formatDate, fullNumber } from "../../lib/format";
 
@@ -42,6 +43,14 @@ export default function AboutPage() {
             The archive currently holds {fullNumber(meta.counts.published)} published ideas from {fullNumber(meta.counts.scored)} reviewed posts, spanning {fullNumber(meta.counts.accounts)} accounts and {fullNumber(meta.counts.years)} citation years.
             {meta.fixture ? " This build is showing the preview set while the live pipeline runs." : ` Last rebuilt ${formatDate(meta.generated_at)}.`}
           </p>
+        </section>
+
+        <section aria-labelledby="display-title">
+          <h2 id="display-title">How posts are shown</h2>
+          <p>
+            Posts render through X’s official embed, and only after you allow it. Your choice is saved in this browser and you can change it any time.
+          </p>
+          <EmbedSetting />
         </section>
 
         <section aria-labelledby="privacy-title">
