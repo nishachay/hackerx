@@ -14,6 +14,7 @@ import {
   MoreHorizontal,
   Rss,
   Search,
+  ShieldCheck,
   Sparkles,
   Users,
   X,
@@ -41,6 +42,7 @@ export const moreNav: NavItem[] = [
 export const aboutNav: NavItem[] = [
   { href: "/how-we-pick", label: "How we pick", icon: ListChecks },
   { href: "/about", label: "About", icon: Info },
+  { href: "/privacy", label: "Privacy", icon: ShieldCheck },
 ];
 
 export const allNav = [...primaryNav, ...moreNav, ...aboutNav];

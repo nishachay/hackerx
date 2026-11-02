@@ -73,6 +73,7 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
           <a href="/rss.xml">RSS · top 50</a>
           <Link href="/accounts">Accounts</Link>
           <Link href="/about">About the data</Link>
+          <Link href="/privacy">Privacy</Link>
         </div>
       </section>
 
@@ -80,7 +81,7 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
         <p>
           Built for reading. {plural(meta.counts.recommenders, "recommendation")} from {fullNumber(meta.counts.accounts)} accounts.
         </p>
-        <p>Independent project, not affiliated with Hacker News. Covers are linked to their original posts.</p>
+        <p>Independent project. Not affiliated with X Corp. or Hacker News. Posts are shown with X’s official embed or linked, never copied.</p>
       </footer>
     </aside>
   );
