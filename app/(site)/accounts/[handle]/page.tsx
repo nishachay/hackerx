@@ -4,6 +4,7 @@ import { Avatar } from "../../../components/avatar";
 import { TweetCard } from "../../../components/tweet-card";
 import { cardsByIds, getAccount, getSite } from "../../../lib/site-data";
 import { fullNumber } from "../../../lib/format";
+import { og } from "../../../lib/og";
 
 export function generateStaticParams() {
   return getSite().accounts.map((account) => ({ handle: account.handle }));
@@ -12,12 +13,11 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params;
   const account = getAccount(handle);
-  return {
-    title: account ? `@${account.handle}` : "Account",
-    description: account
-      ? `Posts by @${account.handle} that Hacker News readers recommend, shown with X's official embed and the original HN comments.`
-      : "An author in the HackerX archive.",
-  };
+  const title = account ? `@${account.handle}` : "Account";
+  const description = account
+    ? `Posts by @${account.handle} that Hacker News readers recommend, shown with X's official embed and the original HN comments.`
+    : "An author in the HackerX archive.";
+  return { title, description, ...og(title, description) };
 }
 
 export default async function AccountPage({ params }: { params: Promise<{ handle: string }> }) {

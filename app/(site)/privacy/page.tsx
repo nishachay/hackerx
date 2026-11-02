@@ -1,9 +1,11 @@
 import { PageHeader } from "../../components/page-header";
 import { EmbedSetting } from "../../components/embed-setting";
+import { og } from "../../lib/og";
 
 export const metadata = {
   title: "Privacy",
   description: "What HackerX stores in your browser, how X's embed works, and how to request a removal.",
+  ...og("Privacy", "What HackerX stores in your browser, how X's embed works, and how to request a removal."),
 };
 
 const REMOVAL_URL = "https://github.com/nishachay/hackerx/issues/new?template=removal.yml";

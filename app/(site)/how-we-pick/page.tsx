@@ -2,12 +2,24 @@ import Link from "next/link";
 import { ArrowUpRight, Rss } from "lucide-react";
 import { PageHeader } from "../../components/page-header";
 import { getSite } from "../../lib/site-data";
-import { fullNumber } from "../../lib/format";
+import { fullNumber, plural } from "../../lib/format";
+import config from "../../../config.json";
+import { og } from "../../lib/og";
 
 export const metadata = {
   title: "How we pick",
   description: "The Hacker News signals, thresholds and ranking that decide which ideas HackerX publishes.",
+  ...og("How we pick", "The Hacker News signals, thresholds and ranking that decide which ideas HackerX publishes."),
 };
+
+/**
+ * Every threshold on this page is read from the pipeline config at build
+ * time. Nothing here is hardcoded: change config.json and the page follows.
+ */
+const evergreenMinimum = Number(config.evergreen.minimum_average_probability);
+const evergreenPercent = `${Math.round(evergreenMinimum * 100)}%`;
+const distinctRecommenders = Number(config.recommendation.minimum_distinct_authors);
+const citingAuthors = Number(config.hn.minimum_distinct_citing_authors);
 
 export default function HowWePickPage() {
   const { meta } = getSite();
@@ -30,7 +42,10 @@ export default function HowWePickPage() {
               </span>
               <div>
                 <h3>Find the links</h3>
-                <p>We read public Hacker News stories and comments and keep links to individual public posts. A post needs at least three distinct HN authors citing it before it enters the pool.</p>
+                <p>
+                  We read public Hacker News stories and comments and keep links to individual public posts. A post needs at least{" "}
+                  {fullNumber(citingAuthors)} distinct HN {plural(citingAuthors, "author")} citing it before it enters the pool.
+                </p>
               </div>
             </li>
             <li>
@@ -48,7 +63,10 @@ export default function HowWePickPage() {
               </span>
               <div>
                 <h3>Ask what will last</h3>
-                <p>Three evergreen questions score each post from 0 to 1. Posts scoring below 60% average, or that are news, drama, promotion, launches or jokes, are left out.</p>
+                <p>
+                  Three evergreen questions score each post from 0 to 1. Posts scoring below {evergreenPercent} average, or that are news,
+                  drama, promotion, launches or jokes, are left out.
+                </p>
               </div>
             </li>
             <li>
@@ -57,7 +75,11 @@ export default function HowWePickPage() {
               </span>
               <div>
                 <h3>Count independent recommendations</h3>
-                <p>Every substantive HN comment on a surviving post is read for stance. Only posts recommended by at least two distinct commenters are published, and each comment is shown with its author.</p>
+                <p>
+                  Every substantive HN comment on a surviving post is read for stance. Only posts recommended by at least{" "}
+                  {fullNumber(distinctRecommenders)} distinct {plural(distinctRecommenders, "commenter")} are published, and each comment is
+                  shown with its author.
+                </p>
               </div>
             </li>
             <li>
@@ -77,17 +99,17 @@ export default function HowWePickPage() {
           <dl className="criteria-grid">
             <div>
               <dt>Evergreen score</dt>
-              <dd>60%</dd>
+              <dd>{evergreenPercent}</dd>
               <p>Average of three model questions about lasting value.</p>
             </div>
             <div>
               <dt>Distinct recommenders</dt>
-              <dd>2+</dd>
+              <dd>{distinctRecommenders}+</dd>
               <p>Different HN accounts whose comment recommends the post.</p>
             </div>
             <div>
               <dt>Citing authors</dt>
-              <dd>3+</dd>
+              <dd>{citingAuthors}+</dd>
               <p>Different HN accounts linking to the post, before scoring.</p>
             </div>
           </dl>

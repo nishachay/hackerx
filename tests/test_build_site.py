@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "pipeline"))
-from build_site import MAX_BYTES, SchemaError, build, build_card, validate_card  # noqa: E402
+from build_site import MAX_BYTES, SchemaError, build, build_card, is_thread_starter, validate_card  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,7 +46,7 @@ class BuildSiteTests(unittest.TestCase):
         validate_card(card)
         self.assertEqual(
             sorted(card.keys()),
-            ["author", "citing_users", "created_at", "id", "kind", "quotes", "rank_score", "recommenders", "topic", "url", "years"],
+            ["author", "citing_users", "created_at", "id", "kind", "quotes", "rank_score", "recommenders", "thread", "topic", "url", "years"],
         )
         self.assertEqual(sorted(card["author"].keys()), ["handle"])
         self.assertEqual(card["author"]["handle"], record["author"]["handle"])
@@ -76,6 +76,31 @@ class BuildSiteTests(unittest.TestCase):
         self.assertTrue(rss.startswith("<?xml"))
         self.assertLessEqual(rss.count("<item>"), 50)
         self.assertLess((out / "tweets.json").stat().st_size, MAX_BYTES)
+
+    def test_thread_detection_from_private_data(self):
+        record = scored_fixture()[0]
+        # Plain post: no thread.
+        self.assertFalse(is_thread_starter(record))
+        # Clearly numbered post.
+        numbered = {**record, "tweet": {**record["tweet"], "text": "1/ Some long thoughts on databases"}}
+        self.assertTrue(is_thread_starter(numbered))
+        # Thread emoji.
+        emoji = {**record, "tweet": {**record["tweet"], "text": "A few lessons \U0001f9f5"}}
+        self.assertTrue(is_thread_starter(emoji))
+        # Same-author reply chain in the raw record.
+        handle = record["tweet"]["user"]["screen_name"]
+        chained = {**record, "replies": [{"user": {"screen_name": handle}, "in_reply_to_status_id_str": record["id"]}]}
+        self.assertTrue(is_thread_starter(chained))
+        # A reply from someone else is not a self-thread.
+        other = {**record, "replies": [{"user": {"screen_name": "someoneelse"}, "in_reply_to_status_id_str": record["id"]}]}
+        self.assertFalse(is_thread_starter(other))
+
+    def test_thread_flag_is_a_boolean_in_public_card(self):
+        record = scored_fixture()[0]
+        card = build_card({**record, "tweet": {**record["tweet"], "text": "1/ numbered"}}, self.config)
+        self.assertIs(card["thread"], True)
+        self.assertNotIn("replies", card)
+        validate_card(card)
 
     def test_schema_rejects_invalid_card(self):
         record = scored_fixture()[0]

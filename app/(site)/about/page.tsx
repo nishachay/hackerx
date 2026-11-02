@@ -4,10 +4,12 @@ import { PageHeader } from "../../components/page-header";
 import { EmbedSetting } from "../../components/embed-setting";
 import { getSite } from "../../lib/site-data";
 import { formatDate, fullNumber } from "../../lib/format";
+import { og } from "../../lib/og";
 
 export const metadata = {
   title: "About",
   description: "What HackerX is, where its data comes from, and what it deliberately leaves out.",
+  ...og("About", "What HackerX is, where its data comes from, and what it deliberately leaves out."),
 };
 
 export default function AboutPage() {

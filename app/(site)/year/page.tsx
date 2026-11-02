@@ -2,11 +2,13 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { PageHeader } from "../../components/page-header";
 import { getSite } from "../../lib/site-data";
-import { fullNumber } from "../../lib/format";
+import { fullNumber, plural } from "../../lib/format";
+import { og } from "../../lib/og";
 
 export const metadata = {
   title: "By year",
   description: "Follow HackerX picks across the years and see which ideas kept their value.",
+  ...og("By year", "Follow HackerX picks across the years and see which ideas kept their value."),
 };
 
 export default function YearIndexPage() {
@@ -37,10 +39,10 @@ export default function YearIndexPage() {
                     <span style={{ inlineSize: `${Math.max(4, (group.tweet_count / max) * 100)}%` }} />
                   </span>
                   <span className="year-row-stat">
-                    <b>{fullNumber(group.tweet_count)}</b> {group.tweet_count === 1 ? "idea" : "ideas"}
+                    <b>{fullNumber(group.tweet_count)}</b> {plural(group.tweet_count, "post cited", "posts cited")}
                   </span>
                   <span className="year-row-stat year-row-stat-wide">
-                    <b>{fullNumber(group.recommenders)}</b> recommendations
+                    <b>{fullNumber(group.recommenders)}</b> {plural(group.recommenders, "citation")}
                   </span>
                   <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" className="year-row-chevron" />
                 </Link>
@@ -48,7 +50,7 @@ export default function YearIndexPage() {
             ))}
           </ul>
           <p className="feed-footnote">
-            A year counts every Hacker News comment that recommended an idea that year. Open a year to read the full set.
+            Counts show how many picks Hacker News readers cited in each year, not when the post was written. Open a year to read the full set.
           </p>
         </>
       )}

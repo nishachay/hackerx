@@ -2,7 +2,8 @@ import Link from "next/link";
 import { ArrowUpRight, Compass, Rss, Search } from "lucide-react";
 import { getSite } from "../lib/site-data";
 import { BrandMark } from "./brand-mark";
-import { formatDate, fullNumber, initials, plural } from "../lib/format";
+import { Credit } from "./credit";
+import { formatDate, fullNumber, initials, pluralize } from "../lib/format";
 
 export function Sidebar({ activeTopic }: { activeTopic?: string }) {
   const { meta, cards } = getSite();
@@ -28,7 +29,7 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
           <h2>Ideas worth keeping</h2>
         </div>
         <p>HackerX collects posts that Hacker News readers recommend years after they were written. No feed, no outrage, just ideas that age well.</p>
-        <Link className="text-link" href="/how-we-pick">
+        <Link prefetch={false} className="text-link" href="/how-we-pick">
           See how we pick
           <ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />
         </Link>
@@ -42,14 +43,14 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
         <ul className="topic-list">
           {topTopics.map(([topic, count]) => (
             <li key={topic}>
-              <Link href={`/explore?topic=${encodeURIComponent(topic)}`} className={activeTopic === topic ? "is-active" : undefined}>
+              <Link prefetch={false} href={`/explore?topic=${encodeURIComponent(topic)}`} className={activeTopic === topic ? "is-active" : undefined}>
                 <span>{topic || "Other"}</span>
                 <span className="topic-count">{fullNumber(count)}</span>
               </Link>
             </li>
           ))}
         </ul>
-        <Link className="text-link" href="/explore">
+        <Link prefetch={false} className="text-link" href="/explore">
           Browse every topic
           <ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />
         </Link>
@@ -66,22 +67,22 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
           </p>
         ) : (
           <p>
-            {fullNumber(meta.counts.published)} picks from {fullNumber(meta.counts.scored)} reviewed posts, updated {formatDate(meta.generated_at)}.
+            {pluralize(meta.counts.published, "pick")} from {pluralize(meta.counts.scored, "reviewed post")}, updated {formatDate(meta.generated_at)}.
           </p>
         )}
         <div className="side-links">
           <a href="/rss.xml">RSS · top 50</a>
-          <Link href="/accounts">Accounts</Link>
-          <Link href="/about">About the data</Link>
-          <Link href="/privacy">Privacy</Link>
+          <Link prefetch={false} href="/accounts">Accounts</Link>
+          <Link prefetch={false} href="/about">About the data</Link>
         </div>
       </section>
 
       <footer className="side-footer">
         <p>
-          Built for reading. {plural(meta.counts.recommenders, "recommendation")} from {fullNumber(meta.counts.accounts)} accounts.
+          Built for reading. {pluralize(meta.counts.recommenders, "recommendation")} from {pluralize(meta.counts.accounts, "account")}.
         </p>
-        <p>Independent project. Not affiliated with X Corp. or Hacker News. Posts are shown with X’s official embed or linked, never copied.</p>
+        <p>Posts are shown with X’s official embed or linked, never copied. X’s embed may set cookies.</p>
+        <Credit />
       </footer>
     </aside>
   );

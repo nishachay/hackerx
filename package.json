@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "audit": "node scripts/audit.mjs",
-    "test": "for t in tests/test_*.py; do python3 $t || exit 1; done && python3 tests/check_site.py && node tests/browser_test.mjs",
-    "test:browser": "node tests/browser_test.mjs"
+    "test": "for t in tests/test_*.py; do python3 $t || exit 1; done && node tests/format_test.mjs && python3 tests/check_site.py && node tests/browser_test.mjs",
+    "test:browser": "node tests/browser_test.mjs",
+    "threads": "python3 -u pipeline/detect_threads.py"
   },
   "dependencies": {
     "lucide-react": "1.66.0",

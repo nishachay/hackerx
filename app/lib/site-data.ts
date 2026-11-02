@@ -41,6 +41,7 @@ export type Card = {
   citing_users: number;
   rank_score: number;
   years: number[];
+  thread: boolean;
   quotes: Quote[];
 };
 
@@ -87,6 +88,7 @@ type RawRecord = {
   citing_users?: number;
   rank_score?: number;
   years?: number[];
+  thread?: boolean;
   quotes?: RawCitation[];
   tweet?: { created_at?: string; user?: { screen_name?: string } };
   citations?: RawCitation[];
@@ -144,6 +146,7 @@ function normaliseFixture(record: RawRecord): Card {
     citing_users: Number(record.citing_users ?? recommenders),
     rank_score: Number(record.rank_score ?? 0),
     years: [...new Set(quotes.map((quote) => quote.year).filter(Boolean))].sort(),
+    thread: record.thread === true,
     quotes,
   };
 }

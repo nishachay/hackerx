@@ -1,30 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Bookmark, Check, ExternalLink, MessageCircle, Quote as QuoteIcon, Share2 } from "lucide-react";
+import { Bookmark, Check, ChevronDown, ExternalLink, MessageCircle, Quote as QuoteIcon, Share2 } from "lucide-react";
 import type { Card } from "../lib/site-data";
 import { recommendationBadge, topQuote } from "../lib/quotes";
 import { compactNumber, formatDate } from "../lib/format";
+import { readSavedIds, toggleSaved } from "../lib/saved-list";
+import { QuoteText } from "../lib/quote-text";
 import { Avatar } from "./avatar";
 import { TweetEmbed } from "./tweet-embed";
-
-function readIds(key: string) {
-  try {
-    const value = JSON.parse(localStorage.getItem(key) || "[]");
-    return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeIds(key: string, ids: string[]) {
-  try {
-    localStorage.setItem(key, JSON.stringify(ids));
-  } catch {
-    /* private mode: the toggle still reflects this visit */
-  }
-}
 
 type Props = {
   card: Card;
@@ -34,16 +19,25 @@ type Props = {
 export function TweetCard({ card, eager = false }: Props) {
   const [saved, setSaved] = useState(false);
   const [shared, setShared] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [clamped, setClamped] = useState(false);
+  const quoteRef = useRef<HTMLQuoteElement>(null);
 
   useEffect(() => {
-    setSaved(readIds("hackerx-saved").includes(card.id));
+    setSaved(readSavedIds().includes(card.id));
   }, [card.id]);
 
+  useEffect(() => {
+    const node = quoteRef.current;
+    if (!node) return;
+    const check = () => setClamped(node.scrollHeight > node.clientHeight + 1);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   const toggleSave = () => {
-    const next = !saved;
-    const ids = readIds("hackerx-saved");
-    writeIds("hackerx-saved", next ? [...new Set([...ids, card.id])] : ids.filter((id) => id !== card.id));
-    setSaved(next);
+    setSaved(toggleSaved(card.id));
   };
 
   const share = async () => {
@@ -64,11 +58,10 @@ export function TweetCard({ card, eager = false }: Props) {
   };
 
   const quote = topQuote(card);
-  const quoteHref = quote?.story_url || `/tweet/${card.id}`;
   const topic = card.topic || "Ideas";
 
   return (
-    <article className="card tweet-card">
+    <article className="card tweet-card" data-card-id={card.id} data-card-url={card.url}>
       <div className="tweet-head">
         <span className="tweet-avatar-link">
           <Avatar name={card.author.handle} size={40} />
@@ -87,32 +80,56 @@ export function TweetCard({ card, eager = false }: Props) {
               {formatDate(card.created_at)}
             </time>
           </div>
-          <div className="tweet-submeta">
-            <span className="recommended-badge">
-              <QuoteIcon size={13} strokeWidth={2} aria-hidden="true" />
-              {recommendationBadge(card.recommenders)}
-            </span>
+          <div className="tweet-meta-tags">
             <span className="topic-chip">{topic}</span>
+            {card.thread ? (
+              <a className="thread-chip" href={card.url} target="_blank" rel="noreferrer">
+                Thread · Read the full thread on X
+                <ExternalLink size={12} strokeWidth={2} aria-hidden="true" />
+              </a>
+            ) : null}
           </div>
         </div>
       </div>
 
       <TweetEmbed id={card.id} url={card.url} handle={card.author.handle} createdAt={card.created_at} eager={eager} />
 
+      <div className="tweet-submeta">
+        <span className="recommended-badge">
+          <QuoteIcon size={13} strokeWidth={2} aria-hidden="true" />
+          {recommendationBadge(card.recommenders)}
+        </span>
+      </div>
+
       {quote ? (
-        <a className="hn-quote" href={quoteHref} target={quote.story_url ? "_blank" : undefined} rel={quote.story_url ? "noreferrer" : undefined}>
-          <span className="hn-quote-head">
-            <QuoteIcon size={13} strokeWidth={2} aria-hidden="true" />
-            <span>From the Hacker News thread</span>
-            {quote.story_url ? <ExternalLink size={12} strokeWidth={2} aria-hidden="true" /> : null}
-          </span>
-          <q>{quote.text}</q>
+        <div className={`hn-quote${expanded ? " is-expanded" : ""}`}>
+          {quote.story_url ? (
+            <a className="hn-quote-head" href={quote.story_url} target="_blank" rel="noreferrer">
+              <QuoteIcon size={13} strokeWidth={2} aria-hidden="true" />
+              <span>From the Hacker News thread</span>
+              <ExternalLink size={12} strokeWidth={2} aria-hidden="true" />
+            </a>
+          ) : (
+            <span className="hn-quote-head">
+              <QuoteIcon size={13} strokeWidth={2} aria-hidden="true" />
+              <span>From the Hacker News thread</span>
+            </span>
+          )}
+          <q className="hn-quote-text" ref={quoteRef}>
+            <QuoteText text={quote.text} />
+          </q>
+          {clamped || expanded ? (
+            <button type="button" className="hn-quote-toggle" aria-expanded={expanded} onClick={() => setExpanded((value) => !value)}>
+              <ChevronDown size={14} strokeWidth={2} aria-hidden="true" />
+              {expanded ? "Show less" : "Show more"}
+            </button>
+          ) : null}
           <span className="hn-quote-meta">
             <span>@{quote.author}</span>
             {quote.story_title ? <span className="hn-quote-story">{quote.story_title}</span> : null}
             {quote.year ? <span className="meta-mono">{quote.year}</span> : null}
           </span>
-        </a>
+        </div>
       ) : null}
 
       <div className="tweet-actions">

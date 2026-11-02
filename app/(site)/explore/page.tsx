@@ -1,10 +1,12 @@
 import { PageHeader } from "../../components/page-header";
 import { ExploreGrid } from "../../components/explore-grid";
 import { getCards, getSite } from "../../lib/site-data";
+import { og } from "../../lib/og";
 
 export const metadata = {
   title: "Explore",
   description: "Browse HackerX picks by topic, from programming and AI to design, security and careers.",
+  ...og("Explore", "Browse HackerX picks by topic, from programming and AI to design, security and careers."),
 };
 
 export default function ExplorePage() {
