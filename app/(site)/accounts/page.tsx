@@ -32,10 +32,9 @@ export default function AccountsPage() {
             <li key={account.handle}>
               <Link className="account-row" href={`/accounts/${account.handle}`}>
                 <span className="account-rank meta-mono">{String(index + 1).padStart(2, "0")}</span>
-                <Avatar name={account.name} src={account.avatar} size={40} />
+                <Avatar name={account.handle} size={40} />
                 <span className="account-copy">
-                  <span className="account-name">{account.name}</span>
-                  <span className="account-handle meta-mono">@{account.handle}</span>
+                  <span className="account-name">@{account.handle}</span>
                 </span>
                 <span className="account-stat">
                   <span className="account-stat-value">{fullNumber(account.tweet_count)}</span>

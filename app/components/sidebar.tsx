@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ArrowUpRight, Compass, Rss, Search } from "lucide-react";
-import { getSite, initials } from "../lib/site-data";
+import { getSite } from "../lib/site-data";
 import { BrandMark } from "./brand-mark";
-import { formatDate, fullNumber, plural } from "../lib/format";
+import { formatDate, fullNumber, initials, plural } from "../lib/format";
 
 export function Sidebar({ activeTopic }: { activeTopic?: string }) {
   const { meta, cards } = getSite();
@@ -86,10 +86,7 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
   );
 }
 
-export function AccountMark({ name, avatar, size = 34 }: { name: string; avatar?: string; size?: number }) {
-  if (avatar) {
-    return <img className="account-avatar" src={avatar} alt="" width={size} height={size} loading="lazy" referrerPolicy="no-referrer" />;
-  }
+export function AccountMark({ name, size = 34 }: { name: string; size?: number }) {
   return (
     <span className="account-avatar account-avatar-fallback" style={{ width: size, height: size }} aria-hidden="true">
       {initials(name)}

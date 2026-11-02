@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import { getCard, getCards } from "../../../lib/site-data";
+import { recommendationBadge, topQuote } from "../../../lib/quotes";
 
 export const dynamic = "force-static";
 
@@ -21,7 +22,8 @@ function markDataUri() {
 export default async function TweetImage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const card = getCard(id);
-  const text = card?.text ?? "An idea worth keeping.";
+  const quote = card ? topQuote(card) : null;
+  const text = quote ? `“${quote.text}” — HN reader @${quote.author}` : "An idea worth keeping.";
   const short = text.length > 190 ? `${text.slice(0, 187).trimEnd()}…` : text;
   const recommenders = card?.recommenders ?? 0;
 
@@ -58,15 +60,15 @@ export default async function TweetImage({ params }: { params: Promise<{ id: str
               fontWeight: 600,
             }}
           >
-            Recommended by {recommenders} HN {recommenders === 1 ? "user" : "users"}
+            {recommendationBadge(recommenders)}
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ display: "flex", fontSize: 50, lineHeight: 1.18, letterSpacing: "-0.025em", maxWidth: 1020 }}>{short}</div>
           <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 27, color: "#a7adb4" }}>
-            <div style={{ display: "flex", color: "#f2f3f4", fontWeight: 600 }}>{card?.author.name ?? "Hacker News"}</div>
-            {card?.author.handle ? <div style={{ display: "flex" }}>@{card.author.handle}</div> : null}
+            <div style={{ display: "flex", color: "#f2f3f4", fontWeight: 600 }}>{card ? `@${card.author.handle}` : "Hacker News"}</div>
+            {card?.topic ? <div style={{ display: "flex" }}>{card.topic}</div> : null}
           </div>
         </div>
 

@@ -13,9 +13,9 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
   const { handle } = await params;
   const account = getAccount(handle);
   return {
-    title: account ? `${account.name} (@${account.handle})` : "Account",
+    title: account ? `@${account.handle}` : "Account",
     description: account
-      ? `Ideas from ${account.name} that Hacker News readers recommend, with their original comments.`
+      ? `Posts by @${account.handle} that Hacker News readers recommend, shown with X's official embed and the original HN comments.`
       : "An author in the HackerX archive.",
   };
 }
@@ -31,11 +31,10 @@ export default async function AccountPage({ params }: { params: Promise<{ handle
     <>
       <header className="profile-head">
         <div className="profile-identity">
-          <Avatar name={account.name} src={account.avatar} size={72} />
+          <Avatar name={account.handle} size={72} />
           <div>
             <p className="eyebrow">Account</p>
-            <h1>{account.name}</h1>
-            <p className="profile-handle meta-mono">@{account.handle}</p>
+            <h1>@{account.handle}</h1>
           </div>
         </div>
         <dl className="profile-stats">
@@ -64,7 +63,7 @@ export default async function AccountPage({ params }: { params: Promise<{ handle
         ) : null}
         {account.url ? (
           <a className="text-link" href={account.url} target="_blank" rel="noreferrer">
-            Open @{account.handle}'s profile
+            View @{account.handle} on X
             <ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />
           </a>
         ) : null}

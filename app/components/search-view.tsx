@@ -9,12 +9,11 @@ import { TweetCard } from "./tweet-card";
 
 function matches(card: Card, query: string) {
   const haystack = [
-    card.text,
-    card.author.name,
     card.author.handle,
     card.topic,
     card.kind,
-    ...card.quotes.map((quote) => `${quote.text} ${quote.author}`),
+    ...card.years.map(String),
+    ...card.quotes.map((quote) => `${quote.text} ${quote.author} ${quote.story_title}`),
   ]
     .join(" ")
     .toLowerCase();
@@ -59,7 +58,7 @@ export function SearchView({ cards }: { cards: Card[] }) {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Try “databases”, “career”, or a name"
+            placeholder="Try “databases”, “career”, or a handle"
             autoComplete="off"
             autoFocus
           />
@@ -74,7 +73,7 @@ export function SearchView({ cards }: { cards: Card[] }) {
       <p className="result-count search-count" role="status">
         {query.trim()
           ? `${fullNumber(results.length)} ${results.length === 1 ? "match" : "matches"} for “${query.trim()}”`
-          : "Search titles, authors, topics and the Hacker News quotes."}
+          : "Search handles, topics, years and the Hacker News quotes."}
       </p>
 
       {query.trim() && results.length === 0 ? (
