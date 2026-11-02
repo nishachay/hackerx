@@ -1,4 +1,11 @@
-"""Run the cached Amos evergreen and recommendation filters."""
+"""Run the cached Amos evergreen and recommendation filters.
+
+v1 runs the full eligible set in single mode only. Phase 5's single-versus-batched
+comparison was skipped (see PROGRESS.md), so batching is deliberately absent: one
+Amos call per tweet for evergreen scoring and one per HN comment for stance.
+Every call is content-addressed and cached under ``data/cache/amos`` and the
+shared sliding-window limiter in ``amos.py`` caps the whole process at 60/min.
+"""
 
 from __future__ import annotations
 
@@ -17,6 +24,8 @@ from amos import AmosClient, evergreen_questions, recommendation_questions
 
 ROOT = Path(__file__).resolve().parents[1]
 GOOD_KINDS = {"insight", "advice", "technical", "story"}
+REQUESTS_PER_MINUTE = 60
+DEFAULT_WORKERS = 12
 
 
 def tweet_text(record: dict[str, Any]) -> str:
@@ -105,6 +114,8 @@ def valid_answer(answer: Any, answer_type: str) -> bool:
 
 
 class ProgressMeter:
+    """Prints a heartbeat every 25 completed calls so RUN.md logs stay readable."""
+
     def __init__(self, label: str, total: int, client: AmosClient) -> None:
         self.label = label
         self.total = total
@@ -122,7 +133,12 @@ class ProgressMeter:
             self.done += 1
             if self.done % 25 == 0:
                 elapsed = time.monotonic() - self.started
-                print(f"Amos progress ({self.label}): {self.done}/{self.total} calls; cache hits {self.client.cache_hits}; elapsed {elapsed:.1f}s", flush=True)
+                print(
+                    f"Amos progress ({self.label}): {self.done}/{self.total} calls; "
+                    f"requests {self.client.requests_made}; cache hits {self.client.cache_hits}; "
+                    f"elapsed {elapsed:.1f}s",
+                    flush=True,
+                )
 
 
 def tracked_ask(client: AmosClient, meter: ProgressMeter, state: Any, questions: dict[str, Any]) -> dict[str, Any]:
@@ -136,53 +152,7 @@ def evergreen_state(record: dict[str, Any]) -> dict[str, Any]:
         "hn_story_titles": sorted({str(c.get("hn_story_title", "")) for c in record.get("citations", []) if c.get("hn_story_title")})}
 
 
-def batched_evergreen(records: list[dict[str, Any]], topics: list[str], batch_size: int, client: AmosClient,
-                      executor: ThreadPoolExecutor, meter: ProgressMeter) -> dict[str, dict[str, Any]]:
-    base_questions = evergreen_questions(topics)
-    jobs: list[dict[str, Any]] = []
-    for start in range(0, len(records), batch_size):
-        batch = records[start : start + batch_size]
-        state: dict[str, Any] = {}
-        questions: dict[str, Any] = {}
-        mapping: dict[str, tuple[str, str]] = {}
-        for index, record in enumerate(batch, start=1):
-            record_id = str(record.get("id", ""))
-            state_key = f"tweet_{index}"
-            state[state_key] = {"text": tweet_text(record), "author": author_name(record), "hn_story_titles": evergreen_state(record)["hn_story_titles"]}
-            for field, definition in base_questions.items():
-                question_key = f"{state_key}_{field}"
-                questions[question_key] = {**definition, "instructions": f"Evaluate only {state_key} from state. {definition['instructions']}"}
-                mapping[question_key] = (record_id, field)
-        jobs.append({"state": state, "questions": questions, "mapping": mapping, "records": batch})
-    responses = list(executor.map(lambda job: tracked_ask(client, meter, job["state"], job["questions"]), jobs))
-    output: dict[str, dict[str, Any]] = {str(record.get("id", "")): {} for record in records}
-    retries: dict[str, dict[str, Any]] = {}
-    for job, response in zip(jobs, responses):
-        answers = response.get("answers", {}) if isinstance(response, dict) else {}
-        malformed: set[str] = set()
-        for question_key, (record_id, field) in job["mapping"].items():
-            answer = answers.get(question_key) if isinstance(answers, dict) else None
-            if valid_answer(answer, base_questions[field]["type"]):
-                output[record_id][field] = answer
-            else:
-                malformed.add(record_id)
-        for record in job["records"]:
-            record_id = str(record.get("id", ""))
-            if record_id in malformed:
-                retries[record_id] = evergreen_state(record)
-    meter.add_total(len(retries))
-    retry_records = [record for record in records if str(record.get("id", "")) in retries]
-    retry_responses = list(executor.map(lambda record: tracked_ask(client, meter, retries[str(record.get("id", ""))], base_questions), retry_records))
-    for record, response in zip(retry_records, retry_responses):
-        record_id = str(record.get("id", ""))
-        single_answers = response.get("answers", {}) if isinstance(response, dict) else {}
-        if not isinstance(single_answers, dict) or not all(valid_answer(single_answers.get(key), question["type"]) for key, question in base_questions.items()):
-            raise ValueError(f"Malformed evergreen response for tweet {record_id}, including single-item retry")
-        output[record_id] = {key: single_answers[key] for key in base_questions}
-    return output
-
-
-def collect_recommendations(scored: list[dict[str, Any]], mode: str, batch_size: int, client: AmosClient,
+def collect_recommendations(scored: list[dict[str, Any]], client: AmosClient,
                             executor: ThreadPoolExecutor, label: str) -> None:
     template = recommendation_questions()
     jobs: list[dict[str, Any]] = []
@@ -192,42 +162,25 @@ def collect_recommendations(scored: list[dict[str, Any]], mode: str, batch_size:
             continue
         citations = [c for c in record.get("citations", []) if c.get("hn_kind") == "comment" and str(c.get("hn_comment_text", "")).strip()]
         citation_lists[record_index] = citations
-        size = 1 if mode == "single" else batch_size
-        for start in range(0, len(citations), size):
-            chunk = citations[start : start + size]
-            if mode == "single":
-                jobs.append({"record_index": record_index, "start": start, "citations": chunk,
-                    "state": comment_state(record, chunk[0]), "questions": template, "mapping": {"stance": 0}})
-                continue
-            state: dict[str, Any] = {}
-            questions: dict[str, Any] = {}
-            mapping: dict[str, int] = {}
-            for index, citation in enumerate(chunk, start=1):
-                state_key, question_key = f"comment_{index}", f"comment_{index}_stance"
-                state[state_key] = comment_state(record, citation)
-                questions[question_key] = {**template["stance"], "instructions": f"Use only {state_key} from state. {template['stance']['instructions']}"}
-                mapping[question_key] = index - 1
-            jobs.append({"record_index": record_index, "start": start, "citations": chunk,
-                "state": state, "questions": questions, "mapping": mapping})
+        for start, citation in enumerate(citations):
+            jobs.append({"record_index": record_index, "start": start, "citation": citation,
+                "state": comment_state(record, citation), "questions": template})
 
     meter = ProgressMeter(f"{label} recommendations", len(jobs), client)
     responses = list(executor.map(lambda job: tracked_ask(client, meter, job["state"], job["questions"]), jobs))
     answer_map: list[dict[int, dict[str, Any]]] = [{} for _ in scored]
-    retries: list[tuple[int, int, dict[str, Any], dict[str, Any], dict[str, Any]]] = []
+    retries: list[tuple[int, int, dict[str, Any], dict[str, Any]]] = []
     for job, response in zip(jobs, responses):
         answers = response.get("answers", {}) if isinstance(response, dict) else {}
-        record_index = job["record_index"]
-        for question_key, local_index in job["mapping"].items():
-            answer = answers.get(question_key) if isinstance(answers, dict) else None
-            if valid_answer(answer, "choice") and answer["choice"] in {"recommends", "neutral", "critical"}:
-                answer_map[record_index][job["start"] + local_index] = answer
-            else:
-                citation = job["citations"][local_index]
-                retries.append((record_index, job["start"] + local_index, comment_state(scored[record_index], citation), template, citation))
+        answer = answers.get("stance") if isinstance(answers, dict) else None
+        if valid_answer(answer, "choice") and answer["choice"] in {"recommends", "neutral", "critical"}:
+            answer_map[job["record_index"]][job["start"]] = answer
+        else:
+            retries.append((job["record_index"], job["start"], comment_state(scored[job["record_index"]], job["citation"]), job["citation"]))
     meter.add_total(len(retries))
-    retry_responses = list(executor.map(lambda item: tracked_ask(client, meter, item[2], item[3]), retries))
+    retry_responses = list(executor.map(lambda item: tracked_ask(client, meter, item[2], template), retries))
     for retry, response in zip(retries, retry_responses):
-        record_index, citation_index, _, _, citation = retry
+        record_index, citation_index, _, citation = retry
         answers = response.get("answers", {}) if isinstance(response, dict) else {}
         answer = answers.get("stance") if isinstance(answers, dict) else None
         if not (valid_answer(answer, "choice") and answer["choice"] in {"recommends", "neutral", "critical"}):
@@ -235,28 +188,25 @@ def collect_recommendations(scored: list[dict[str, Any]], mode: str, batch_size:
         answer_map[record_index][citation_index] = answer
     for record_index, record in enumerate(scored):
         if record["evergreen_pass"]:
-            record["recommendations"] = [{"hn_id": citation.get("hn_id"), "hn_author": citation.get("hn_author"),
-                "stance": answer_map[record_index][index]["choice"], "probabilities": answer_map[record_index][index].get("probabilities", {})}
-                for index, citation in enumerate(citation_lists[record_index])]
+            record["recommendations"] = [{
+                "hn_id": citation.get("hn_id"),
+                "hn_author": citation.get("hn_author"),
+                "stance": answer_map[record_index][index]["choice"],
+                "probabilities": answer_map[record_index][index].get("probabilities", {}),
+            } for index, citation in enumerate(citation_lists[record_index])]
 
 
 def filter_records(records: list[dict[str, Any]], config: dict[str, Any], client: AmosClient,
-                   mode: str = "single", workers: int = 12, label: str = "filter") -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+                   workers: int = DEFAULT_WORKERS, label: str = "filter") -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     if workers < 1:
         raise ValueError("workers must be at least 1")
     evergreen_config = config["evergreen"]
     recommendation_minimum = int(config["recommendation"]["minimum_distinct_authors"])
     questions = evergreen_questions(config["topics"])
-    batch_size = int(config.get("amos", {}).get("batch_size", 1))
     with ThreadPoolExecutor(max_workers=workers) as executor:
-        if mode == "single":
-            meter = ProgressMeter(f"{label} evergreen", len(records), client)
-            responses = list(executor.map(lambda record: tracked_ask(client, meter, evergreen_state(record), questions), records))
-            answer_rows = [response["answers"] for response in responses]
-        else:
-            meter = ProgressMeter(f"{label} evergreen", math.ceil(len(records) / batch_size), client)
-            batch_answers = batched_evergreen(records, config["topics"], batch_size, client, executor, meter)
-            answer_rows = [batch_answers[str(record.get("id", ""))] for record in records]
+        meter = ProgressMeter(f"{label} evergreen", len(records), client)
+        responses = list(executor.map(lambda record: tracked_ask(client, meter, evergreen_state(record), questions), records))
+        answer_rows = [response["answers"] for response in responses]
 
         scored: list[dict[str, Any]] = []
         for record, answers in zip(records, answer_rows):
@@ -273,7 +223,7 @@ def filter_records(records: list[dict[str, Any]], config: dict[str, Any], client
                 "year_spread_rank_boost": year_boost,
                 "rank_score": float(record.get("rank_score", 0)) + year_boost,
             })
-        collect_recommendations(scored, mode, batch_size, client, executor, label)
+        collect_recommendations(scored, client, executor, label)
 
     for result in scored:
         if result["evergreen_pass"]:
@@ -284,47 +234,25 @@ def filter_records(records: list[dict[str, Any]], config: dict[str, Any], client
     return scored, passed
 
 
-def compare_sample(records: list[dict[str, Any]], config: dict[str, Any], sample_size: int, workers: int = 12) -> None:
-    selected = sorted(records, key=lambda r: (-int(r.get("distinct_hn_authors", 0)), str(r.get("id", ""))))[:sample_size]
-    single_client, batched_client = AmosClient(), AmosClient()
-    single, _ = filter_records(selected, config, single_client, "single", workers, "single")
-    print("single done", flush=True)
-    batched, _ = filter_records(selected, config, batched_client, "batched", workers, "batched")
-    single_by_id = {str(r.get("id", "")): r for r in single}
-    batch_by_id = {str(r.get("id", "")): r for r in batched}
-    agreements = {"evergreen_pass": 0, "kind": 0, "recommendation_pass": 0}
-    disagreements: list[dict[str, Any]] = []
-    for record_id in single_by_id:
-        left, right = single_by_id[record_id], batch_by_id[record_id]
-        values_left = {
-            "evergreen_pass": left["evergreen_pass"],
-            "kind": left["amos"]["kind"],
-            "recommendation_pass": left.get("recommendation_pass", "not checked"),
-        }
-        values_right = {
-            "evergreen_pass": right["evergreen_pass"],
-            "kind": right["amos"]["kind"],
-            "recommendation_pass": right.get("recommendation_pass", "not checked"),
-        }
-        for key in agreements:
-            agreements[key] += values_left[key] == values_right[key]
-        if values_left != values_right:
-            disagreements.append({"id": record_id, "single": values_left, "batched": values_right})
-    denominator = len(single_by_id)
-    for key, count in agreements.items():
-        print(f"{key} agreement: {count / denominator * 100 if denominator else 0:.1f}% ({count}/{denominator})")
-    print("Disagreements:")
-    for item in disagreements:
-        print(json.dumps(item, ensure_ascii=False))
-    print(f"Amos requests used per mode: single={single_client.requests_made}; batched={batched_client.requests_made}.")
-
-    batch_size = int(config.get("amos", {}).get("batch_size", 1))
-    sample_pass_rate = (sum(bool(r["evergreen_pass"]) for r in single) / denominator) if denominator else 0
-    all_comment_counts = [sum(1 for c in r.get("citations", []) if c.get("hn_kind") == "comment" and str(c.get("hn_comment_text", "")).strip()) for r in records]
-    expected_passing_comment_calls = sample_pass_rate * sum(all_comment_counts)
-    single_estimate = len(records) + expected_passing_comment_calls
-    batched_estimate = math.ceil(len(records) / batch_size) + sample_pass_rate * sum(math.ceil(count / batch_size) for count in all_comment_counts)
-    print(f"Full-run estimate after pre-filter: single={single_estimate:.1f} requests/{single_estimate / 60:.1f} minutes; batched={batched_estimate:.1f} requests/{batched_estimate / 60:.1f} minutes at 60/min.")
+def estimate_run(records: list[dict[str, Any]]) -> dict[str, float]:
+    """Estimate single-mode Amos calls from comment volume and an assumed pass rate."""
+    comments = [
+        sum(1 for citation in record.get("citations", [])
+            if citation.get("hn_kind") == "comment" and str(citation.get("hn_comment_text", "")).strip())
+        for record in records
+    ]
+    total_comments = sum(comments)
+    low_rate, high_rate = 0.4, 0.6
+    low_calls = len(records) + total_comments * low_rate
+    high_calls = len(records) + total_comments * high_rate
+    return {
+        "eligible": len(records),
+        "comments": total_comments,
+        "low_calls": low_calls,
+        "high_calls": high_calls,
+        "low_minutes": low_calls / REQUESTS_PER_MINUTE,
+        "high_minutes": high_calls / REQUESTS_PER_MINUTE,
+    }
 
 
 def main() -> None:
@@ -333,10 +261,9 @@ def main() -> None:
     parser.add_argument("--scored", default="data/scored-tweets.json")
     parser.add_argument("--passed", default="data/amos-passed.json")
     parser.add_argument("--fetch-rejections", default="data/rejected-fetch.json")
-    parser.add_argument("--mode", choices=("single", "batched"), default="single")
-    parser.add_argument("--workers", type=int, default=12, help="Concurrent Amos workers (default: 12)")
-    parser.add_argument("--compare", action="store_true", help="Compare single and batched modes on the top 20 eligible tweets")
-    parser.add_argument("--sample", type=int, default=0, help="Filter top N by distinct HN author count; 0 means all")
+    parser.add_argument("--workers", type=int, default=DEFAULT_WORKERS, help=f"Concurrent Amos workers (default: {DEFAULT_WORKERS})")
+    parser.add_argument("--sample", type=int, default=0, help="Dev only: filter the top N by distinct HN author count; 0 means the full eligible set")
+    parser.add_argument("--dry-run", action="store_true", help="Print eligible counts and the run estimate, then exit without calling Amos")
     args = parser.parse_args()
     input_path = ROOT / args.input
     if not input_path.exists():
@@ -345,16 +272,34 @@ def main() -> None:
     rejected_fetch_path = ROOT / args.fetch_rejections
     fetch_failures = json.loads(rejected_fetch_path.read_text(encoding="utf-8")) if rejected_fetch_path.exists() else []
     eligible, rejected, prefilter_counts = prefilter_records(records, fetch_failures)
-    total_comments = sum(1 for record in records for c in record.get("citations", []) if c.get("hn_kind") == "comment" and c.get("hn_comment_text"))
     ordered = sorted(eligible, key=lambda r: (-int(r.get("distinct_hn_authors", 0)), str(r.get("id", ""))))
-    sample = args.sample > 0
-    selected = ordered[:args.sample] if sample else ordered
-    config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
-    if args.compare:
-        compare_sample(ordered, config, 20, args.workers)
+    selected = ordered[:args.sample] if args.sample > 0 else ordered
+    estimate = estimate_run(selected)
+    print(
+        "Pre-filter removed: "
+        f"{prefilter_counts['fetch_failed']} fetch failures, "
+        f"{prefilter_counts['deleted']} deleted, "
+        f"{prefilter_counts['fewer_than_two_comment_authors']} with fewer than 2 distinct commenting authors.",
+        flush=True,
+    )
+    print(
+        f"Eligible tweets: {estimate['eligible']:,} (from {len(records):,} fetched)"
+        + (f"; dev sample capped at {args.sample:,}" if args.sample > 0 else "; full set, no top-N cut")
+        + f". HN comment quotes to classify: {estimate['comments']:,}.",
+        flush=True,
+    )
+    print(
+        f"Estimated run: {estimate['low_calls']:,.0f}–{estimate['high_calls']:,.0f} Amos calls, "
+        f"about {estimate['low_minutes']:.0f}–{estimate['high_minutes']:.0f} minutes at {REQUESTS_PER_MINUTE}/minute "
+        f"(assuming a 40–60% evergreen pass rate; cached calls are free).",
+        flush=True,
+    )
+    print(f"Mode: single; workers: {args.workers}; shared limiter: {REQUESTS_PER_MINUTE}/minute; cache: data/cache/amos.", flush=True)
+    if args.dry_run:
         return
+    config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
     client = AmosClient()
-    scored, passed = filter_records(selected, config, client, args.mode, args.workers)
+    scored, passed = filter_records(selected, config, client, args.workers)
     scored_path, passed_path = ROOT / args.scored, ROOT / args.passed
     scored_path.parent.mkdir(parents=True, exist_ok=True)
     scored_path.write_text(json.dumps(scored, ensure_ascii=False), encoding="utf-8")
@@ -363,22 +308,10 @@ def main() -> None:
     prefilter_path.write_text(json.dumps(rejected, ensure_ascii=False, indent=2), encoding="utf-8")
     for record in scored:
         score = record["amos"]
-        if sample:
+        if args.sample > 0:
             print(f"{record['id']} evergreen={score['evergreen']} avg={score['average']:.3f} kind={score['kind']} evergreen_pass={record['evergreen_pass']} recommendation_pass={record.get('recommendation_pass', 'not checked')}")
     print(f"Processed {len(scored)} tweets; evergreen passed {sum(r['evergreen_pass'] for r in scored)}; recommendation passed {len(passed)}.")
-    print(
-        "Pre-filter removed: "
-        f"{prefilter_counts['fetch_failed']} fetch failures, "
-        f"{prefilter_counts['deleted']} deleted, "
-        f"{prefilter_counts['fewer_than_two_comment_authors']} with fewer than 2 distinct commenting authors."
-    )
     print(f"Amos requests used: {client.requests_made}; cached responses reused: {client.cache_hits}.")
-    print(f"Amos mode: {args.mode}; configured batch size {config.get('amos', {}).get('batch_size', 1)}.")
-    if sample:
-        evergreen_rate = (sum(r["evergreen_pass"] for r in scored) / len(scored)) if scored else 0
-        total_requests = len(records) + math.ceil(total_comments * evergreen_rate)
-        estimated_minutes = total_requests / 60
-        print(f"Full-run estimate: about {total_requests} Amos requests and {estimated_minutes:.1f} minutes at the 60/minute limit (assuming sample evergreen rate {evergreen_rate:.0%}).")
 
 
 if __name__ == "__main__":

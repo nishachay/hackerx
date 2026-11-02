@@ -1,4 +1,5 @@
 {
+  "site_url": "https://hackerx.nishachay.tech",
   "topics": [
     "Programming", "AI", "Startups", "Design", "Security", "Open Source",
     "Databases", "Web Development", "Distributed Systems", "Learning",
@@ -10,8 +11,7 @@
     "passing_kinds": ["insight", "advice", "technical", "story"]
   },
   "recommendation": { "minimum_distinct_authors": 2 },
-  "amos": { "batch_size": 6 },
-  "amos": { "batch_size": 6 },
+  "amos": { "batch_size": 6, "workers": 12, "requests_per_minute": 60 },
   "hn": {
     "minimum_distinct_citing_authors": 3,
     "slice_days": 14,

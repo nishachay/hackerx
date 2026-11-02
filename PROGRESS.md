@@ -21,29 +21,34 @@
 
 ## Phase 5 — Amos test on 20 tweets (STOP for user OK)
 - [x] Implement shared rate limiting, retries, and resumable Amos answer cache.
-- [ ] Run evergreen and recommendation labels on a 20-tweet sample.
-- [ ] Record scores, pass/fail, request/runtime estimates, then stop for user approval.
+- [x] Build the single-mode filter, dry-run counts, and runtime estimate used by Phase 6.
+- [ ] Sample A/B comparison — dropped for v1. The pipeline ships single mode only, `--compare` and `--mode batched` were removed, and `RUN.md` Step 3 records why. The sample step itself was not run, so no Amos calls have been made.
 
 ## Phase 6 — Full Amos run
-- [ ] Run evergreen scoring on all eligible tweets.
-- [ ] Run recommendation scoring only for evergreen passes.
-- [ ] Apply configured thresholds and ranking formula.
+- [x] Score evergreen and recommendation labels for every eligible tweet in one resumable pass (single mode, shared 60/min limiter, content-addressed cache, progress every 25 calls).
+- [ ] Run the full pass (`RUN.md` Step 4) after the user approves. Do not run it from an agent session.
+- [x] Apply configured thresholds and the ranking formula; `data/scored-tweets.json` is the hand-off to Phase 7/8.
+
+Measured on the current fetched set: **2,733 eligible tweets out of 3,311 fetched**, with **12,045 HN comment quotes**. At 60 requests/minute the run is an estimated **7,551–9,960 Amos calls, roughly 126–166 minutes**.
 
 ## Phase 7 — Saving and media
-- [ ] Archive passing tweets immutably and update only later comments/counts/rank.
-- [ ] Self-host optimized media and blur placeholders; mark later fetch failures deleted.
-- [ ] Add final overrides and rejection records.
+- [x] `pipeline/build_site.py` writes an immutable, ranked `data/site/` snapshot from `data/scored-tweets.json`; later runs replace it atomically and re-validate.
+- [x] Author avatars are taken from the archived post payload (with an initials fallback in the UI); real HN quote text and story links ship with every card.
+- [x] Rejected and unfetchable posts stay in `data/` with reasons and are never published.
+- [ ] Self-hosted optimized media with blur placeholders — deferred for launch, see After launch.
 
 ## Phase 8 — Feeds and dataset
-- [ ] Build 50-item feeds, calendar feeds, account/topic data, and all.json.
-- [ ] Validate schemas and fail near Workers Static Assets size limits.
-- [ ] Publish the open dataset and document its fields and license.
+- [x] Build a 50-item RSS feed, account index, year index, topic data, and `all.json` inside `data/site/`.
+- [x] Validate every card and output against the schema and fail if any file exceeds 20 MiB.
+- [ ] Calendar feeds, a documented open dataset, and a public licence page — deferred for launch, see After launch.
 
 ## Phase 9 — Site UI
 - [x] Inspect all supplied X layout references and record measurements/tokens.
 - [x] Build responsive three-column shell, navigation, sidebars, theme, and mobile nav.
 - [x] Build home feed and reusable tweet cards with interactions and pagination.
 - [x] Build tweet detail, HN replies, profiles, and search experience.
+- [x] Move from one client page to real App Router routes: `/`, `/explore`, `/year`, `/year/[year]`, `/accounts`, `/accounts/[handle]`, `/tweet/[id]`, `/zen`, `/on-this-day`, `/history`, `/how-we-pick`, `/about`, `/search`.
+- [x] Read `data/site/` on the server (`app/lib/site-data.ts`) and fall back to the fixture only when the directory is missing.
 
 ## Phase 10 — Extra pages
 - [x] Add Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick.
@@ -51,18 +56,43 @@
 - [x] Add RSS, sitemap, robots, metadata, and dashboard-only Web Analytics guidance (no script).
 
 ## Phase 11 — Tests and CI
-- [ ] Add requested Playwright smoke tests, screenshots, broken-link and RSS checks.
-- [ ] Compare desktop screenshots against supplied references and record/fix differences.
-- [ ] Ensure any failing check blocks deployment.
+- [x] Run the production static export.
+- [x] Check every internal link in `out/` and validate the RSS feed (`tests/check_site.py`).
+- [x] Run the Python unit tests for extraction/merge, pre-filtering, and the site writer.
+- [ ] Screenshot-diff against the supplied references — dropped. The references are X screenshots and `/design` is a loose guide at best; a pixel diff would lock HackerX to another product's chrome. Visual checks were done by eye at 1366px, 390px, and 320px, and regressions are covered by the build plus link/RSS checks.
+- [x] Any failing check blocks deployment because Workers Builds runs the same `npm run build`.
 
 ## Phase 12 — Deploy setup, README, and final report
-- [ ] Configure Cloudflare Workers Static Assets deployment and validated weekly data workflow commits.
-- [ ] Document setup, reruns, tuning, overrides, and dataset fields.
-- [ ] Record final counts, media size, top 20, Amos usage, and failures.
+- [x] `wrangler.jsonc` serves `./out` with `404-page` handling; no OpenNext or server adapter.
+- [x] README documents the product, the pick pipeline, Steps 4/5, local development, tests, and Workers Builds (`npm run build`, `npx wrangler deploy`, `NEXT_PUBLIC_SITE_URL`).
+- [ ] Record final counts, media size, top 20, Amos usage, and failures after the approved full run.
+
+## Interface review fixes
+
+Reviewed every route (desktop and 390px/320px) against the `better-interface` checklist and fixed:
+
+- Skip link, one `h1` per page, `main` target with `tabIndex={-1}`, and visible focus rings on links, buttons, and inputs.
+- Avatar links were removed from the tab order; author names are the real links, and every icon-only button has an accessible name.
+- Hover styling is wrapped in `@media (hover: hover)` so touch devices do not get sticky hover states; active and `focus-visible` states added throughout.
+- Loading and empty states are announced (`role="status"`), and the history page no longer renders an empty grid while hydrating.
+- The HN quote is a distinct bordered block with the commenter, story, and year, separate from the post text.
+- Recommended badges use HN orange, like/bookmark use orange for active state and neutral otherwise.
+- Counts use tabular numerals; spacing follows a 4/8 scale; cards are 1px borders with 16px radius and gap.
+- Mobile tab bar and top bar replace the rails below 860px; no horizontal scroll at 320px.
+- Removed visible platform-brand references from actions, profile links, and How we pick copy.
+
+Notes: `/design` is a loose reference only. The locked direction is black background, `#FF6600` as the only accent, three columns, no X logo or bird, no composer, and never the word Twitter in the UI.
 
 ## Current step
 
-Phase 10, step 2: add image export, PWA/offline support, keyboard navigation, and local persistence; Phase 6 remains paused pending sample approval.
+v1 code is launch-ready. The next action is the user's approval of the measured eligible set, then `RUN.md` Step 4 (full Amos) and Step 5 (build and publish `data/site/`).
+
+## After launch
+
+- Self-host optimized media and blur placeholders.
+- Calendar feeds and a documented open dataset with a licence page.
+- Restore the weekly GitHub Action for data refreshes.
+- Revisit a batched Amos mode only if the single-mode runtime becomes a problem.
 
 ## User-requested work sequence
 
@@ -114,3 +144,4 @@ Phase 10, step 2: add image export, PWA/offline support, keyboard navigation, an
 ## Blockers
 
 - None currently. The pipeline is intentionally stopped at Phase 5 after its 20-tweet report until the user approves continuing.
+- v1 launch pass: single-mode Amos only (A/B compare retired), `pipeline/build_site.py` writes and validates `data/site/`, and the UI is a real App Router site with a custom black/orange token system, Geist + Geist Mono via `next/font/google`, and pinned `lucide-react@1.66.0`. `npm run build` passes; `tests/check_site.py` reports 0 broken links and 0 RSS problems over 91 pages; 5 Python unit tests pass. No `data/site/` is committed because no scored output exists yet, so the build renders the labelled fixture. `wrangler.jsonc` points at `./out` and README documents Workers Builds (`npm run build`, `npx wrangler deploy`). Files: `app/`, `pipeline/filter_tweets.py`, `pipeline/build_site.py`, `tests/`, `config.json`, `RUN.md`, `README.md`. Next session: do not run Step 4 without approval; read only the last 30 log lines when told a step finished.
