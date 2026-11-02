@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import type { Card } from "../lib/site-data";
 import { recommendationBadge, topQuote } from "../lib/quotes";
+import { QuoteText } from "../lib/quote-text";
 import { formatDate } from "../lib/format";
 import { Avatar } from "./avatar";
 
@@ -15,7 +16,13 @@ export function TodayPick({ card }: { card: Card }) {
         <span className="meta-mono">{formatDate(card.created_at)}</span>
       </div>
       <Link href={`/tweet/${card.id}`} className="today-pick-text">
-        {quote ? `“${quote.text}”` : `@${card.author.handle}`}
+        {quote ? (
+          <q>
+            <QuoteText text={quote.text} linkify={false} />
+          </q>
+        ) : (
+          `@${card.author.handle}`
+        )}
       </Link>
       {quote ? (
         <span className="today-pick-src">

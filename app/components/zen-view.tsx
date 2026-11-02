@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Quote as QuoteIcon, RefreshCw } from "lucide-react";
 import type { Card } from "../lib/site-data";
 import { recommendationBadge, topQuote } from "../lib/quotes";
+import { QuoteText } from "../lib/quote-text";
 import { Avatar } from "./avatar";
 
 export function ZenView({ cards }: { cards: Card[] }) {
@@ -33,15 +34,15 @@ export function ZenView({ cards }: { cards: Card[] }) {
         <QuoteIcon size={14} strokeWidth={2} aria-hidden="true" /> One idea, no feed
       </p>
       <blockquote className="zen-quote" key={card.id}>
-        {quote ? quote.text : "Recommended by Hacker News readers."}
+        {quote ? <QuoteText text={quote.text} /> : "Recommended by Hacker News readers."}
       </blockquote>
       <div className="zen-author">
         <Avatar name={card.author.handle} size={32} />
         <div>
           <p>@{card.author.handle}</p>
-          <p className="meta-mono">
-            {recommendationBadge(card.recommenders)}
-            {card.years.length > 0 ? ` · since ${card.years[0]}` : ""}
+          <p className="zen-author-meta">
+            <span className="today-pick-count">{recommendationBadge(card.recommenders)}</span>
+            {card.years.length > 0 ? <span className="meta-mono"> · since {card.years[0]}</span> : null}
           </p>
         </div>
       </div>

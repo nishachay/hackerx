@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import { getCard, getCards } from "../../../lib/site-data";
-import { recommendationBadge, topQuote } from "../../../lib/quotes";
+import { recommendationBadge } from "../../../lib/quotes";
 
 export const dynamic = "force-static";
 
@@ -19,13 +19,12 @@ function markDataUri() {
   return `data:image/svg+xml;base64,${svg.toString("base64")}`;
 }
 
+/** Per-post card image: handle, topic, year and the recommendation badge.
+ * Never the post text — only our own metadata. */
 export default async function TweetImage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const card = getCard(id);
-  const quote = card ? topQuote(card) : null;
-  const text = quote ? `“${quote.text}” — HN reader @${quote.author}` : "An idea worth keeping.";
-  const short = text.length > 190 ? `${text.slice(0, 187).trimEnd()}…` : text;
-  const recommenders = card?.recommenders ?? 0;
+  const year = card?.created_at ? card.created_at.slice(0, 4) : "";
 
   return new ImageResponse(
     (
@@ -36,45 +35,47 @@ export default async function TweetImage({ params }: { params: Promise<{ id: str
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          padding: "64px 72px",
+          padding: "72px 80px",
           background: "#000000",
           color: "#f2f3f4",
           border: "1px solid #262a2e",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <img src={markDataUri()} width={56} height={56} alt="" />
-            <div style={{ display: "flex", fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em" }}>HackerX</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          <img src={markDataUri()} width={72} height={72} alt="" />
+          <div style={{ display: "flex", fontSize: 40, fontWeight: 700, letterSpacing: "-0.02em" }}>HackerX</div>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+          <div style={{ display: "flex", fontSize: 88, fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+            {card ? `@${card.author.handle}` : "HackerX"}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 34, color: "#a7adb4" }}>
+            {card?.topic ? <div style={{ display: "flex" }}>{card.topic}</div> : null}
+            {card?.topic && year ? <div style={{ display: "flex", color: "#71767b" }}>·</div> : null}
+            {year ? <div style={{ display: "flex" }}>{year}</div> : null}
           </div>
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              padding: "10px 20px",
+              alignSelf: "flex-start",
+              padding: "14px 28px",
               borderRadius: 999,
               background: "rgba(255,102,0,0.14)",
               border: "1px solid rgba(255,102,0,0.4)",
               color: "#ff6600",
-              fontSize: 24,
+              fontSize: 32,
               fontWeight: 600,
             }}
           >
-            {recommendationBadge(recommenders)}
+            {recommendationBadge(card?.recommenders ?? 0)}
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-          <div style={{ display: "flex", fontSize: 50, lineHeight: 1.18, letterSpacing: "-0.025em", maxWidth: 1020 }}>{short}</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 27, color: "#a7adb4" }}>
-            <div style={{ display: "flex", color: "#f2f3f4", fontWeight: 600 }}>{card ? `@${card.author.handle}` : "Hacker News"}</div>
-            {card?.topic ? <div style={{ display: "flex" }}>{card.topic}</div> : null}
-          </div>
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 23, color: "#71767b" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 26, color: "#71767b" }}>
           <div style={{ display: "flex" }}>hackerx.nishachay.tech</div>
-          <div style={{ display: "flex" }}>Ideas worth keeping</div>
+          <div style={{ display: "flex" }}>Posts Hacker News kept coming back to</div>
         </div>
       </div>
     ),

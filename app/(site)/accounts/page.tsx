@@ -4,10 +4,12 @@ import { PageHeader } from "../../components/page-header";
 import { Avatar } from "../../components/avatar";
 import { getSite } from "../../lib/site-data";
 import { fullNumber } from "../../lib/format";
+import { og } from "../../lib/og";
 
 export const metadata = {
   title: "Accounts",
   description: "The authors whose ideas Hacker News readers keep recommending, ranked by recommendations.",
+  ...og("Accounts", "The authors whose ideas Hacker News readers keep recommending, ranked by recommendations."),
 };
 
 export default function AccountsPage() {
