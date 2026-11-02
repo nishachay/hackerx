@@ -47,7 +47,7 @@
 
 ## Phase 10 — Extra pages
 - [x] Add Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick.
-- [ ] Add image export, PWA/offline support, keyboard navigation, and persistence.
+- [x] Add image export, PWA/offline support, keyboard navigation, and persistence.
 - [ ] Add RSS, sitemap, robots, metadata, and dashboard-only Web Analytics guidance (no script).
 
 ## Phase 11 — Tests and CI
@@ -107,6 +107,7 @@ Phase 10, step 2: add image export, PWA/offline support, keyboard navigation, an
 - Phase 9 feed step adds fixture-backed For you/Top/Rising tabs, 8-item pagination, tweet cards with media/link previews, HN citation excerpts, working local like/bookmark toggles, and profile/detail navigation hooks. Local proxy-free production build passed in 4 seconds.
 - Phase 9 detail step adds tweet detail with HN discussion links, author profiles, and fixture search using the shared data module. Proxy-free production build passed in 4 seconds.
 - Phase 10 page step adds Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick, all against fixture data. Proxy-free production build passed in 4 seconds.
+- Phase 10 interaction step adds downloadable SVG quote cards, a static web manifest/service worker, `/` search and `g h` home keyboard shortcuts, and local persistence for theme, likes, saves, and viewed history. Proxy-free static export build passed in 5 seconds.
 
 ## Blockers
 
