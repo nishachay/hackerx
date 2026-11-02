@@ -17,6 +17,11 @@ export function TodayPick({ card }: { card: Card }) {
       <Link href={`/tweet/${card.id}`} className="today-pick-text">
         {quote ? `“${quote.text}”` : `@${card.author.handle}`}
       </Link>
+      {quote ? (
+        <span className="today-pick-src">
+          From the Hacker News thread · {quote.author}
+        </span>
+      ) : null}
       <div className="today-pick-foot">
         <Avatar name={card.author.handle} size={28} />
         <span className="today-pick-author">@{card.author.handle}</span>

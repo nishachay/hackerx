@@ -27,6 +27,7 @@ sys.path.insert(0, str(ROOT))
 from pipeline.build_site import (  # noqa: E402
     SITE_DIR,
     clean_hn_text,
+    normalize_x_spelling,
     recommendation_label,  # noqa: F401  (re-exported for tests)
     sort_and_rank,
     tweet_url,
@@ -40,6 +41,8 @@ QUOTE_FIELDS = ("hn_id", "author", "text", "created_at", "year", "story_title", 
 def strip_quote(quote: dict) -> dict:
     cleaned = {key: quote.get(key) for key in QUOTE_FIELDS if key in quote}
     cleaned["text"] = clean_hn_text(str(quote.get("text") or ""))
+    if "story_title" in cleaned:
+        cleaned["story_title"] = normalize_x_spelling(str(cleaned["story_title"] or ""))
     if "stance" not in cleaned:
         cleaned["stance"] = "neutral"
     return cleaned

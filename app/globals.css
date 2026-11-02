@@ -1568,6 +1568,13 @@ code {
   }
 }
 
+.today-pick-src {
+  display: block;
+  margin-block-start: 6px;
+  font-size: 0.75rem;
+  color: var(--muted, #8b8b8b);
+}
+
 .today-pick-foot {
   display: flex;
   flex-wrap: wrap;

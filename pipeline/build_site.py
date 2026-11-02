@@ -54,6 +54,17 @@ def tweet_url(handle: str, tweet_id: str) -> str:
 
 
 
+def normalize_x_spelling(text: str) -> str:
+    """Display normalization for third-party text: legacy twitter.com URL
+    spellings and the old brand name render in their current X form.
+    Pure string rewrite; no network calls."""
+    text = re.sub(r"(?i)(?:www\.|mobile\.)?twitter\.com", "x.com", text)
+    text = re.sub(r"(?i)@twittersupport\b", "@Support", text)
+    text = re.sub(r"(?i)\bextwitter\b", "ex-X", text)
+    text = re.sub(r"(?i)\btwitters?\b", "X", text)
+    return text
+
+
 def clean_hn_text(value: str) -> str:
     """Turn HN's HTML-ish comment text into clean plain text.
 
@@ -73,7 +84,7 @@ def clean_hn_text(value: str) -> str:
     text = re.sub(r"<[^>]+>", "", text)
     text = re.sub(r"https?://(?:[a-z0-9-]+\.)?twimg\.com\S*", "[image on X]", text, flags=re.I)
     text = re.sub(r"\n{3,}", "\n\n", text)
-    return text.strip()
+    return normalize_x_spelling(text.strip())
 
 
 def citation_year(citation: dict[str, Any]) -> int:
@@ -101,7 +112,7 @@ def build_quotes(record: dict[str, Any]) -> list[dict[str, Any]]:
             "text": text,
             "created_at": str(citation.get("hn_created_at") or ""),
             "year": citation_year(citation),
-            "story_title": str(citation.get("hn_story_title") or ""),
+            "story_title": normalize_x_spelling(str(citation.get("hn_story_title") or "")),
             "story_url": str(citation.get("hn_story_url") or ""),
             "points": int(citation.get("hn_story_points") or 0),
             "stance": stances.get(str(citation.get("hn_id")), "neutral"),

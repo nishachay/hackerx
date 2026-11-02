@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     description: "Timeless ideas recommended by Hacker News readers.",
     url: siteUrl,
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "HackerX — ideas worth keeping",
+    description: "Timeless ideas recommended by Hacker News readers.",
+  },
   alternates: { types: { "application/rss+xml": "/rss.xml" } },
   icons: { icon: "/h-mark.svg", apple: "/apple-icon" },
 };
