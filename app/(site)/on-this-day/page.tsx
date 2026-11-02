@@ -2,7 +2,10 @@ import { PageHeader } from "../../components/page-header";
 import { OnThisDayView } from "../../components/on-this-day-view";
 import { getCards } from "../../lib/site-data";
 
-export const metadata = { title: "On this day" };
+export const metadata = {
+  title: "On this day",
+  description: "HackerX picks that Hacker News readers were discussing on this day in past years.",
+};
 
 export default function OnThisDayPage() {
   const cards = getCards();

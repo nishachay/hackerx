@@ -6,6 +6,11 @@ import { Feed } from "../components/feed";
 import { getCards, getSite } from "../lib/site-data";
 import { fullNumber } from "../lib/format";
 
+export const metadata = {
+  title: { absolute: "HackerX — ideas worth keeping" },
+  description: "Timeless ideas recommended by Hacker News readers, with the comments that recommend them.",
+};
+
 export default function HomePage() {
   const cards = getCards();
   const { meta } = getSite();

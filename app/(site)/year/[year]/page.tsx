@@ -10,7 +10,13 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ year: string }> }) {
   const { year } = await params;
-  return { title: `Ideas from ${year}` };
+  const group = getYear(Number.parseInt(year, 10));
+  return {
+    title: `Ideas from ${year}`,
+    description: group
+      ? `${group.tweet_count} ideas from ${year} that Hacker News readers still recommend.`
+      : `Ideas from ${year} in the HackerX archive.`,
+  };
 }
 
 export default async function YearPage({ params }: { params: Promise<{ year: string }> }) {

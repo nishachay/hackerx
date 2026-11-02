@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -10,12 +11,16 @@ import {
   Home,
   Info,
   ListChecks,
+  MoreHorizontal,
   Rss,
   Search,
+  ShieldCheck,
   Sparkles,
   Users,
+  X,
   type LucideIcon,
 } from "lucide-react";
+import { BrandMark } from "./brand-mark";
 import { Credit } from "./credit";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -37,9 +42,11 @@ export const moreNav: NavItem[] = [
 export const aboutNav: NavItem[] = [
   { href: "/how-we-pick", label: "How we pick", icon: ListChecks },
   { href: "/about", label: "About", icon: Info },
+  { href: "/privacy", label: "Privacy", icon: ShieldCheck },
 ];
 
 export const allNav = [...primaryNav, ...moreNav, ...aboutNav];
+const sheetNav = [...moreNav, ...aboutNav];
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -63,9 +70,7 @@ export function RailNav() {
   return (
     <nav className="rail" aria-label="Primary">
       <Link href="/" className="brand" aria-label="HackerX home">
-        <span className="brand-mark" aria-hidden="true">
-          H
-        </span>
+        <BrandMark />
         <span className="brand-name">HackerX</span>
       </Link>
 
@@ -105,20 +110,101 @@ export function RailNav() {
 
 export function MobileNav() {
   const pathname = usePathname() || "/";
-  const items = primaryNav.slice(0, 4).concat(moreNav.slice(0, 1));
+  const [open, setOpen] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const sheetActive = [...sheetNav].some((item) => isActive(pathname, item.href));
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open && !dialog.open) {
+      dialog.showModal();
+      document.documentElement.classList.add("sheet-open");
+      window.requestAnimationFrame(() => closeRef.current?.focus());
+    } else if (!open && dialog.open) {
+      dialog.close();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    return () => document.documentElement.classList.remove("sheet-open");
+  }, []);
+
+  const close = () => setOpen(false);
+
   return (
-    <nav className="tabbar" aria-label="Primary">
-      {items.map((item) => {
-        const active = isActive(pathname, item.href);
-        const Icon = item.icon;
-        return (
-          <Link key={item.href} href={item.href} className={`tab${active ? " is-active" : ""}`} aria-current={active ? "page" : undefined}>
-            <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
-            <span>{item.label}</span>
-          </Link>
-        );
-      })}
-    </nav>
+    <>
+      <nav className="tabbar" aria-label="Primary">
+        {primaryNav.map((item) => {
+          const active = isActive(pathname, item.href);
+          const Icon = item.icon;
+          return (
+            <Link key={item.href} href={item.href} className={`tab${active ? " is-active" : ""}`} aria-current={active ? "page" : undefined}>
+              <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+        <button
+          type="button"
+          className={`tab${sheetActive || open ? " is-active" : ""}`}
+          aria-expanded={open}
+          aria-haspopup="dialog"
+          onClick={() => setOpen(true)}
+        >
+          <MoreHorizontal size={20} strokeWidth={1.75} aria-hidden="true" />
+          <span>More</span>
+        </button>
+      </nav>
+
+      <dialog
+        ref={dialogRef}
+        className="more-sheet"
+        aria-labelledby="more-title"
+        onClose={() => {
+          setOpen(false);
+          document.documentElement.classList.remove("sheet-open");
+        }}
+        onClick={(event) => {
+          if (event.target === dialogRef.current) close();
+        }}
+      >
+        <div className="more-sheet-head">
+          <h2 id="more-title">More</h2>
+          <button ref={closeRef} type="button" className="icon-button" onClick={close} aria-label="Close menu">
+            <X size={18} strokeWidth={1.75} aria-hidden="true" />
+          </button>
+        </div>
+        <nav aria-label="More pages">
+          <ul className="more-sheet-list">
+            {sheetNav.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(pathname, item.href);
+              return (
+                <li key={item.href}>
+                  <Link href={item.href} className={`sheet-link${active ? " is-active" : ""}`} onClick={close} aria-current={active ? "page" : undefined}>
+                    <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+        <div className="more-sheet-foot">
+          <ThemeToggle />
+          <a className="sheet-link" href="/rss.xml">
+            <Rss size={18} strokeWidth={1.75} aria-hidden="true" />
+            <span>RSS feed</span>
+          </a>
+        </div>
+      </dialog>
+    </>
   );
 }
 
@@ -126,9 +212,7 @@ export function MobileTopBar() {
   return (
     <header className="mobile-top">
       <Link href="/" className="brand" aria-label="HackerX home">
-        <span className="brand-mark" aria-hidden="true">
-          H
-        </span>
+        <BrandMark />
         <span className="brand-name">HackerX</span>
       </Link>
       <div className="mobile-top-actions">

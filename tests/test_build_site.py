@@ -40,14 +40,21 @@ class BuildSiteTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def test_card_keeps_avatar_quotes_and_rank(self):
+    def test_card_public_shape_has_no_copied_post_content(self):
         record = scored_fixture()[0]
         card = build_card(record, self.config)
         validate_card(card)
-        self.assertEqual(card["author"]["name"], record["author"]["name"])
-        self.assertEqual(card["author"]["avatar"], "")
+        self.assertEqual(
+            sorted(card.keys()),
+            ["author", "citing_users", "created_at", "id", "kind", "quotes", "rank_score", "recommenders", "topic", "url", "years"],
+        )
+        self.assertEqual(sorted(card["author"].keys()), ["handle"])
+        self.assertEqual(card["author"]["handle"], record["author"]["handle"])
+        for dropped in ("text", "media", "link_card", "quoted_tweet", "stats", "evergreen"):
+            self.assertNotIn(dropped, card)
         self.assertEqual(len(card["quotes"]), len(record["citations"]))
         self.assertTrue(card["quotes"][0]["text"])
+        self.assertNotIn("&#x", card["quotes"][0]["text"])
         self.assertEqual(card["quotes"][0]["stance"], "recommends")
         self.assertEqual(card["recommenders"], 2)
 

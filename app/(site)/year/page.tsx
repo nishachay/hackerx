@@ -4,7 +4,10 @@ import { PageHeader } from "../../components/page-header";
 import { getSite } from "../../lib/site-data";
 import { fullNumber } from "../../lib/format";
 
-export const metadata = { title: "By year" };
+export const metadata = {
+  title: "By year",
+  description: "Follow HackerX picks across the years and see which ideas kept their value.",
+};
 
 export default function YearIndexPage() {
   const { years } = getSite();

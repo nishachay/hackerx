@@ -6,7 +6,7 @@ export const dynamic = "force-static";
 export default function sitemap(): MetadataRoute.Sitemap {
   const { cards, accounts, years, meta } = getSite();
   const origin = process.env.NEXT_PUBLIC_SITE_URL || meta.siteUrl;
-  const pages = ["", "/explore", "/year", "/accounts", "/zen", "/on-this-day", "/history", "/how-we-pick", "/about", "/search"];
+  const pages = ["", "/explore", "/year", "/accounts", "/zen", "/on-this-day", "/history", "/how-we-pick", "/about", "/privacy", "/search"];
   return [
     ...pages.map((page) => ({
       url: `${origin}${page || "/"}`,

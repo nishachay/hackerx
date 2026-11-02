@@ -1,6 +1,6 @@
 const links = [
-  { label: "X", href: "https://x.com/ni5hachay" },
-  { label: "GitHub", href: "https://github.com/nishachay/hackerx" },
+  { label: "Privacy", href: "/privacy", internal: true },
+  { label: "GitHub", href: "https://github.com/nishachay/hackerx", internal: false },
 ];
 
 export function Credit() {
@@ -13,12 +13,19 @@ export function Credit() {
         </a>
       </span>
       <span className="credit-links">
-        {links.map((link) => (
-          <a key={link.label} href={link.href} target="_blank" rel="noopener">
-            {link.label}
-          </a>
-        ))}
+        {links.map((link) =>
+          link.internal ? (
+            <a key={link.label} href={link.href}>
+              {link.label}
+            </a>
+          ) : (
+            <a key={link.label} href={link.href} target="_blank" rel="noopener">
+              {link.label}
+            </a>
+          ),
+        )}
       </span>
+      <span className="credit-note">Independent project. Not affiliated with X Corp. or Hacker News.</span>
     </div>
   );
 }

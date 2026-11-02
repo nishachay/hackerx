@@ -1,16 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { getCards, getSite } from "../../app/lib/site-data";
+import { recommendationBadge, topQuote } from "../../app/lib/quotes";
 
 export const dynamic = "force-static";
 
 function xml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&apos;");
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 function buildFeed() {
@@ -29,7 +25,11 @@ function buildFeed() {
     .map((card) => {
       const link = `${origin}/tweet/${card.id}`;
       const date = card.created_at ? new Date(card.created_at) : new Date();
-      return `<item><title>${xml(`${card.author.name}: ${card.text.slice(0, 90)}`)}</title><description>${xml(card.text)}</description><link>${xml(link)}</link><guid isPermaLink="false">${xml(card.id)}</guid><pubDate>${date.toUTCString()}</pubDate><category>${xml(card.topic || "Ideas")}</category><comments>${xml(link)}</comments></item>`;
+      const badge = recommendationBadge(card.recommenders);
+      const title = `@${card.author.handle}, ${badge.charAt(0).toLowerCase()}${badge.slice(1)}`;
+      const quote = topQuote(card);
+      const description = `${quote ? `“${quote.text}” — HN reader @${quote.author}. ` : ""}View on X: ${card.url}`;
+      return `<item><title>${xml(title)}</title><description>${xml(description)}</description><link>${xml(link)}</link><guid isPermaLink="false">${xml(card.id)}</guid><pubDate>${date.toUTCString()}</pubDate><category>${xml(card.topic || "Ideas")}</category><comments>${xml(link)}</comments></item>`;
     })
     .join("");
 
