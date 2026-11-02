@@ -43,7 +43,7 @@
 - [x] Inspect all supplied X layout references and record measurements/tokens.
 - [x] Build responsive three-column shell, navigation, sidebars, theme, and mobile nav.
 - [x] Build home feed and reusable tweet cards with interactions and pagination.
-- [ ] Build tweet detail, HN replies, profiles, and search experience.
+- [x] Build tweet detail, HN replies, profiles, and search experience.
 
 ## Phase 10 — Extra pages
 - [ ] Add Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick.
@@ -105,6 +105,7 @@ Phase 9, step 2: build the home feed and reusable tweet cards against the fixtur
 - After the required `direct git pull`, confirmed ten references in `design/`: home, light home, tweet, image tweet, link card, profile, search, explore, like, and bookmark. The screenshots are 1366×768; the three columns align with the previously recorded ~327/598/441px proportions. Implement the responsive HackerX shell with the requested colors and orange H mark.
 - User-provided local build workaround is in `AGENTS.md`: unset all four HTTP(S)_PROXY variants for local npm builds; Workers Builds remains `npm run build`. Phase 9 shell uses the fixture as the sole configured UI source (`app/lib/data.ts`); 30 marked fixture records are in `data/fixture-tweets.json`. The first shell build passed in 4 seconds after excluding Tailwind scans of data/logs/cache.
 - Phase 9 feed step adds fixture-backed For you/Top/Rising tabs, 8-item pagination, tweet cards with media/link previews, HN citation excerpts, working local like/bookmark toggles, and profile/detail navigation hooks. Local proxy-free production build passed in 4 seconds.
+- Phase 9 detail step adds tweet detail with HN discussion links, author profiles, and fixture search using the shared data module. Proxy-free production build passed in 4 seconds.
 
 ## Blockers
 
