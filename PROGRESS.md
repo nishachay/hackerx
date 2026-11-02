@@ -46,7 +46,7 @@
 - [x] Build tweet detail, HN replies, profiles, and search experience.
 
 ## Phase 10 — Extra pages
-- [ ] Add Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick.
+- [x] Add Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick.
 - [ ] Add image export, PWA/offline support, keyboard navigation, and persistence.
 - [ ] Add RSS, sitemap, robots, metadata, and dashboard-only Web Analytics guidance (no script).
 
@@ -62,7 +62,7 @@
 
 ## Current step
 
-Phase 9, step 2: build the home feed and reusable tweet cards against the fixture; Phase 6 remains paused pending sample approval.
+Phase 10, step 2: add image export, PWA/offline support, keyboard navigation, and local persistence; Phase 6 remains paused pending sample approval.
 
 ## User-requested work sequence
 
@@ -106,6 +106,7 @@ Phase 9, step 2: build the home feed and reusable tweet cards against the fixtur
 - User-provided local build workaround is in `AGENTS.md`: unset all four HTTP(S)_PROXY variants for local npm builds; Workers Builds remains `npm run build`. Phase 9 shell uses the fixture as the sole configured UI source (`app/lib/data.ts`); 30 marked fixture records are in `data/fixture-tweets.json`. The first shell build passed in 4 seconds after excluding Tailwind scans of data/logs/cache.
 - Phase 9 feed step adds fixture-backed For you/Top/Rising tabs, 8-item pagination, tweet cards with media/link previews, HN citation excerpts, working local like/bookmark toggles, and profile/detail navigation hooks. Local proxy-free production build passed in 4 seconds.
 - Phase 9 detail step adds tweet detail with HN discussion links, author profiles, and fixture search using the shared data module. Proxy-free production build passed in 4 seconds.
+- Phase 10 page step adds Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick, all against fixture data. Proxy-free production build passed in 4 seconds.
 
 ## Blockers
 
