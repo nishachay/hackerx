@@ -58,17 +58,15 @@ class FilterConcurrencyTests(unittest.TestCase):
     def setUpClass(cls):
         cls.config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
 
-    def test_concurrent_single_and_batched_match_serial_results_and_order(self):
-        for mode in ("single", "batched"):
-            with self.subTest(mode=mode):
-                serial, serial_passed = filter_records(fixture_records(), self.config, MockAmosClient(), mode, workers=1, label="test")
-                concurrent, concurrent_passed = filter_records(fixture_records(), self.config, MockAmosClient(), mode, workers=5, label="test")
-                self.assertEqual(concurrent, serial)
-                self.assertEqual(concurrent_passed, serial_passed)
-                self.assertEqual([row["id"] for row in concurrent], [str(1000 + i) for i in range(7)])
-                for row in concurrent:
-                    offset = int(row["id"]) - 1000
-                    self.assertEqual([item["hn_id"] for item in row["recommendations"]], [f"{offset}-{n}" for n in range(1,4)])
+    def test_concurrent_single_mode_matches_serial_results_and_order(self):
+        serial, serial_passed = filter_records(fixture_records(), self.config, MockAmosClient(), workers=1, label="test")
+        concurrent, concurrent_passed = filter_records(fixture_records(), self.config, MockAmosClient(), workers=5, label="test")
+        self.assertEqual(concurrent, serial)
+        self.assertEqual(concurrent_passed, serial_passed)
+        self.assertEqual([row["id"] for row in concurrent], [str(1000 + i) for i in range(7)])
+        for row in concurrent:
+            offset = int(row["id"]) - 1000
+            self.assertEqual([item["hn_id"] for item in row["recommendations"]], [f"{offset}-{n}" for n in range(1,4)])
 
 
 if __name__ == "__main__":
