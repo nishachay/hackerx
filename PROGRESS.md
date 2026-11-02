@@ -108,6 +108,7 @@ Phase 10, step 2: add image export, PWA/offline support, keyboard navigation, an
 - Phase 9 detail step adds tweet detail with HN discussion links, author profiles, and fixture search using the shared data module. Proxy-free production build passed in 4 seconds.
 - Phase 10 page step adds Explore, By Year, Accounts, Zen, On this day, History, About, and How we pick, all against fixture data. Proxy-free production build passed in 4 seconds.
 - Phase 10 interaction step adds downloadable SVG quote cards, a static web manifest/service worker, `/` search and `g h` home keyboard shortcuts, and local persistence for theme, likes, saves, and viewed history. Proxy-free static export build passed in 5 seconds.
+- Merge perf fix: the per-tweet rescan of every longer ID was replaced by a handle/prefix index built once, so the 102,957-record merge dropped from 10+ minutes to 4.6s with byte-identical `tweet-candidates.json` and `rejected-ids.json` (cmp against `/tmp` copies passed). Pipeline data JSON is now git-ignored via `/data/*.json`; commit `147c09c` contains only code, tests, and `.gitignore`. No Amos run was made.
 - Phase 10 metadata step adds RSS, sitemap, robots, Open Graph metadata, and dashboard-only Web Analytics guidance with no script. Detail URLs use `/?tweet=<id>`; static metadata defaults to `https://hackerx.workers.dev` and accepts `NEXT_PUBLIC_SITE_URL` at build time. Proxy-free production build passed; stopping before Phase 11 and Phase 6 as requested.
 
 ## Blockers
