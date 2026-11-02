@@ -14,7 +14,7 @@ SITE = ROOT / "data" / "site"
 OUT = ROOT / "out"
 
 CARD_FIELDS = {"id", "url", "author", "created_at", "topic", "kind", "recommenders", "citing_users", "rank_score", "years", "quotes", "rank"}
-QUOTE_FIELDS = {"hn_id", "author", "text", "created_at", "year", "story_title", "story_url", "points", "stance", "edited_for_display"}
+QUOTE_FIELDS = {"hn_id", "author", "text", "created_at", "year", "story_title", "story_url", "points", "stance"}
 ACCOUNT_FIELDS = {"handle", "url", "tweet_ids", "tweet_count", "recommenders", "citations", "topics"}
 ALL_FIELDS = {"id", "rank", "url", "author", "topic", "kind", "recommenders", "citing_users", "rank_score", "years"}
 BANNED_SUBSTRINGS = ("twimg.com", "pbs.twimg", "video.twimg")
@@ -87,78 +87,20 @@ class BuiltSiteTests(unittest.TestCase):
             self.assertNotIn("Recommended by 1 HN users", rss)
 
     def test_no_word_twitter_in_visible_ui(self):
-        # Absolute over every rendered HTML page: the word "Twitter" and
-        # legacy twitter.com spellings must never appear in the UI.
-        # HN quotes and story titles are third-party text, but the pipeline
-        # display-normalizes them (twitter.com -> x.com, Twitter -> X) at
-        # build time, so no exclusion is needed here. Still stripped: the
-        # OpenGraph "twitter:*" protocol meta names, script/JSON payloads,
-        # and URL attributes (post links point at x.com).
+        # Scope: our own UI copy. Excluded: the OpenGraph "twitter:*"
+        # protocol meta names, script/JSON payloads, URLs, and verbatim
+        # HN quotes (third-party speech we must not edit).
         for path in OUT.rglob("*.html"):
             body = path.read_text(encoding="utf-8", errors="replace")
             body = re.sub(r"<script[\s\S]*?</script>", "", body)
             body = re.sub(r"<meta[^>]*>", "", body)
+            # HN quote blocks and quote items are verbatim third-party
+            # content (comment text, story titles, author handles).
+            body = re.sub(r"<a class=\"hn-quote\"[\s\S]*?</a>", "", body)
+            body = re.sub(r"<figure class=\"quote-item\"[\s\S]*?</figure>", "", body)
+            body = re.sub(r"<q[ >][\s\S]*?</q>|<blockquote[ >][\s\S]*?</blockquote>", "", body)
             body = re.sub(r"https?://\S*", "", body)
             self.assertNotRegex(body, re.compile(r"twitter", re.I), f"{path.relative_to(OUT)} mentions Twitter")
-
-    def test_no_word_twitter_in_public_data(self):
-        # Display-normalized data must be free of the old brand spelling in
-        # every field shown as text. story_url values are third-party
-        # article links (hrefs only, never rendered as text) and may
-        # legitimately contain the substring, so they are excluded.
-        cards = json.loads((SITE / "tweets.json").read_text(encoding="utf-8"))
-        pat = re.compile(r"twitter", re.I)
-        for card in cards:
-            for q in card.get("quotes", []):
-                for field in ("text", "story_title", "author"):
-                    value = str(q.get(field) or "")
-                    self.assertNotRegex(value, pat, f"quote {q.get('hn_id')} field {field} mentions Twitter: {value[:80]}")
-        rss_path = SITE / "rss.xml"
-        if rss_path.exists():
-            rss = re.sub(r"https?://\S*", "", rss_path.read_text(encoding="utf-8", errors="replace"))
-            self.assertNotRegex(rss, pat, "data/site/rss.xml mentions Twitter")
-
-class NormalizationTests(unittest.TestCase):
-    """Regression guards for display normalization: it must never rewrite an
-    account handle into another handle or alter link destinations."""
-
-    @classmethod
-    def setUpClass(cls):
-        sys.path.insert(0, str(ROOT))
-        from pipeline.build_site import normalize_x_spelling
-        cls.norm = staticmethod(normalize_x_spelling)
-
-    def test_disallowed_handle_is_masked_not_rewritten(self):
-        out = self.norm("via @TwitterSupport and @SomeTwitterFan: agreed")
-        self.assertIn("[account handle omitted]", out)
-        self.assertNotIn("@Support", out)
-        self.assertNotRegex(out, re.compile(r"@\w*twitter\w*", re.I))
-
-    def test_destinations_not_altered(self):
-        # x.com links and ordinary handles pass through byte-identical.
-        for value in (
-            "https://x.com/nearcyan/status/1532076277947330561",
-            "@nearcyan @mxcl https://news.ycombinator.com/item?id=1",
-            "see https://example.com/post for details",
-        ):
-            self.assertEqual(self.norm(value), value)
-        # Legacy spelling of the same status URL keeps the same destination.
-        self.assertEqual(
-            self.norm("https://twitter.com/nearcyan/status/1532076277947330561"),
-            "https://x.com/nearcyan/status/1532076277947330561",
-        )
-
-    def test_public_data_has_no_handle_rewrites(self):
-        cards = json.loads((SITE / "tweets.json").read_text(encoding="utf-8"))
-        for card in cards:
-            for q in card.get("quotes", []):
-                text = q.get("text", "")
-                self.assertNotIn("@Support", text, f"quote {q.get('hn_id')}")
-                self.assertNotRegex(text, re.compile(r"@\w*twitter\w*", re.I), f"quote {q.get('hn_id')}")
-                # story_url destinations must be untouched by normalization
-                # (they may legitimately contain the substring in a slug).
-                self.assertNotIn("account handle omitted", str(q.get("story_url") or ""))
-
 
 if __name__ == "__main__":
     unittest.main()

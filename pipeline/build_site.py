@@ -54,25 +54,14 @@ def tweet_url(handle: str, tweet_id: str) -> str:
 
 
 
-def normalize_x_spelling(text: str) -> str:
-    """Display normalization for third-party text: legacy twitter.com URL
-    spellings and the old brand name render in their current X form.
-    Pure string rewrite; no network calls."""
-    text = re.sub(r"(?i)(?:www\.|mobile\.)?twitter\.com", "x.com", text)
-    # A disallowed handle is masked, never rewritten to another handle:
-    # rewriting would attribute the words to a different account.
-    text = re.sub(r"(?i)@\w*twitter\w*", "[account handle omitted]", text)
-    text = re.sub(r"(?i)\bextwitter\b", "ex-X", text)
-    text = re.sub(r"(?i)\btwitters?\b", "X", text)
-    return text
-
-
 def clean_hn_text(value: str) -> str:
     """Turn HN's HTML-ish comment text into clean plain text.
 
     Entities are unescaped (repeatedly, since HN text is often stored
-    double-escaped), ``<p>`` becomes a paragraph break, ``<a href>`` keeps
-    only its link text and every other tag is dropped.
+    double-escaped), ``<p>`` becomes a paragraph break, ``<a href>`` becomes
+    its plain URL (when the link text differs from the URL, both are kept
+    as ``text (URL)`` so no reader wording is lost) and every other tag is
+    dropped.
     """
     text = value
     for _ in range(3):
@@ -82,9 +71,18 @@ def clean_hn_text(value: str) -> str:
         text = unescaped
     text = re.sub(r"<p\s*>", "\n\n", text, flags=re.I)
     text = re.sub(r"</p\s*>", "\n\n", text, flags=re.I)
-    text = re.sub(r'<a\s+[^>]*href="[^"]*"[^>]*>(.*?)</a>', r"\1", text, flags=re.I | re.S)
+    text = re.sub(r"https?://(?:[a-z0-9-]+\.)?twimg\.com[^\s\"'<>]*", "[image on X]", text, flags=re.I)
+    def _anchor(match: re.Match) -> str:
+        href = match.group(1).strip()
+        label = match.group(2).strip()
+        if not href:
+            return label
+        if not label or label == href:
+            return href
+        return f"{label} ({href})"
+
+    text = re.sub(r'<a\s+[^>]*href="([^"]*)"[^>]*>(.*?)</a>', _anchor, text, flags=re.I | re.S)
     text = re.sub(r"<[^>]+>", "", text)
-    text = re.sub(r"https?://(?:[a-z0-9-]+\.)?twimg\.com\S*", "[image on X]", text, flags=re.I)
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 
@@ -108,23 +106,17 @@ def build_quotes(record: dict[str, Any]) -> list[dict[str, Any]]:
         text = clean_hn_text(str(citation.get("hn_comment_text") or ""))
         if not text:
             continue
-        story_title = str(citation.get("hn_story_title") or "")
-        normalized_text = normalize_x_spelling(text)
-        normalized_title = normalize_x_spelling(story_title)
-        quote = {
+        quotes.append({
             "hn_id": str(citation.get("hn_id") or ""),
             "author": str(citation.get("hn_author") or ""),
-            "text": normalized_text,
+            "text": text,
             "created_at": str(citation.get("hn_created_at") or ""),
             "year": citation_year(citation),
-            "story_title": normalized_title,
+            "story_title": str(citation.get("hn_story_title") or ""),
             "story_url": str(citation.get("hn_story_url") or ""),
             "points": int(citation.get("hn_story_points") or 0),
             "stance": stances.get(str(citation.get("hn_id")), "neutral"),
-        }
-        if normalized_text != text or normalized_title != story_title:
-            quote["edited_for_display"] = True
-        quotes.append(quote)
+        })
     quotes.sort(key=lambda quote: (quote["stance"] != "recommends", -int(quote["year"] or 0), quote["hn_id"]))
     return quotes
 

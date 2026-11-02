@@ -34,7 +34,6 @@ export function ZenView({ cards }: { cards: Card[] }) {
       </p>
       <blockquote className="zen-quote" key={card.id}>
         {quote ? quote.text : "Recommended by Hacker News readers."}
-        {quote?.edited_for_display ? <span className="edited-note">edited for display</span> : null}
       </blockquote>
       <div className="zen-author">
         <Avatar name={card.author.handle} size={32} />

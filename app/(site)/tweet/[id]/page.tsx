@@ -104,7 +104,6 @@ export default async function TweetPage({ params }: { params: Promise<{ id: stri
                     <div className="quote-item-head">
                       <QuoteIcon size={14} strokeWidth={2} aria-hidden="true" />
                       <span className="quote-author">@{quote.author}</span>
-                      {quote.edited_for_display ? <span className="edited-note">edited for display</span> : null}
                       <span className={`stance stance-${quote.stance}`}>{stanceLabel[quote.stance] ?? "Cites it"}</span>
                       {quote.year ? <span className="meta-mono">{quote.year}</span> : null}
                     </div>
