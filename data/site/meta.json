@@ -1,0 +1,92 @@
+{
+"generated_at": "2026-11-02T03:36:34.263649Z",
+"site_url": "https://hackerx.nishachay.tech",
+"counts": {
+"scored": 2733,
+"published": 266,
+"accounts": 196,
+"years": 17,
+"topics": 19,
+"quotes": 1285,
+"recommenders": 549
+},
+"topics": [
+[
+"AI",
+80
+],
+[
+"Programming",
+31
+],
+[
+"Security",
+27
+],
+[
+"Business",
+18
+],
+[
+"Science",
+16
+],
+[
+"Internet",
+15
+],
+[
+"Hardware",
+14
+],
+[
+"Web Development",
+10
+],
+[
+"Philosophy",
+9
+],
+[
+"Startups",
+9
+],
+[
+"Career",
+8
+],
+[
+"Open Source",
+7
+],
+[
+"Design",
+6
+],
+[
+"Math",
+4
+],
+[
+"Tools",
+3
+],
+[
+"Writing",
+3
+],
+[
+"Distributed Systems",
+2
+],
+[
+"Learning",
+2
+],
+[
+"Productivity",
+2
+]
+],
+"source": "data/scored-tweets.json"
+}
