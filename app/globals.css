@@ -2643,3 +2643,15 @@ html.sheet-open {
   font-size: 14px;
   color: var(--text-3);
 }
+
+/* Long URLs and long words wrap inside the card, never overflow */
+.tweet-card,
+.detail,
+.hn-quote q,
+.quote-item blockquote,
+.zen-quote,
+.today-pick-text,
+.tweet-embed-fallback,
+.embed-consent p {
+  overflow-wrap: anywhere;
+}
