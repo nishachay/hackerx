@@ -1,8 +1,8 @@
 import { chromium } from "playwright";
 import fs from "node:fs";
 
-const BASE = "http://localhost:8123";
-const OUT = "/tmp/opencode/shots";
+const BASE = process.env.AUDIT_BASE || "http://localhost:8123";
+const OUT = process.env.AUDIT_SHOTS || "/tmp/hackerx-audit/shots";
 fs.mkdirSync(OUT, { recursive: true });
 
 const routes = [
@@ -25,7 +25,8 @@ const routes = [
 const widths = [1440, 1024, 768, 390];
 const themes = ["dark", "light"];
 
-const browser = await chromium.launch({ executablePath: "/usr/bin/chromium", args: ["--no-sandbox"] });
+const systemChromium = process.env.CHROMIUM_PATH || (fs.existsSync("/usr/bin/chromium") ? "/usr/bin/chromium" : undefined);
+const browser = await chromium.launch({ ...(systemChromium ? { executablePath: systemChromium } : {}), args: ["--no-sandbox"] });
 const SHOT_TIMEOUT = 60000;
 const problems = [];
 
@@ -185,5 +186,5 @@ functional.push({ check: "external-links", value: external.slice(0, 4), pass: ex
 await context.close();
 await browser.close();
 
-fs.writeFileSync("/tmp/opencode/audit.json", JSON.stringify({ problems, functional }, null, 2));
+fs.writeFileSync(`${OUT}/audit.json`, JSON.stringify({ problems, functional }, null, 2));
 console.log(JSON.stringify({ problemCount: problems.length, problems, functional }, null, 2));
