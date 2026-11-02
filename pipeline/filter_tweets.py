@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import json
 import math
+import threading
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -101,9 +104,42 @@ def valid_answer(answer: Any, answer_type: str) -> bool:
     return isinstance(answer.get("choice"), str) and bool(answer["choice"])
 
 
-def batched_evergreen(records: list[dict[str, Any]], topics: list[str], batch_size: int, client: AmosClient) -> dict[str, dict[str, Any]]:
+class ProgressMeter:
+    def __init__(self, label: str, total: int, client: AmosClient) -> None:
+        self.label = label
+        self.total = total
+        self.client = client
+        self.done = 0
+        self.started = time.monotonic()
+        self.lock = threading.Lock()
+
+    def add_total(self, count: int) -> None:
+        with self.lock:
+            self.total += count
+
+    def completed(self) -> None:
+        with self.lock:
+            self.done += 1
+            if self.done % 25 == 0:
+                elapsed = time.monotonic() - self.started
+                print(f"Amos progress ({self.label}): {self.done}/{self.total} calls; cache hits {self.client.cache_hits}; elapsed {elapsed:.1f}s", flush=True)
+
+
+def tracked_ask(client: AmosClient, meter: ProgressMeter, state: Any, questions: dict[str, Any]) -> dict[str, Any]:
+    response = client.ask(state, questions)
+    meter.completed()
+    return response
+
+
+def evergreen_state(record: dict[str, Any]) -> dict[str, Any]:
+    return {"tweet_text": tweet_text(record), "author": author_name(record),
+        "hn_story_titles": sorted({str(c.get("hn_story_title", "")) for c in record.get("citations", []) if c.get("hn_story_title")})}
+
+
+def batched_evergreen(records: list[dict[str, Any]], topics: list[str], batch_size: int, client: AmosClient,
+                      executor: ThreadPoolExecutor, meter: ProgressMeter) -> dict[str, dict[str, Any]]:
     base_questions = evergreen_questions(topics)
-    output: dict[str, dict[str, Any]] = {}
+    jobs: list[dict[str, Any]] = []
     for start in range(0, len(records), batch_size):
         batch = records[start : start + batch_size]
         state: dict[str, Any] = {}
@@ -112,136 +148,148 @@ def batched_evergreen(records: list[dict[str, Any]], topics: list[str], batch_si
         for index, record in enumerate(batch, start=1):
             record_id = str(record.get("id", ""))
             state_key = f"tweet_{index}"
-            state[state_key] = {"text": tweet_text(record), "author": author_name(record),
-                "hn_story_titles": sorted({str(c.get("hn_story_title", "")) for c in record.get("citations", []) if c.get("hn_story_title")})}
+            state[state_key] = {"text": tweet_text(record), "author": author_name(record), "hn_story_titles": evergreen_state(record)["hn_story_titles"]}
             for field, definition in base_questions.items():
                 question_key = f"{state_key}_{field}"
                 questions[question_key] = {**definition, "instructions": f"Evaluate only {state_key} from state. {definition['instructions']}"}
                 mapping[question_key] = (record_id, field)
-        response = client.ask(state, questions)
-        collected: dict[str, dict[str, Any]] = {str(r.get("id", "")): {} for r in batch}
-        malformed: set[str] = set()
+        jobs.append({"state": state, "questions": questions, "mapping": mapping, "records": batch})
+    responses = list(executor.map(lambda job: tracked_ask(client, meter, job["state"], job["questions"]), jobs))
+    output: dict[str, dict[str, Any]] = {str(record.get("id", "")): {} for record in records}
+    retries: dict[str, dict[str, Any]] = {}
+    for job, response in zip(jobs, responses):
         answers = response.get("answers", {}) if isinstance(response, dict) else {}
-        for question_key, (record_id, field) in mapping.items():
+        malformed: set[str] = set()
+        for question_key, (record_id, field) in job["mapping"].items():
             answer = answers.get(question_key) if isinstance(answers, dict) else None
             if valid_answer(answer, base_questions[field]["type"]):
-                collected[record_id][field] = answer
+                output[record_id][field] = answer
             else:
                 malformed.add(record_id)
-        for record_id in malformed:
-            record = next(r for r in batch if str(r.get("id", "")) == record_id)
-            state_one = {"tweet_text": tweet_text(record), "author": author_name(record),
-                "hn_story_titles": sorted({str(c.get("hn_story_title", "")) for c in record.get("citations", []) if c.get("hn_story_title")})}
-            single = client.ask(state_one, base_questions)
-            single_answers = single.get("answers", {})
-            if not isinstance(single_answers, dict) or not all(valid_answer(single_answers.get(k), q["type"]) for k, q in base_questions.items()):
-                raise ValueError(f"Malformed evergreen response for tweet {record_id}, including single-item retry")
-            collected[record_id] = {k: single_answers[k] for k in base_questions}
-        output.update(collected)
+        for record in job["records"]:
+            record_id = str(record.get("id", ""))
+            if record_id in malformed:
+                retries[record_id] = evergreen_state(record)
+    meter.add_total(len(retries))
+    retry_records = [record for record in records if str(record.get("id", "")) in retries]
+    retry_responses = list(executor.map(lambda record: tracked_ask(client, meter, retries[str(record.get("id", ""))], base_questions), retry_records))
+    for record, response in zip(retry_records, retry_responses):
+        record_id = str(record.get("id", ""))
+        single_answers = response.get("answers", {}) if isinstance(response, dict) else {}
+        if not isinstance(single_answers, dict) or not all(valid_answer(single_answers.get(key), question["type"]) for key, question in base_questions.items()):
+            raise ValueError(f"Malformed evergreen response for tweet {record_id}, including single-item retry")
+        output[record_id] = {key: single_answers[key] for key in base_questions}
     return output
 
 
-def batched_recommendations(record: dict[str, Any], batch_size: int, client: AmosClient) -> list[dict[str, Any]]:
-    citations = [c for c in record.get("citations", []) if c.get("hn_kind") == "comment" and str(c.get("hn_comment_text", "")).strip()]
+def collect_recommendations(scored: list[dict[str, Any]], mode: str, batch_size: int, client: AmosClient,
+                            executor: ThreadPoolExecutor, label: str) -> None:
     template = recommendation_questions()
-    recommendations: list[dict[str, Any]] = []
-    for start in range(0, len(citations), batch_size):
-        chunk = citations[start : start + batch_size]
-        state: dict[str, Any] = {}
-        questions: dict[str, Any] = {}
-        linked: dict[str, dict[str, Any]] = {}
-        for index, citation in enumerate(chunk, start=1):
-            state_key = f"comment_{index}"
-            question_key = f"{state_key}_stance"
-            state[state_key] = comment_state(record, citation)
-            questions[question_key] = {**template["stance"], "instructions": f"Use only {state_key} from state. {template['stance']['instructions']}"}
-            linked[question_key] = citation
-        response = client.ask(state, questions)
+    jobs: list[dict[str, Any]] = []
+    citation_lists: list[list[dict[str, Any]]] = [[] for _ in scored]
+    for record_index, record in enumerate(scored):
+        if not record["evergreen_pass"]:
+            continue
+        citations = [c for c in record.get("citations", []) if c.get("hn_kind") == "comment" and str(c.get("hn_comment_text", "")).strip()]
+        citation_lists[record_index] = citations
+        size = 1 if mode == "single" else batch_size
+        for start in range(0, len(citations), size):
+            chunk = citations[start : start + size]
+            if mode == "single":
+                jobs.append({"record_index": record_index, "start": start, "citations": chunk,
+                    "state": comment_state(record, chunk[0]), "questions": template, "mapping": {"stance": 0}})
+                continue
+            state: dict[str, Any] = {}
+            questions: dict[str, Any] = {}
+            mapping: dict[str, int] = {}
+            for index, citation in enumerate(chunk, start=1):
+                state_key, question_key = f"comment_{index}", f"comment_{index}_stance"
+                state[state_key] = comment_state(record, citation)
+                questions[question_key] = {**template["stance"], "instructions": f"Use only {state_key} from state. {template['stance']['instructions']}"}
+                mapping[question_key] = index - 1
+            jobs.append({"record_index": record_index, "start": start, "citations": chunk,
+                "state": state, "questions": questions, "mapping": mapping})
+
+    meter = ProgressMeter(f"{label} recommendations", len(jobs), client)
+    responses = list(executor.map(lambda job: tracked_ask(client, meter, job["state"], job["questions"]), jobs))
+    answer_map: list[dict[int, dict[str, Any]]] = [{} for _ in scored]
+    retries: list[tuple[int, int, dict[str, Any], dict[str, Any], dict[str, Any]]] = []
+    for job, response in zip(jobs, responses):
         answers = response.get("answers", {}) if isinstance(response, dict) else {}
-        parsed: dict[str, dict[str, Any]] = {}
-        retries: list[tuple[str, dict[str, Any]]] = []
-        for question_key, citation in linked.items():
+        record_index = job["record_index"]
+        for question_key, local_index in job["mapping"].items():
             answer = answers.get(question_key) if isinstance(answers, dict) else None
             if valid_answer(answer, "choice") and answer["choice"] in {"recommends", "neutral", "critical"}:
-                parsed[question_key] = answer
+                answer_map[record_index][job["start"] + local_index] = answer
             else:
-                retries.append((question_key, citation))
-        for question_key, citation in retries:
-            response_one = client.ask(comment_state(record, citation), template)
-            one_answers = response_one.get("answers", {})
-            answer = one_answers.get("stance") if isinstance(one_answers, dict) else None
-            if not (valid_answer(answer, "choice") and answer["choice"] in {"recommends", "neutral", "critical"}):
-                raise ValueError(f"Malformed recommendation response for HN comment {citation.get('hn_id')}, including single-item retry")
-            parsed[question_key] = answer
-        for question_key, citation in linked.items():
-            answer = parsed[question_key]
-            recommendations.append({"hn_id": citation.get("hn_id"), "hn_author": citation.get("hn_author"), "stance": answer["choice"], "probabilities": answer.get("probabilities", {})})
-    return recommendations
+                citation = job["citations"][local_index]
+                retries.append((record_index, job["start"] + local_index, comment_state(scored[record_index], citation), template, citation))
+    meter.add_total(len(retries))
+    retry_responses = list(executor.map(lambda item: tracked_ask(client, meter, item[2], item[3]), retries))
+    for retry, response in zip(retries, retry_responses):
+        record_index, citation_index, _, _, citation = retry
+        answers = response.get("answers", {}) if isinstance(response, dict) else {}
+        answer = answers.get("stance") if isinstance(answers, dict) else None
+        if not (valid_answer(answer, "choice") and answer["choice"] in {"recommends", "neutral", "critical"}):
+            raise ValueError(f"Malformed recommendation response for HN comment {citation.get('hn_id')}, including single-item retry")
+        answer_map[record_index][citation_index] = answer
+    for record_index, record in enumerate(scored):
+        if record["evergreen_pass"]:
+            record["recommendations"] = [{"hn_id": citation.get("hn_id"), "hn_author": citation.get("hn_author"),
+                "stance": answer_map[record_index][index]["choice"], "probabilities": answer_map[record_index][index].get("probabilities", {})}
+                for index, citation in enumerate(citation_lists[record_index])]
 
 
-def filter_records(records: list[dict[str, Any]], config: dict[str, Any], client: AmosClient, mode: str = "single") -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+def filter_records(records: list[dict[str, Any]], config: dict[str, Any], client: AmosClient,
+                   mode: str = "single", workers: int = 12, label: str = "filter") -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    if workers < 1:
+        raise ValueError("workers must be at least 1")
     evergreen_config = config["evergreen"]
     recommendation_minimum = int(config["recommendation"]["minimum_distinct_authors"])
     questions = evergreen_questions(config["topics"])
     batch_size = int(config.get("amos", {}).get("batch_size", 1))
-    batch_answers = batched_evergreen(records, config["topics"], batch_size, client) if mode == "batched" else {}
-    scored: list[dict[str, Any]] = []
-    passed: list[dict[str, Any]] = []
-    for record in records:
-        state = {
-            "tweet_text": tweet_text(record),
-            "author": author_name(record),
-            "hn_story_titles": sorted({str(c.get("hn_story_title", "")) for c in record.get("citations", []) if c.get("hn_story_title")}),
-        }
-        response = client.ask(state, questions) if mode == "single" else None
-        answers = response["answers"] if response else batch_answers[str(record.get("id", ""))]
-        probabilities = {key: float(answers[key]["noul"]) for key in ("evergreen_1", "evergreen_2", "evergreen_3")}
-        average = sum(probabilities.values()) / 3
-        kind = str(answers["kind"]["choice"]).lower()
-        year_boost = year_spread_boost(record, config)
-        result = {
-            **record,
-            "amos": {
-                "evergreen": probabilities,
-                "average": average,
-                "kind": kind,
-                "topic": answers["topic"]["choice"],
-                "raw": answers,
-            },
-            "evergreen_pass": average >= float(evergreen_config["minimum_average_probability"]) and kind in set(evergreen_config["passing_kinds"]),
-            "recommendations": [],
-            "year_spread_rank_boost": year_boost,
-            "rank_score": float(record.get("rank_score", 0)) + year_boost,
-        }
-        scored.append(result)
-        if result["evergreen_pass"]:
-            recommendation_answers = recommendation_questions()
-            recommendations = []
-            if mode == "batched":
-                recommendations = batched_recommendations(record, batch_size, client)
-            else:
-                for citation in record.get("citations", []):
-                    if citation.get("hn_kind") != "comment" or not citation.get("hn_comment_text"):
-                        continue
-                    answer = client.ask(comment_state(record, citation), recommendation_answers)["answers"]["stance"]
-                    recommendations.append({"hn_id": citation.get("hn_id"), "hn_author": citation.get("hn_author"), "stance": answer["choice"], "probabilities": answer.get("probabilities", {})})
-            result["recommendations"] = recommendations
-            result["recommending_authors"] = len({
-                str(item.get("hn_author", "")).strip().lower()
-                for item in recommendations
-                if item["stance"] == "recommends" and str(item.get("hn_author", "")).strip()
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        if mode == "single":
+            meter = ProgressMeter(f"{label} evergreen", len(records), client)
+            responses = list(executor.map(lambda record: tracked_ask(client, meter, evergreen_state(record), questions), records))
+            answer_rows = [response["answers"] for response in responses]
+        else:
+            meter = ProgressMeter(f"{label} evergreen", math.ceil(len(records) / batch_size), client)
+            batch_answers = batched_evergreen(records, config["topics"], batch_size, client, executor, meter)
+            answer_rows = [batch_answers[str(record.get("id", ""))] for record in records]
+
+        scored: list[dict[str, Any]] = []
+        for record, answers in zip(records, answer_rows):
+            probabilities = {key: float(answers[key]["noul"]) for key in ("evergreen_1", "evergreen_2", "evergreen_3")}
+            average = sum(probabilities.values()) / 3
+            kind = str(answers["kind"]["choice"]).lower()
+            year_boost = year_spread_boost(record, config)
+            scored.append({
+                **record,
+                "amos": {"evergreen": probabilities, "average": average, "kind": kind,
+                         "topic": answers["topic"]["choice"], "raw": answers},
+                "evergreen_pass": average >= float(evergreen_config["minimum_average_probability"]) and kind in set(evergreen_config["passing_kinds"]),
+                "recommendations": [],
+                "year_spread_rank_boost": year_boost,
+                "rank_score": float(record.get("rank_score", 0)) + year_boost,
             })
+        collect_recommendations(scored, mode, batch_size, client, executor, label)
+
+    for result in scored:
+        if result["evergreen_pass"]:
+            result["recommending_authors"] = len({str(item.get("hn_author", "")).strip().lower()
+                for item in result["recommendations"] if item["stance"] == "recommends" and str(item.get("hn_author", "")).strip()})
             result["recommendation_pass"] = result["recommending_authors"] >= recommendation_minimum
-            if result["recommendation_pass"]:
-                passed.append(result)
+    passed = [result for result in scored if result.get("recommendation_pass")]
     return scored, passed
 
 
-def compare_sample(records: list[dict[str, Any]], config: dict[str, Any], sample_size: int) -> None:
+def compare_sample(records: list[dict[str, Any]], config: dict[str, Any], sample_size: int, workers: int = 12) -> None:
     selected = sorted(records, key=lambda r: (-int(r.get("distinct_hn_authors", 0)), str(r.get("id", ""))))[:sample_size]
     single_client, batched_client = AmosClient(), AmosClient()
-    single, _ = filter_records(selected, config, single_client, "single")
-    batched, _ = filter_records(selected, config, batched_client, "batched")
+    single, _ = filter_records(selected, config, single_client, "single", workers, "single")
+    print("single done", flush=True)
+    batched, _ = filter_records(selected, config, batched_client, "batched", workers, "batched")
     single_by_id = {str(r.get("id", "")): r for r in single}
     batch_by_id = {str(r.get("id", "")): r for r in batched}
     agreements = {"evergreen_pass": 0, "kind": 0, "recommendation_pass": 0}
@@ -286,6 +334,7 @@ def main() -> None:
     parser.add_argument("--passed", default="data/amos-passed.json")
     parser.add_argument("--fetch-rejections", default="data/rejected-fetch.json")
     parser.add_argument("--mode", choices=("single", "batched"), default="single")
+    parser.add_argument("--workers", type=int, default=12, help="Concurrent Amos workers (default: 12)")
     parser.add_argument("--compare", action="store_true", help="Compare single and batched modes on the top 20 eligible tweets")
     parser.add_argument("--sample", type=int, default=0, help="Filter top N by distinct HN author count; 0 means all")
     args = parser.parse_args()
@@ -302,10 +351,10 @@ def main() -> None:
     selected = ordered[:args.sample] if sample else ordered
     config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
     if args.compare:
-        compare_sample(ordered, config, 20)
+        compare_sample(ordered, config, 20, args.workers)
         return
     client = AmosClient()
-    scored, passed = filter_records(selected, config, client, args.mode)
+    scored, passed = filter_records(selected, config, client, args.mode, args.workers)
     scored_path, passed_path = ROOT / args.scored, ROOT / args.passed
     scored_path.parent.mkdir(parents=True, exist_ok=True)
     scored_path.write_text(json.dumps(scored, ensure_ascii=False), encoding="utf-8")

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -23,19 +24,29 @@ def merge(records: list[dict[str, Any]], minimum_authors: int) -> tuple[list[dic
     by_id = {str(record["id"]): record for record in records}
     ids = sorted(by_id, key=lambda value: (-len(value), value))
     canonical: dict[str, str] = {}
+    handles_by_id: dict[str, set[str]] = {}
+    for tweet_id in ids:
+        handles = {handle.casefold() for handle in by_id[tweet_id].get("handles", []) if handle}
+        handles_by_id[tweet_id] = handles
+
+    # Index only prefixes that exist as candidate IDs. Candidate order ensures
+    # the first value stored is the same shortest/lexical match as the old scan.
+    prefix_targets: dict[str, dict[str, str]] = defaultdict(dict)
+    id_set = set(ids)
+    for candidate_id in sorted(ids, key=lambda value: (len(value), value)):
+        for handle in handles_by_id[candidate_id]:
+            targets = prefix_targets[handle]
+            for prefix_length in range(1, len(candidate_id)):
+                prefix = candidate_id[:prefix_length]
+                if prefix in id_set:
+                    targets.setdefault(prefix, candidate_id)
 
     for tweet_id in ids:
-        record = by_id[tweet_id]
-        handles = {handle.casefold() for handle in record.get("handles", []) if handle}
+        handles = handles_by_id[tweet_id]
         target = tweet_id
         if handles:
-            candidates = [
-                other_id
-                for other_id in ids
-                if len(other_id) > len(tweet_id)
-                and other_id.startswith(tweet_id)
-                and handles.intersection(handle.casefold() for handle in by_id[other_id].get("handles", []) if handle)
-            ]
+            candidates = [prefix_targets[handle][tweet_id] for handle in handles
+                if tweet_id in prefix_targets[handle]]
             if candidates:
                 target = min(candidates, key=lambda value: (len(value), value))
                 target = canonical.get(target, target)

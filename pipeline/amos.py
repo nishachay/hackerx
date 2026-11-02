@@ -32,6 +32,7 @@ class AmosClient:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.requests_made = 0
         self.cache_hits = 0
+        self._counter_lock = threading.Lock()
 
     def _wait_for_slot(self) -> None:
         while True:
@@ -63,7 +64,8 @@ class AmosClient:
         key = hashlib.sha256(encoded).hexdigest()
         cache_path = self.cache_dir / f"{key}.json"
         if cache_path.exists():
-            self.cache_hits += 1
+            with self._counter_lock:
+                self.cache_hits += 1
             return json.loads(cache_path.read_text(encoding="utf-8"))
 
         request = urllib.request.Request(
@@ -75,7 +77,8 @@ class AmosClient:
         delay = 2.0
         for attempt in range(8):
             self._wait_for_slot()
-            self.requests_made += 1
+            with self._counter_lock:
+                self.requests_made += 1
             try:
                 with urllib.request.urlopen(request, timeout=180) as response:
                     answer = json.loads(response.read().decode("utf-8"))
