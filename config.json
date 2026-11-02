@@ -1,24 +1,59 @@
 {
   "site_url": "https://hackerx.nishachay.tech",
   "topics": [
-    "Programming", "AI", "Startups", "Design", "Security", "Open Source",
-    "Databases", "Web Development", "Distributed Systems", "Learning",
-    "Productivity", "Science", "Math", "Hardware", "Career", "Writing",
-    "Philosophy", "Business", "Internet", "Tools"
+    "Programming",
+    "AI",
+    "Startups",
+    "Design",
+    "Security",
+    "Open Source",
+    "Databases",
+    "Web Development",
+    "Distributed Systems",
+    "Learning",
+    "Productivity",
+    "Science",
+    "Math",
+    "Hardware",
+    "Career",
+    "Writing",
+    "Philosophy",
+    "Business",
+    "Internet",
+    "Tools"
   ],
   "evergreen": {
-    "minimum_average_probability": 0.6,
-    "passing_kinds": ["insight", "advice", "technical", "story"]
+    "minimum_average_probability": 0.3,
+    "passing_kinds": [
+      "insight",
+      "advice",
+      "technical",
+      "story"
+    ]
   },
-  "recommendation": { "minimum_distinct_authors": 2 },
-  "amos": { "batch_size": 6, "workers": 12, "requests_per_minute": 60 },
+  "recommendation": {
+    "minimum_distinct_authors": 1
+  },
+  "amos": {
+    "batch_size": 6,
+    "workers": 12,
+    "requests_per_minute": 60
+  },
   "hn": {
     "minimum_distinct_citing_authors": 3,
     "slice_days": 14,
     "hits_per_page": 1000,
     "threads": 8,
-    "tags": ["comment", "story"],
-    "queries": ["twitter.com status", "x.com status", "twitter.com", "x.com"]
+    "tags": [
+      "comment",
+      "story"
+    ],
+    "queries": [
+      "twitter.com status",
+      "x.com status",
+      "twitter.com",
+      "x.com"
+    ]
   },
   "rank": {
     "recommending_author_weight": 10,
