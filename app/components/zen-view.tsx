@@ -40,9 +40,9 @@ export function ZenView({ cards }: { cards: Card[] }) {
         <Avatar name={card.author.handle} size={32} />
         <div>
           <p>@{card.author.handle}</p>
-          <p className="meta-mono">
-            {recommendationBadge(card.recommenders)}
-            {card.years.length > 0 ? ` · since ${card.years[0]}` : ""}
+          <p className="zen-author-meta">
+            <span className="today-pick-count">{recommendationBadge(card.recommenders)}</span>
+            {card.years.length > 0 ? <span className="meta-mono"> · since {card.years[0]}</span> : null}
           </p>
         </div>
       </div>

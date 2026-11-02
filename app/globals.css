@@ -1391,6 +1391,18 @@ code {
   padding: 20px 24px 40px;
 }
 
+/* The detail article is one card; hover state stays put. */
+.detail.card:hover {
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+@media (max-width: 767px) {
+  .detail {
+    padding: 16px 16px 28px;
+  }
+}
+
 .detail-author {
   display: flex;
   align-items: center;
@@ -1534,15 +1546,15 @@ code {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
   margin-block-start: 16px;
 }
 
+.quote-list > li + li {
+  border-block-start: 1px solid var(--border);
+}
+
 .quote-item {
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--surface);
+  padding: 16px 0;
   scroll-margin-block-start: 96px;
 }
 
@@ -1675,7 +1687,7 @@ code {
 }
 
 .today-pick-count {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.6875rem;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
@@ -1931,7 +1943,8 @@ code {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
+  font-weight: 600;
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2164,7 +2177,7 @@ code {
 
 .prose-signoff {
   margin-block-start: 20px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.6875rem;
   color: var(--text-3);
 }
