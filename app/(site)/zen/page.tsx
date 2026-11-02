@@ -2,7 +2,10 @@ import { PageHeader } from "../../components/page-header";
 import { ZenView } from "../../components/zen-view";
 import { getCards } from "../../lib/site-data";
 
-export const metadata = { title: "Zen" };
+export const metadata = {
+  title: "Zen",
+  description: "One idea at a time, without a feed or counts. A slower way to read the HackerX archive.",
+};
 
 export default function ZenPage() {
   return (

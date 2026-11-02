@@ -17,7 +17,8 @@ import json
 import math
 from datetime import datetime, timezone
 from email.utils import format_datetime
-from html import escape
+import re
+from html import escape, unescape
 from pathlib import Path
 from typing import Any
 
@@ -33,13 +34,6 @@ STANCES = {"recommends", "neutral", "critical"}
 class SchemaError(ValueError):
     pass
 
-
-def avatar_url(tweet: dict[str, Any], record: dict[str, Any]) -> str:
-    user = tweet.get("user", {}) if isinstance(tweet.get("user"), dict) else {}
-    for value in (record.get("avatar"), user.get("profile_image_url_https"), user.get("profile_image_url")):
-        if isinstance(value, str) and value:
-            return value.replace("_normal.", "_400x400.")
-    return ""
 
 
 def parse_date(value: Any) -> datetime | None:
@@ -58,74 +52,39 @@ def tweet_url(handle: str, tweet_id: str) -> str:
     return f"https://x.com/{handle}/status/{tweet_id}" if handle else f"https://x.com/i/web/status/{tweet_id}"
 
 
-def extract_media(tweet: dict[str, Any]) -> list[dict[str, Any]]:
-    media: list[dict[str, Any]] = []
-    for photo in tweet.get("photos") or []:
-        if isinstance(photo, dict) and photo.get("url"):
-            media.append({
-                "type": "photo",
-                "url": str(photo["url"]),
-                "width": int(photo.get("width") or 0),
-                "height": int(photo.get("height") or 0),
-                "alt": str(photo.get("alt") or ""),
-            })
-    video = tweet.get("video")
-    if isinstance(video, dict) and video.get("poster"):
-        media.append({
-            "type": "video",
-            "url": str(video.get("poster")),
-            "width": int((video.get("aspectRatio") or [16, 9])[0]) if video.get("aspectRatio") else 0,
-            "height": int((video.get("aspectRatio") or [16, 9])[1]) if video.get("aspectRatio") else 0,
-            "alt": "Video preview",
-            "video_url": str(video.get("variants", [{}])[0].get("src", "")),
-        })
-    return media[:4]
 
 
-def extract_link_card(tweet: dict[str, Any]) -> dict[str, str] | None:
-    card = tweet.get("card")
-    if not isinstance(card, dict):
-        return None
-    values = card.get("binding_values") if isinstance(card.get("binding_values"), dict) else {}
+def clean_hn_text(value: str) -> str:
+    """Turn HN's HTML-ish comment text into clean plain text.
 
-    def text_value(key: str, nested: str) -> str:
-        entry = values.get(key)
-        if isinstance(entry, dict):
-            value = entry.get(nested)
-            if isinstance(value, str):
-                return value
-        return ""
+    Entities are unescaped (repeatedly, since HN text is often stored
+    double-escaped), ``<p>`` becomes a paragraph break, ``<a href>`` becomes
+    its plain URL (when the link text differs from the URL, both are kept
+    as ``text (URL)`` so no reader wording is lost) and every other tag is
+    dropped.
+    """
+    text = value
+    for _ in range(3):
+        unescaped = unescape(text)
+        if unescaped == text:
+            break
+        text = unescaped
+    text = re.sub(r"<p\s*>", "\n\n", text, flags=re.I)
+    text = re.sub(r"</p\s*>", "\n\n", text, flags=re.I)
+    text = re.sub(r"https?://(?:[a-z0-9-]+\.)?twimg\.com[^\s\"'<>]*", "[image on X]", text, flags=re.I)
+    def _anchor(match: re.Match) -> str:
+        href = match.group(1).strip()
+        label = match.group(2).strip()
+        if not href:
+            return label
+        if not label or label == href:
+            return href
+        return f"{label} ({href})"
 
-    title = text_value("title", "string_value")
-    description = text_value("description", "string_value")
-    domain = text_value("domain", "string_value")
-    image = ""
-    for key in ("thumbnail_image_original", "thumbnail_image_large", "thumbnail_image"):
-        entry = values.get(key)
-        if isinstance(entry, dict) and isinstance(entry.get("image_value"), dict):
-            image = str(entry["image_value"].get("url") or "")
-            if image:
-                break
-    url = str(card.get("url") or "")
-    if not (title or description):
-        return None
-    return {"title": title, "description": description, "domain": domain, "image": image, "url": url}
-
-
-def extract_tweet_edge(tweet: dict[str, Any]) -> dict[str, str] | None:
-    quoted = tweet.get("quoted_tweet")
-    if not isinstance(quoted, dict):
-        return None
-    user = quoted.get("user") if isinstance(quoted.get("user"), dict) else {}
-    text = str(quoted.get("text") or "")
-    if not text:
-        return None
-    return {
-        "id": str(quoted.get("id_str") or quoted.get("id") or ""),
-        "text": text,
-        "name": str(user.get("name") or ""),
-        "handle": str(user.get("screen_name") or ""),
-    }
+    text = re.sub(r'<a\s+[^>]*href="([^"]*)"[^>]*>(.*?)</a>', _anchor, text, flags=re.I | re.S)
+    text = re.sub(r"<[^>]+>", "", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
 
 
 def citation_year(citation: dict[str, Any]) -> int:
@@ -144,7 +103,7 @@ def build_quotes(record: dict[str, Any]) -> list[dict[str, Any]]:
     for citation in record.get("citations", []):
         if citation.get("hn_kind") != "comment":
             continue
-        text = str(citation.get("hn_comment_text") or "").strip()
+        text = clean_hn_text(str(citation.get("hn_comment_text") or ""))
         if not text:
             continue
         quotes.append({
@@ -175,59 +134,55 @@ def rank_score(recommenders: int, citing: int, points: int, years: int, newest_y
     )
 
 
-def build_card(record: dict[str, Any], config: dict[str, Any]) -> dict[str, Any]:
+def public_card(record: dict[str, Any]) -> dict[str, Any]:
+    """Build the public, X-content-free shape for one scored record.
+
+    Only our own metadata may be published: never the post text, media,
+    link cards, quoted posts, engagement stats, or the author's display
+    name or avatar. The post itself is shown through X's official embed.
+    """
     tweet = record.get("tweet") if isinstance(record.get("tweet"), dict) else {}
     user = tweet.get("user") if isinstance(tweet.get("user"), dict) else {}
     amos = record.get("amos") if isinstance(record.get("amos"), dict) else {}
     handle = str(user.get("screen_name") or record.get("author", {}).get("handle") or "")
-    name = str(user.get("name") or record.get("author", {}).get("name") or handle)
     quotes = build_quotes(record)
     recommenders = len({quote["author"].strip().casefold() for quote in quotes if quote["stance"] == "recommends" and quote["author"].strip()})
-    citing = int(record.get("distinct_hn_authors") or len({quote["author"].strip().casefold() for quote in quotes if quote["author"].strip()}))
+    citing = len({quote["author"].strip().casefold() for quote in quotes if quote["author"].strip()})
     years = sorted({quote["year"] for quote in quotes if quote["year"]})
-    newest_year = max(years) if years else 0
-    points = max([quote["points"] for quote in quotes] or [0])
     created = parse_date(tweet.get("created_at"))
     tweet_id = str(record.get("id") or tweet.get("id_str") or "")
     return {
         "id": tweet_id,
         "url": tweet_url(handle, tweet_id),
-        "text": str(tweet.get("text") or ""),
+        "author": {"handle": handle},
         "created_at": created.isoformat().replace("+00:00", "Z") if created else "",
-        "author": {
-            "name": name,
-            "handle": handle,
-            "avatar": avatar_url(tweet, record),
-            "url": f"https://x.com/{handle}" if handle else "",
-        },
         "topic": str(amos.get("topic") or ""),
         "kind": str(amos.get("kind") or ""),
-        "evergreen": round(float(amos.get("average") or 0), 4),
         "recommenders": recommenders,
         "citing_users": citing,
-        "rank_score": round(rank_score(recommenders, citing, points, len(years), newest_year, config), 3),
+        "rank_score": 0.0,
         "years": years,
         "quotes": quotes,
-        "media": extract_media(tweet),
-        "link_card": extract_link_card(tweet),
-        "quoted_tweet": extract_tweet_edge(tweet),
-        "stats": {
-            "replies": int(tweet.get("conversation_count") or 0),
-            "reposts": int(tweet.get("retweet_count") or 0),
-            "likes": int(tweet.get("favorite_count") or 0),
-            "views": int((tweet.get("video") or {}).get("viewCount") or 0),
-            "bookmarks": 0,
-        },
     }
+
+
+def build_card(record: dict[str, Any], config: dict[str, Any]) -> dict[str, Any]:
+    card = public_card(record)
+    quotes = card["quotes"]
+    years = card["years"]
+    points = max([quote["points"] for quote in quotes] or [0])
+    newest_year = max(years) if years else 0
+    card["rank_score"] = round(
+        rank_score(card["recommenders"], card["citing_users"], points, len(years), newest_year, config), 3
+    )
+    return card
 
 
 def validate_card(card: dict[str, Any]) -> None:
     if not isinstance(card.get("id"), str) or not card["id"]:
         raise SchemaError("card is missing a string id")
-    if not isinstance(card.get("text"), str) or not card["text"].strip():
-        raise SchemaError(f"card {card.get('id')} has no text")
     author = card.get("author")
-    if not isinstance(author, dict) or not isinstance(author.get("handle"), str):
+    if not isinstance(author, dict) or not isinstance(author.get("handle"), str) or not author["handle"]:
         raise SchemaError(f"card {card['id']} has no author handle")
     for key in ("recommenders", "citing_users"):
         if not isinstance(card.get(key), int) or card[key] < 0:
@@ -259,23 +214,34 @@ def write_json(path: Path, payload: Any, kind: type = list) -> int:
     return size
 
 
-def rss_xml(cards: list[dict[str, Any]]) -> str:
+def recommendation_label(recommenders: int) -> str:
+    if recommenders == 1:
+        return "Shared by 1 HN user"
+    return f"Recommended by {recommenders} HN users"
+
+
+def rss_xml(cards: list[dict[str, Any]], site_url: str = SITE_URL) -> str:
     items = []
     for card in cards[:RSS_LIMIT]:
-        link = f"{SITE_URL}/tweet/{card['id']}"
+        link = f"{site_url}/tweet/{card['id']}"
         created = parse_date(card.get("created_at")) or datetime.now(timezone.utc)
-        title = f"{card['author']['name']}: {card['text'][:90]}"
-        description = "Recommended by " + (f"{card['recommenders']} Hacker News readers" if card["recommenders"] != 1 else "1 Hacker News reader")
+        handle = card["author"]["handle"]
+        title = f"@{handle}, {recommendation_label(card['recommenders'])[0].lower() + recommendation_label(card['recommenders'])[1:]}"
+        top_quote = next((q for q in card["quotes"] if q.get("stance") == "recommends"), None) or (card["quotes"][0] if card["quotes"] else None)
+        description = ""
+        if top_quote:
+            description = f"“{top_quote['text']}” — HN reader @{top_quote['author']}. "
+        description += f"View on X: {card['url']}"
         items.append(
             "<item>"
-            f"<title>{escape(title)}</title>"
-            f"<description>{escape(card['text'])}</description>"
-            f"<link>{escape(link)}</link>"
-            f'<guid isPermaLink="false">{escape(card["id"])}</guid>'
+            f"<title>{escape(title, quote=False)}</title>"
+            f"<description>{escape(description, quote=False)}</description>"
+            f"<link>{escape(link, quote=False)}</link>"
+            f'<guid isPermaLink="false">{escape(card["id"], quote=False)}</guid>'
             f"<pubDate>{format_datetime(created)}</pubDate>"
-            f"<category>{escape(card.get('topic') or 'Ideas')}</category>"
-            f"<comments>{escape(link)}</comments>"
-            f"<source url=\"{escape(SITE_URL)}\">HackerX</source>"
+            f"<category>{escape(card.get('topic') or 'Ideas', quote=False)}</category>"
+            f"<comments>{escape(link, quote=False)}</comments>"
+            f'<source url="{escape(site_url, quote=False)}">HackerX</source>'
             f"</item>"
         )
     return (
@@ -283,52 +249,42 @@ def rss_xml(cards: list[dict[str, Any]]) -> str:
         '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'
         "<channel>"
         "<title>HackerX — ideas worth keeping</title>"
-        f"<link>{SITE_URL}</link>"
+        f"<link>{site_url}</link>"
         "<description>Timeless ideas recommended by Hacker News readers.</description>"
         "<language>en</language>"
-        f'<atom:link href="{SITE_URL}/rss.xml" rel="self" type="application/rss+xml"/>'
+        f'<atom:link href="{site_url}/rss.xml" rel="self" type="application/rss+xml"/>'
         f"<lastBuildDate>{format_datetime(datetime.now(timezone.utc))}</lastBuildDate>"
         + "".join(items)
         + "</channel></rss>"
     )
 
 
-def build(scored_path: Path, out_dir: Path, config: dict[str, Any], site_url: str) -> dict[str, int]:
-    records = json.loads(scored_path.read_text(encoding="utf-8"))
-    published: list[dict[str, Any]] = []
-    rejected_rows: list[dict[str, Any]] = []
-    for record in records:
-        if record.get("recommendation_pass") is True:
-            published.append(build_card(record, config))
-        else:
-            amos = record.get("amos") if isinstance(record.get("amos"), dict) else {}
-            tweet = record.get("tweet") if isinstance(record.get("tweet"), dict) else {}
-            user = tweet.get("user") if isinstance(tweet.get("user"), dict) else {}
-            rejected_rows.append({
-                "id": str(record.get("id") or ""),
-                "status": "evergreen" if record.get("evergreen_pass") else "not_evergreen",
-                "author": str(user.get("screen_name") or ""),
-                "kind": str(amos.get("kind") or ""),
-                "evergreen": round(float(amos.get("average") or 0), 4),
-                "recommenders": int(record.get("recommending_authors") or 0),
-            })
-    for card in published:
-        validate_card(card)
-    published.sort(key=lambda card: (-card["recommenders"], -card["rank_score"], -card["citing_users"], card["id"]))
-    for index, card in enumerate(published, start=1):
+def sort_and_rank(cards: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    ordered = sorted(cards, key=lambda card: (-card["recommenders"], -card["rank_score"], -card["citing_users"], card["id"]))
+    for index, card in enumerate(ordered, start=1):
         card["rank"] = index
+    return ordered
+
+
+def write_site_files(cards: list[dict[str, Any]], out_dir: Path, scored_total: int, site_url: str) -> dict[str, int]:
+    """Write every public file under ``data/site/`` from public-shape cards.
+
+    Shared by ``build()`` (fresh pipeline output) and
+    ``scripts/strip_site_data.py`` (re-shaping already committed data), so
+    both paths always emit the exact same whitelisted shape.
+    """
+    for card in cards:
+        validate_card(card)
 
     accounts: dict[str, dict[str, Any]] = {}
     years: dict[int, dict[str, Any]] = {}
     topics: dict[str, int] = {}
-    for card in published:
-        author = card["author"]
-        key = author["handle"].casefold() or "unknown"
+    for card in cards:
+        handle = card["author"]["handle"]
+        key = handle.casefold() or "unknown"
         entry = accounts.setdefault(key, {
-            "handle": author["handle"],
-            "name": author["name"],
-            "avatar": author["avatar"],
-            "url": author["url"],
+            "handle": handle,
+            "url": f"https://x.com/{handle}" if handle else "",
             "tweet_ids": [],
             "recommenders": 0,
             "citations": 0,
@@ -338,8 +294,6 @@ def build(scored_path: Path, out_dir: Path, config: dict[str, Any], site_url: st
         entry["recommenders"] += card["recommenders"]
         entry["citations"] += card["citing_users"]
         entry["topics"][card["topic"]] = entry["topics"].get(card["topic"], 0) + 1
-        if not entry["avatar"] and author["avatar"]:
-            entry["avatar"] = author["avatar"]
         for year in card["years"]:
             bucket = years.setdefault(year, {"year": year, "tweet_ids": [], "recommenders": 0})
             bucket["tweet_ids"].append(card["id"])
@@ -357,13 +311,13 @@ def build(scored_path: Path, out_dir: Path, config: dict[str, Any], site_url: st
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "site_url": site_url,
         "counts": {
-            "scored": len(records),
-            "published": len(published),
+            "scored": scored_total,
+            "published": len(cards),
             "accounts": len(account_list),
             "years": len(year_list),
             "topics": len(topics),
-            "quotes": sum(len(card["quotes"]) for card in published),
-            "recommenders": sum(card["recommenders"] for card in published),
+            "quotes": sum(len(card["quotes"]) for card in cards),
+            "recommenders": sum(card["recommenders"] for card in cards),
         },
         "topics": sorted(topics.items(), key=lambda item: (-item[1], item[0])),
         "source": "data/scored-tweets.json",
@@ -372,32 +326,38 @@ def build(scored_path: Path, out_dir: Path, config: dict[str, Any], site_url: st
         {
             "id": card["id"],
             "rank": card["rank"],
-            "status": "published",
+            "url": card["url"],
             "author": card["author"]["handle"],
-            "text": card["text"],
             "topic": card["topic"],
             "kind": card["kind"],
-            "evergreen": card["evergreen"],
             "recommenders": card["recommenders"],
+            "citing_users": card["citing_users"],
             "rank_score": card["rank_score"],
+            "years": card["years"],
         }
-        for card in published
-    ] + rejected_rows
-    all_rows.sort(key=lambda row: (row.get("rank") is None, row.get("rank") or 0, row["id"]))
+        for card in cards
+    ]
 
     sizes = {
-        "tweets.json": write_json(out_dir / "tweets.json", published),
+        "tweets.json": write_json(out_dir / "tweets.json", cards),
         "accounts.json": write_json(out_dir / "accounts.json", account_list),
         "years.json": write_json(out_dir / "years.json", year_list),
         "meta.json": write_json(out_dir / "meta.json", meta, dict),
         "all.json": write_json(out_dir / "all.json", all_rows),
     }
-    rss = rss_xml(published)
+    rss = rss_xml(cards, site_url)
     if len(rss.encode("utf-8")) > MAX_BYTES:
         raise SchemaError("rss.xml is over the 20 MiB limit")
     (out_dir / "rss.xml").write_text(rss, encoding="utf-8")
     sizes["rss.xml"] = (out_dir / "rss.xml").stat().st_size
-    return {"published": len(published), "accounts": len(account_list), "years": len(year_list), **sizes}
+    return {"published": len(cards), "accounts": len(account_list), "years": len(year_list), **sizes}
+
+
+def build(scored_path: Path, out_dir: Path, config: dict[str, Any], site_url: str) -> dict[str, int]:
+    records = json.loads(scored_path.read_text(encoding="utf-8"))
+    published = [build_card(record, config) for record in records if record.get("recommendation_pass") is True]
+    ranked = sort_and_rank(published)
+    return write_site_files(ranked, out_dir, scored_total=len(records), site_url=site_url)
 
 
 def main() -> None:

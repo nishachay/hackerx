@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowUpRight, Compass, Rss, Search } from "lucide-react";
-import { getSite, initials } from "../lib/site-data";
-import { formatDate, fullNumber, plural } from "../lib/format";
+import { getSite } from "../lib/site-data";
+import { BrandMark } from "./brand-mark";
+import { formatDate, fullNumber, initials, plural } from "../lib/format";
 
 export function Sidebar({ activeTopic }: { activeTopic?: string }) {
   const { meta, cards } = getSite();
@@ -23,9 +24,7 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
 
       <section className="side-card side-intro">
         <div className="side-card-head">
-          <span className="mini-mark" aria-hidden="true">
-            H
-          </span>
+          <BrandMark size={24} className="mini-mark" />
           <h2>Ideas worth keeping</h2>
         </div>
         <p>HackerX collects posts that Hacker News readers recommend years after they were written. No feed, no outrage, just ideas that age well.</p>
@@ -74,6 +73,7 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
           <a href="/rss.xml">RSS · top 50</a>
           <Link href="/accounts">Accounts</Link>
           <Link href="/about">About the data</Link>
+          <Link href="/privacy">Privacy</Link>
         </div>
       </section>
 
@@ -81,16 +81,13 @@ export function Sidebar({ activeTopic }: { activeTopic?: string }) {
         <p>
           Built for reading. {plural(meta.counts.recommenders, "recommendation")} from {fullNumber(meta.counts.accounts)} accounts.
         </p>
-        <p>Independent project, not affiliated with Hacker News. Covers are linked to their original posts.</p>
+        <p>Independent project. Not affiliated with X Corp. or Hacker News. Posts are shown with X’s official embed or linked, never copied.</p>
       </footer>
     </aside>
   );
 }
 
-export function AccountMark({ name, avatar, size = 34 }: { name: string; avatar?: string; size?: number }) {
-  if (avatar) {
-    return <img className="account-avatar" src={avatar} alt="" width={size} height={size} loading="lazy" referrerPolicy="no-referrer" />;
-  }
+export function AccountMark({ name, size = 34 }: { name: string; size?: number }) {
   return (
     <span className="account-avatar account-avatar-fallback" style={{ width: size, height: size }} aria-hidden="true">
       {initials(name)}

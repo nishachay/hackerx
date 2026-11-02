@@ -1,4 +1,8 @@
-"""Python entry point for the react-tweet Node fetch adapter."""
+"""Python entry point for the retired tweet fetch adapter.
+
+The react-tweet dependency was removed for X policy compliance; the
+adapter now fails immediately until a compliant paid-API source exists.
+"""
 
 from __future__ import annotations
 

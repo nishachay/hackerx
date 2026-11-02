@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { ArrowUpRight, Code2, Rss } from "lucide-react";
 import { PageHeader } from "../../components/page-header";
+import { EmbedSetting } from "../../components/embed-setting";
 import { getSite } from "../../lib/site-data";
 import { formatDate, fullNumber } from "../../lib/format";
 
-export const metadata = { title: "About" };
+export const metadata = {
+  title: "About",
+  description: "What HackerX is, where its data comes from, and what it deliberately leaves out.",
+};
 
 export default function AboutPage() {
   const { meta } = getSite();
@@ -32,7 +36,7 @@ export default function AboutPage() {
           <h2 id="data-title">Where the data comes from</h2>
           <ul className="plain-list">
             <li>Hacker News public search and item data, collected in resumable two-week slices.</li>
-            <li>Public post embeds for text, author, date, images and link previews.</li>
+            <li>Posts themselves stay on X and are shown with X’s official embed, or as plain links — never copied.</li>
             <li>HN comment text, author and thread links for every recommendation shown.</li>
           </ul>
           <p>
@@ -41,17 +45,35 @@ export default function AboutPage() {
           </p>
         </section>
 
+        <section aria-labelledby="display-title">
+          <h2 id="display-title">How posts are shown</h2>
+          <p>
+            Posts render through X’s official embed, and only after you allow it. Your choice is saved in this browser and you can change it any time.
+          </p>
+          <EmbedSetting />
+        </section>
+
         <section aria-labelledby="privacy-title">
           <h2 id="privacy-title">Privacy</h2>
           <p>
-            There are no accounts, no comments, no votes and no analytics script. Likes, bookmarks, theme and reading history are stored in your browser’s local storage and never sent anywhere. Clearing site data removes them.
+            There are no accounts, no comments and no votes. Theme, saves, reading history and your embed choice are stored in your browser’s
+            local storage and never sent anywhere. Posts load through X’s official embed only after you allow it, and the site may use
+            Cloudflare Web Analytics, which is cookieless and aggregate. Details on the{" "}
+            <Link className="text-link" href="/privacy">privacy page</Link>.
+          </p>
+          <p>
+            Something of yours in the archive?{" "}
+            <a className="text-link" href="https://github.com/nishachay/hackerx/issues/new?template=removal.yml" target="_blank" rel="noreferrer">
+              Request removal
+            </a>{" "}
+            — we aim to act within 24 hours.
           </p>
         </section>
 
         <section aria-labelledby="independence-title">
           <h2 id="independence-title">Independence</h2>
           <p>
-            HackerX is not affiliated with Hacker News or with the people whose posts appear here. Original posts stay on their platform and are linked, not copied. Quotes are attributed to their Hacker News authors and linked to the thread.
+            HackerX is an independent project, not affiliated with X Corp. or Hacker News, nor with the people whose posts appear here. Posts are shown with X’s official embed or linked, never copied. Quotes are attributed to their Hacker News authors and linked to the thread.
           </p>
         </section>
 

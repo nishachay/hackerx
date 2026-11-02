@@ -3,7 +3,7 @@
     "id": "1900000000000000001",
     "fixture": true,
     "tweet": {
-      "text": "The best way to have ideas is to notice what seems missing, then stay curious long enough to understand why.",
+      "text": "Example fixture post 1: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Paul Graham",
         "screen_name": "paulg"
@@ -67,7 +67,7 @@
     "id": "1900000000000000002",
     "fixture": true,
     "tweet": {
-      "text": "Make users awesome at something they already care about. The product is the path, not the destination.",
+      "text": "Example fixture post 2: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Kathy Sierra",
         "screen_name": "KathySierra"
@@ -131,7 +131,7 @@
     "id": "1900000000000000003",
     "fixture": true,
     "tweet": {
-      "text": "A business can be small, profitable, and a very good use of your life.",
+      "text": "Example fixture post 3: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Patrick McKenzie",
         "screen_name": "patio11"
@@ -199,7 +199,7 @@
     "id": "1900000000000000004",
     "fixture": true,
     "tweet": {
-      "text": "When a system feels slow, measure the whole path before optimizing the part that looks suspicious.",
+      "text": "Example fixture post 4: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Dan Luu",
         "screen_name": "danluu"
@@ -263,7 +263,7 @@
     "id": "1900000000000000005",
     "fixture": true,
     "tweet": {
-      "text": "A useful debugging question: what would I expect to observe if my current theory were true?",
+      "text": "Example fixture post 5: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Julia Evans",
         "screen_name": "b0rk"
@@ -327,7 +327,7 @@
     "id": "1900000000000000006",
     "fixture": true,
     "tweet": {
-      "text": "Good security tools make the safe choice the easy choice, even when nobody is watching.",
+      "text": "Example fixture post 6: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Moxie Marlinspike",
         "screen_name": "moxie"
@@ -395,7 +395,7 @@
     "id": "1900000000000000007",
     "fixture": true,
     "tweet": {
-      "text": "Simple is about the structure of a system. Easy is about how close it is to hand.",
+      "text": "Example fixture post 7: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Rich Hickey",
         "screen_name": "richhickey"
@@ -459,7 +459,7 @@
     "id": "1900000000000000008",
     "fixture": true,
     "tweet": {
-      "text": "A reliable team makes important work visible before it becomes urgent.",
+      "text": "Example fixture post 8: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Tanya Reilly",
         "screen_name": "whereistanya"
@@ -523,7 +523,7 @@
     "id": "1900000000000000009",
     "fixture": true,
     "tweet": {
-      "text": "Creators need to see the consequences of their ideas while they are still forming them.",
+      "text": "Example fixture post 9: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Bret Victor",
         "screen_name": "worrydream"
@@ -591,7 +591,7 @@
     "id": "1900000000000000010",
     "fixture": true,
     "tweet": {
-      "text": "Open tools let people improve the things they depend on, at their own pace.",
+      "text": "Example fixture post 10: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Drew DeVault",
         "screen_name": "sir"
@@ -655,7 +655,7 @@
     "id": "1900000000000000011",
     "fixture": true,
     "tweet": {
-      "text": "Constraints are often what make a product coherent. Start with fewer moving parts.",
+      "text": "Example fixture post 11: placeholder text for local development only, not a real post.",
       "user": {
         "name": "DHH",
         "screen_name": "dhh"
@@ -719,7 +719,7 @@
     "id": "1900000000000000012",
     "fixture": true,
     "tweet": {
-      "text": "Refactoring changes the shape of code while keeping the behavior that users rely on.",
+      "text": "Example fixture post 12: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Martin Fowler",
         "screen_name": "martinfowler"
@@ -787,7 +787,7 @@
     "id": "1900000000000000013",
     "fixture": true,
     "tweet": {
-      "text": "Observability is about asking new questions of a system you did not predict in advance.",
+      "text": "Example fixture post 13: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Charity Majors",
         "screen_name": "mipsytipsy"
@@ -851,7 +851,7 @@
     "id": "1900000000000000014",
     "fixture": true,
     "tweet": {
-      "text": "Duplication is far cheaper than the wrong abstraction.",
+      "text": "Example fixture post 14: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Sandi Metz",
         "screen_name": "sandimetz"
@@ -915,7 +915,7 @@
     "id": "1900000000000000015",
     "fixture": true,
     "tweet": {
-      "text": "A good research note should preserve enough context that future you can understand why it mattered.",
+      "text": "Example fixture post 15: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Gwern Branwen",
         "screen_name": "gwern"
@@ -983,7 +983,7 @@
     "id": "1900000000000000016",
     "fixture": true,
     "tweet": {
-      "text": "Make the change easy, then make the easy change.",
+      "text": "Example fixture post 16: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Kent Beck",
         "screen_name": "KentBeck"
@@ -1047,7 +1047,7 @@
     "id": "1900000000000000017",
     "fixture": true,
     "tweet": {
-      "text": "The web works best when people can make things and link to each other without asking permission.",
+      "text": "Example fixture post 17: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Anil Dash",
         "screen_name": "anildash"
@@ -1111,7 +1111,7 @@
     "id": "1900000000000000018",
     "fixture": true,
     "tweet": {
-      "text": "A diagram is a small model you can use to reason together before committing to code.",
+      "text": "Example fixture post 18: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Maggie Appleton",
         "screen_name": "Mappletons"
@@ -1179,7 +1179,7 @@
     "id": "1900000000000000019",
     "fixture": true,
     "tweet": {
-      "text": "Small, composable tools are easier to trust because you can inspect what they do.",
+      "text": "Example fixture post 19: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Simon Willison",
         "screen_name": "simonw"
@@ -1243,7 +1243,7 @@
     "id": "1900000000000000020",
     "fixture": true,
     "tweet": {
-      "text": "A roadmap is a set of hypotheses. Keep the evidence close to the decisions.",
+      "text": "Example fixture post 20: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Ellen Chisa",
         "screen_name": "ellenchisa"
@@ -1307,7 +1307,7 @@
     "id": "1900000000000000021",
     "fixture": true,
     "tweet": {
-      "text": "A fast feedback loop changes how willing a team is to try a small experiment.",
+      "text": "Example fixture post 21: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Mitchell Hashimoto",
         "screen_name": "mitchellh"
@@ -1375,7 +1375,7 @@
     "id": "1900000000000000022",
     "fixture": true,
     "tweet": {
-      "text": "Software is made by people coordinating their understanding of a problem.",
+      "text": "Example fixture post 22: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Jessica Kerr",
         "screen_name": "jessitron"
@@ -1439,7 +1439,7 @@
     "id": "1900000000000000023",
     "fixture": true,
     "tweet": {
-      "text": "If performance matters, build a measurement that gives you an answer you can repeat.",
+      "text": "Example fixture post 23: placeholder text for local development only, not a real post.",
       "user": {
         "name": "John Carmack",
         "screen_name": "ID_AA_Carmack"
@@ -1503,7 +1503,7 @@
     "id": "1900000000000000024",
     "fixture": true,
     "tweet": {
-      "text": "Clear expectations are a kindness: they give people room to do good work.",
+      "text": "Example fixture post 24: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Lara Hogan",
         "screen_name": "lara_hogan"
@@ -1571,7 +1571,7 @@
     "id": "1900000000000000025",
     "fixture": true,
     "tweet": {
-      "text": "Technology adoption looks obvious in retrospect and uncertain while it is happening.",
+      "text": "Example fixture post 25: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Benedict Evans",
         "screen_name": "benedictevans"
@@ -1635,7 +1635,7 @@
     "id": "1900000000000000026",
     "fixture": true,
     "tweet": {
-      "text": "A great interface makes the common path obvious and the unusual path possible.",
+      "text": "Example fixture post 26: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Joel Spolsky",
         "screen_name": "spolsky"
@@ -1699,7 +1699,7 @@
     "id": "1900000000000000027",
     "fixture": true,
     "tweet": {
-      "text": "Good defaults are a form of documentation that people can use without stopping.",
+      "text": "Example fixture post 27: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Miriam Suzanne",
         "screen_name": "TerribleMia"
@@ -1767,7 +1767,7 @@
     "id": "1900000000000000028",
     "fixture": true,
     "tweet": {
-      "text": "A process is useful when it helps a team make a decision, not when it produces a document.",
+      "text": "Example fixture post 28: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Adam Wiggins",
         "screen_name": "adamwiggins"
@@ -1831,7 +1831,7 @@
     "id": "1900000000000000029",
     "fixture": true,
     "tweet": {
-      "text": "Teach people to question a result, not only to reproduce the steps that produced it.",
+      "text": "Example fixture post 29: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Rachel Thomas",
         "screen_name": "math_rachel"
@@ -1895,7 +1895,7 @@
     "id": "1900000000000000030",
     "fixture": true,
     "tweet": {
-      "text": "Readable data formats make it easier for tools and people to share a long-lived record.",
+      "text": "Example fixture post 30: placeholder text for local development only, not a real post.",
       "user": {
         "name": "Tim Bray",
         "screen_name": "TimBray"

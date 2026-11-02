@@ -1,4 +1,5 @@
 import { Credit } from "../components/credit";
+import { EmbedConsentBar } from "../components/embed-consent-bar";
 import { MobileNav, MobileTopBar, RailNav } from "../components/nav";
 import { Sidebar } from "../components/sidebar";
 
@@ -18,6 +19,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <Credit />
       </footer>
       <MobileNav />
+      <EmbedConsentBar />
     </div>
   );
 }

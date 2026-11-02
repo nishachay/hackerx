@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Quote as QuoteIcon, RefreshCw } from "lucide-react";
 import type { Card } from "../lib/site-data";
+import { recommendationBadge, topQuote } from "../lib/quotes";
 import { Avatar } from "./avatar";
 
 export function ZenView({ cards }: { cards: Card[] }) {
@@ -24,6 +25,7 @@ export function ZenView({ cards }: { cards: Card[] }) {
   }
 
   const card = cards[index % cards.length];
+  const quote = topQuote(card);
 
   return (
     <div className="zen">
@@ -31,15 +33,15 @@ export function ZenView({ cards }: { cards: Card[] }) {
         <QuoteIcon size={14} strokeWidth={2} aria-hidden="true" /> One idea, no feed
       </p>
       <blockquote className="zen-quote" key={card.id}>
-        {card.text}
+        {quote ? quote.text : "Recommended by Hacker News readers."}
       </blockquote>
       <div className="zen-author">
-        <Avatar name={card.author.name} src={card.author.avatar} size={32} />
+        <Avatar name={card.author.handle} size={32} />
         <div>
-          <p>{card.author.name}</p>
+          <p>@{card.author.handle}</p>
           <p className="meta-mono">
-            @{card.author.handle}
-            {card.years.length > 0 ? ` · recommended since ${card.years[0]}` : ""}
+            {recommendationBadge(card.recommenders)}
+            {card.years.length > 0 ? ` · since ${card.years[0]}` : ""}
           </p>
         </div>
       </div>
@@ -54,8 +56,10 @@ export function ZenView({ cards }: { cards: Card[] }) {
         </Link>
       </div>
       <p className="zen-meta">
-        {card.recommenders} Hacker News {card.recommenders === 1 ? "recommendation" : "recommendations"} · {card.quotes.length}{" "}
-        {card.quotes.length === 1 ? "comment" : "comments"}
+        {card.quotes.length} Hacker News {card.quotes.length === 1 ? "comment" : "comments"} ·{" "}
+        <a className="text-link" href={card.url} target="_blank" rel="noreferrer">
+          View on X
+        </a>
       </p>
     </div>
   );

@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { ArrowLeft, Compass } from "lucide-react";
+import { BrandMark } from "./components/brand-mark";
 
 export default function NotFound() {
   return (
     <main className="not-found">
-      <span className="brand-mark" aria-hidden="true">
-        H
-      </span>
+      <BrandMark size={44} />
       <p className="eyebrow">404</p>
       <h1>That idea isn’t here</h1>
       <p>The link may be older than the archive, or the post was removed from its source.</p>

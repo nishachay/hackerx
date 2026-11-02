@@ -1,7 +1,12 @@
 import { mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getTweet } from 'react-tweet/api';
+// react-tweet was removed: it reads posts through an unofficial X endpoint,
+// which X's Terms of Service and Developer Policy forbid. The fetch pipeline
+// is retired until a compliant source (the paid X API) is wired up.
+function getTweet() {
+  throw new Error('Fetch path removed for X policy compliance; no compliant fetch source is configured.');
+}
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
