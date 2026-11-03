@@ -11,6 +11,7 @@ import concurrent.futures
 from email.utils import parsedate_to_datetime
 import json
 import re
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -28,6 +29,56 @@ QUERIES = REQUIRED_QUERIES + FALLBACK_QUERIES
 TAGS = ("comment", "story")
 START_DATE = date(2007, 1, 1)
 RANGE_SECONDS = 14 * 24 * 60 * 60
+# HN Search answers 403/429 when one IP sends too much. Algolia documents
+# 10,000 requests per hour per IP; stay well under it across all workers.
+RETRYABLE = (403, 429, 500, 502, 503, 504)
+_RATE_LOCK = threading.Lock()
+_NEXT_SLOT = [0.0]
+_MIN_INTERVAL = [60 / 120]
+
+
+def set_rate(requests_per_minute: float) -> None:
+    _MIN_INTERVAL[0] = 60 / max(1.0, float(requests_per_minute))
+
+
+def throttle() -> None:
+    """Space every request evenly, shared by all worker threads."""
+    with _RATE_LOCK:
+        now = time.monotonic()
+        slot = max(now, _NEXT_SLOT[0])
+        _NEXT_SLOT[0] = slot + _MIN_INTERVAL[0]
+    wait = slot - time.monotonic()
+    if wait > 0:
+        time.sleep(wait)
+
+
+def fetch_json(url: str) -> dict[str, Any]:
+    request = urllib.request.Request(url, headers={"User-Agent": "HackerX/1.0 (HN recommendation archive)"})
+    delay = 5
+    for attempt in range(8):
+        throttle()
+        try:
+            with urllib.request.urlopen(request, timeout=45) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as error:
+            if error.code not in RETRYABLE or attempt == 7:
+                raise
+            retry_after = error.headers.get("Retry-After")
+            try:
+                wait = max(1, float(retry_after)) if retry_after else delay
+            except ValueError:
+                try:
+                    wait = max(1, (parsedate_to_datetime(retry_after) - datetime.now(timezone.utc)).total_seconds())
+                except (TypeError, ValueError, OverflowError):
+                    wait = delay
+            time.sleep(wait)
+            delay = min(delay * 2, 300)
+        except (urllib.error.URLError, TimeoutError):
+            if attempt == 7:
+                raise
+            time.sleep(delay)
+            delay = min(delay * 2, 300)
+    raise RuntimeError("HN request retries exhausted")
 
 
 def utc_midnight(value: date) -> int:
@@ -42,39 +93,15 @@ def cache_path(query: str, tag: str, start: int, end: int) -> Path:
     return ROOT / "data" / "cache" / "hn" / slug(query) / tag / f"{start}-{end}.json"
 
 
-def request_range(query: str, tag: str, start: int, end: int, hits_per_page: int) -> dict[str, Any]:
+def request_range(query: str, tag: str, start: int, end: int, hits_per_page: int, page: int = 0) -> dict[str, Any]:
     params = urllib.parse.urlencode({
         "query": query,
         "tags": tag,
         "numericFilters": f"created_at_i>={start},created_at_i<{end}",
         "hitsPerPage": hits_per_page,
-        "page": 0,
+        "page": page,
     })
-    request = urllib.request.Request(f"{API}?{params}", headers={"User-Agent": "HackerX/1.0 (HN recommendation archive)"})
-    delay = 2
-    for attempt in range(8):
-        try:
-            with urllib.request.urlopen(request, timeout=45) as response:
-                return json.loads(response.read().decode("utf-8"))
-        except urllib.error.HTTPError as error:
-            if error.code not in (429, 503) or attempt == 7:
-                raise
-            retry_after = error.headers.get("Retry-After")
-            try:
-                wait = max(1, float(retry_after)) if retry_after else delay
-            except ValueError:
-                try:
-                    wait = max(1, (parsedate_to_datetime(retry_after) - datetime.now(timezone.utc)).total_seconds())
-                except (TypeError, ValueError, OverflowError):
-                    wait = delay
-            time.sleep(wait)
-            delay = min(delay * 2, 60)
-        except (urllib.error.URLError, TimeoutError):
-            if attempt == 7:
-                raise
-            time.sleep(delay)
-            delay = min(delay * 2, 60)
-    raise RuntimeError("HN request retries exhausted")
+    return fetch_json(f"{API}?{params}")
 
 
 def get_range(query: str, tag: str, start: int, end: int, hits_per_page: int) -> list[dict[str, Any]]:
@@ -95,16 +122,7 @@ def get_range(query: str, tag: str, start: int, end: int, hits_per_page: int) ->
         # Follow all pages that the endpoint reports in that edge case.
         collected = list(hits)
         for page in range(1, int(result.get("nbPages", 1))):
-            params = urllib.parse.urlencode({
-                "query": query,
-                "tags": tag,
-                "numericFilters": f"created_at_i>={start},created_at_i<{end}",
-                "hitsPerPage": hits_per_page,
-                "page": page,
-            })
-            request = urllib.request.Request(f"{API}?{params}", headers={"User-Agent": "HackerX/1.0"})
-            with urllib.request.urlopen(request, timeout=45) as response:
-                collected.extend(json.loads(response.read().decode("utf-8")).get("hits", []))
+            collected.extend(request_range(query, tag, start, end, hits_per_page, page).get("hits", []))
 
     path.parent.mkdir(parents=True, exist_ok=True)
     temp_path = path.with_suffix(".json.tmp")
@@ -144,6 +162,7 @@ def main() -> None:
         parser.error("--until must be later than --from")
     queries = args.query or list(config["hn"].get("queries", QUERIES))
     tags = args.tag or list(config["hn"].get("tags", TAGS))
+    set_rate(config["hn"].get("requests_per_minute", 120))
     tasks = [(query, tag, left, right) for query in queries for tag in tags for left, right in ranges(start, end)]
     print(f"Fetching {len(tasks)} base ranges across {len(queries)} queries and {len(tags)} item types with {config['hn']['threads']} workers")
 
