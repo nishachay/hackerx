@@ -9,7 +9,11 @@
   <a href="https://hackerx.nishachay.tech">hackerx.nishachay.tech</a>
 </p>
 
-<!-- VIDEO: drag the 26-second launch video onto this line in GitHub's editor -->
+
+
+https://github.com/user-attachments/assets/9ad56132-835c-4749-b4c8-1fff6ad9eb72
+
+
 
 <p align="center">
   <b>266</b> picks &nbsp;·&nbsp; <b>2,733</b> posts scored &nbsp;·&nbsp; <b>1,285</b> HN comments &nbsp;·&nbsp; <b>549</b> recommenders &nbsp;·&nbsp; <b>196</b> accounts &nbsp;·&nbsp; <b>17</b> years
