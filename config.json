@@ -43,7 +43,8 @@
     "minimum_distinct_citing_authors": 3,
     "slice_days": 14,
     "hits_per_page": 1000,
-    "threads": 8,
+    "threads": 4,
+    "requests_per_minute": 120,
     "tags": [
       "comment",
       "story"
