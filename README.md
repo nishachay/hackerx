@@ -11,7 +11,9 @@
 
 
 
-https://github.com/user-attachments/assets/9ad56132-835c-4749-b4c8-1fff6ad9eb72
+<p align="center">
+  <a href="https://hackerx.nishachay.tech"><img src="docs/hackerx-demo.gif" width="800" alt="HackerX demo"></a>
+</p>
 
 
 
@@ -90,4 +92,6 @@ This runs the Python unit tests, link and RSS checks on the built site, and Play
 
 ## Credits
 
-Built by [Nishachay](https://github.com/nishachay). Data comes from public Hacker News comments through the Algolia HN API. No tracking scripts.
+Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). Data comes from public Hacker News comments through the Algolia HN API. No tracking scripts.
+
+Made by [nishachay.tech](https://nishachay.tech)
